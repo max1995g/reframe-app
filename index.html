@@ -211,7 +211,21 @@ label { font-size: 12px; font-weight: 500; color: var(--ink2); display: block; m
 .pwd-active { background: var(--accent-light); color: var(--accent); }
 .pwd-used { background: var(--paper2); color: var(--ink3); }
 
-/* Toast */
+.q-hint { font-size: 11px; color: var(--accent); margin-bottom: 6px; font-style: italic; line-height: 1.4; }
+.q-card.selected .q-hint { color: var(--accent2); }
+
+/* Цветные ветки RCA */
+.rca-cause-col.c1 .rca-cause-node { border-color: #993C1D; background: #FAECE7; color: #712B13; }
+.rca-cause-col.c1 .rca-deep-node { background: #fff0eb; color: #993C1D; }
+.rca-cause-col.c2 .rca-cause-node { border-color: #854F0B; background: #FAEEDA; color: #633806; }
+.rca-cause-col.c2 .rca-deep-node { background: #fff7ec; color: #854F0B; }
+.rca-cause-col.c3 .rca-cause-node { border-color: #534AB7; background: #EEEDFE; color: #3C3489; }
+.rca-cause-col.c3 .rca-deep-node { background: #f5f4ff; color: #534AB7; }
+
+/* Резюме сессии */
+.session-insight { background: var(--ink); color: #fff; border-radius: var(--r2); padding: 20px 22px; margin-bottom: 16px; }
+.session-insight-label { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; color: rgba(255,255,255,0.45); margin-bottom: 8px; }
+.session-insight-text { font-family: 'Playfair Display', serif; font-size: 16px; color: #fff; line-height: 1.6; font-weight: 400; }
 .toast { position: fixed; bottom: 22px; right: 22px; background: var(--ink); color: #fff; padding: 11px 16px; border-radius: var(--r); font-size: 13px; opacity: 0; transform: translateY(6px); transition: all 0.2s; z-index: 999; pointer-events: none; }
 .toast.show { opacity: 1; transform: translateY(0); }
 
@@ -438,6 +452,10 @@ label { font-size: 12px; font-weight: 500; color: var(--ink2); display: block; m
     <h1 class="page-title">Новая сессия</h1>
     <p class="page-sub">Опиши проблему — получишь рефреймы, RCA и гипотезы</p>
     <div id="usage-display"></div>
+    <div id="demo-banner" style="display:none;background:var(--accent-light);border:1px solid var(--accent);border-radius:var(--r2);padding:14px 18px;margin-bottom:20px;cursor:pointer;" onclick="loadDemo()">
+      <p style="font-size:12px;font-weight:500;color:var(--accent);margin-bottom:3px;">ПОСМОТРИ КАК ЭТО РАБОТАЕТ</p>
+      <p style="font-size:13px;color:var(--ink2);margin:0;">Нажми чтобы загрузить готовый пример сессии → увидишь рефреймы, RCA и гипотезы для реального бизнес-кейса</p>
+    </div>
     <div class="steps">
       <div class="step-item"><div class="step-circle active">1</div><span class="step-text active">Проблема</span></div>
       <div class="step-line"></div>
@@ -513,6 +531,10 @@ label { font-size: 12px; font-weight: 500; color: var(--ink2); display: block; m
     </div>
     <h2 style="font-family:'Playfair Display',serif;font-size:22px;margin-bottom:5px;font-weight:400;">Гипотезы для проверки</h2>
     <p style="color:var(--ink3);font-size:13px;margin-bottom:18px;">Меняй статус, добавляй заметки — сохранится в трекере</p>
+    <div id="session-insight-block" class="session-insight" style="display:none;">
+      <div class="session-insight-label">ГЛАВНЫЙ ИНСАЙТ СЕССИИ</div>
+      <div class="session-insight-text" id="session-insight-text"></div>
+    </div>
     <div id="hypotheses-list"></div>
     <div style="margin-top:18px;background:var(--accent-light);border-radius:var(--r2);padding:16px 18px;">
       <p style="font-size:13px;font-weight:500;color:var(--accent);margin-bottom:3px;">Следующий шаг — Chevallier FrED: Explore → Decide</p>
@@ -684,6 +706,51 @@ function renderUsageBar() {
       <div class="usage-track"><div class="usage-fill ${fillClass}" style="width:${pct}%"></div></div>
       <span class="usage-text">${count} / ${SESSION_LIMIT} сессий в этом месяце</span>
     </div>`;
+  // Показываем демо-баннер если это первый визит (нет сессий)
+  const banner = document.getElementById('demo-banner');
+  if (banner) {
+    const noSessions = !sessions.length;
+    banner.style.display = noSessions ? 'block' : 'none';
+  }
+}
+
+function loadDemo() {
+  // Загружаем готовую демо-сессию
+  currentSession = {
+    id: 'demo',
+    date: new Date().toISOString(),
+    problem: 'Мы тратим всё больше на рекламу, а продажи не растут',
+    insight: 'Проблема не в рекламе — реклама привлекает людей, но что-то происходит после клика, что убивает конверсию.',
+    questions: [
+      { lens: 'Shapiro — Lens 5: Result', lens_hint: 'Переформулируй проблему через желаемый результат, а не текущее состояние', question: 'Что должно произойти после клика на рекламу, чего сейчас не происходит?' },
+      { lens: 'Wedell-Wedellsborg — Look in the mirror', lens_hint: 'Посмотри на свою роль в проблеме — что ты сам делаешь, что её создаёт', question: 'Что в нашем продукте или процессе продаж мы не хотим признавать?' },
+      { lens: 'Berger — What If', lens_hint: 'Представь что базовое ограничение убрано — как бы тогда выглядело решение', question: 'Что если реклама работает отлично, но продаёт не тем людям?' },
+      { lens: 'Shapiro — Lens 17: Bright spots', lens_hint: 'Найди случаи где всё работает — что там по-другому', question: 'Какие 20% клиентов приходят и покупают сразу — что у них общего?' },
+      { lens: 'Wedell-Wedellsborg — Rethink the goal', lens_hint: 'Поставь под сомнение саму цель — а то ли ты вообще решаешь', question: 'Кому выгодно что мы продолжаем вкладывать в рекламу вместо того чтобы починить воронку?' }
+    ],
+    selectedQ: ['Что если реклама работает отлично, но продаёт не тем людям?'],
+    rca: {
+      root: 'Реклама привлекает широкую аудиторию, но продукт создан для узкого сегмента — несовпадение убивает конверсию дороже чем любой бюджет',
+      causes: [
+        { cause: 'Размытый ICP', deep: 'Портрет клиента описан по демографии, а не по поведению и боли — реклама бьёт мимо' },
+        { cause: 'Воронка после клика не сконвертирована', deep: 'Лендинг и оффер сделаны для всех — значит ни для кого' },
+        { cause: 'Метрика успеха — клики, не деньги', deep: 'Агентство отчитывается за CTR, а не за выручку — у них нет стимула чинить конверсию' }
+      ]
+    },
+    hypotheses: [
+      { id: 1, title: 'Топ-20% клиентов имеют общий триггер покупки который мы не используем в рекламе', confidence: 81, test: 'Позвонить 10 лучшим клиентам и спросить: что произошло прямо перед тем как вы решили купить?', status: 'strong', notes: '' },
+      { id: 2, title: 'Лендинг теряет 60%+ людей на первом экране потому что не отвечает на вопрос "это для меня?"', confidence: 67, test: 'Записать сессии через Hotjar на 50 посетителях — где они уходят и что читают', status: 'strong', notes: '' },
+      { id: 3, title: 'Реклама привлекает "исследователей" а не "покупателей" — нужен другой канал или оффер', confidence: 44, test: 'Запустить A/B тест: одно объявление с ценой, второе без — сравнить качество лидов', status: 'test', notes: '' }
+    ],
+    rcaCache: {}
+  };
+  // Показываем результат сразу
+  document.getElementById('demo-banner').style.display = 'none';
+  document.getElementById('session-insight-block').style.display = 'block';
+  document.getElementById('session-insight-text').textContent = currentSession.insight;
+  renderHypotheses();
+  goToStep('step-hypotheses');
+  showToast('Демо-сессия загружена ✓');
 }
 
 // ===== NAVIGATION =====
@@ -752,27 +819,27 @@ async function analyzeStep1() {
   const lt = setInterval(() => { document.getElementById('loading-msg').textContent = msgs[mi++ % msgs.length]; }, 1400);
 
   try {
-    const res = await callAPI(`Ты радикальный стратег и эксперт по рефреймингу. Твоя задача — разрушить очевидные предположения, которые стоят за проблемой.
+    const res = await callAPI(`Ты эксперт по рефреймингу бизнес-проблем. Задай 5 вопросов которые заставят посмотреть на проблему по-новому.
 
-Методология: Shapiro (25 линз), Wedell-Wedellsborg (7 методов), Berger (Why→What If→How), Chevallier (FrED).
+Методология: Shapiro (25 линз), Wedell-Wedellsborg, Berger (Why→What If→How), Chevallier (FrED).
 
 Проблема: "${problem}"
 
 ПРАВИЛА:
-1. Вопросы должны быть короткими и разговорными — как спрашивает умный друг, а не консультант
-2. Минимум 2 вопроса переворачивают базовое предположение — человек скажет "об этом я не думал"
-3. Один вопрос использует аналогию из другой сферы (спорт, медицина, природа, кино)
-4. Один вопрос: "Кому выгодно что эта проблема не решается?"
-5. Без жаргона, без сложных конструкций — максимум одно предложение на вопрос
+1. Вопросы разговорные и короткие — как спрашивает умный друг, не консультант
+2. Минимум 2 вопроса переворачивают базовое предположение
+3. Один вопрос через аналогию из другой сферы (спорт, медицина, природа, кино)
+4. Один вопрос: кому выгодно что эта проблема не решается?
+5. Без жаргона, одно предложение на вопрос
 
 Верни ТОЛЬКО валидный JSON без markdown:
 {
   "questions": [
-    {"lens": "название линзы/метода", "question": "простой острый вопрос"},
-    {"lens": "название линзы/метода", "question": "вопрос который переворачивает предположение"},
-    {"lens": "название линзы/метода", "question": "вопрос через аналогию из другой сферы"},
-    {"lens": "название линзы/метода", "question": "кому выгодно что проблема не решается"},
-    {"lens": "название линзы/метода", "question": "вопрос о настоящей цели"}
+    {"lens": "название метода", "lens_hint": "одно предложение что означает этот метод", "question": "вопрос"},
+    {"lens": "название метода", "lens_hint": "одно предложение что означает этот метод", "question": "вопрос"},
+    {"lens": "название метода", "lens_hint": "одно предложение что означает этот метод", "question": "вопрос"},
+    {"lens": "название метода", "lens_hint": "одно предложение что означает этот метод", "question": "вопрос"},
+    {"lens": "название метода", "lens_hint": "одно предложение что означает этот метод", "question": "вопрос"}
   ]
 }`);
 
@@ -795,7 +862,10 @@ function renderQuestionsStep() {
   currentSession.questions.forEach((q, i) => {
     const el = document.createElement('div');
     el.className = 'q-card';
-    el.innerHTML = `<div class="q-lens">${q.lens.toUpperCase()}</div><div class="q-text">${q.question}</div>`;
+    el.innerHTML = `
+      <div class="q-lens">${q.lens.toUpperCase()}</div>
+      ${q.lens_hint ? `<div class="q-hint">${q.lens_hint}</div>` : ''}
+      <div class="q-text">${q.question}</div>`;
     el.onclick = () => toggleQ(el, i);
     c.appendChild(el);
   });
@@ -835,6 +905,7 @@ async function goToRCA() {
   if (currentSession.rcaCache[cacheKey]) {
     const cached = currentSession.rcaCache[cacheKey];
     currentSession.rca = cached.rca;
+    currentSession.insight = cached.insight || '';
     currentSession.hypotheses = cached.hypotheses;
     renderRCA(cached.rca, focusText);
     goToStep('step-rca');
@@ -847,44 +918,52 @@ async function goToRCA() {
   document.getElementById('loading-msg').textContent = 'Строю RCA и гипотезы...';
 
   try {
-    const res = await callAPI(`Ты глубокий стратегический аналитик. Построй нестандартный Root Cause Analysis и смелые гипотезы.
+    const res = await callAPI(`Ты стратегический аналитик. Построй Root Cause Analysis и гипотезы для проверки.
 
 Проблема: "${currentSession.problem}"
 Рефреймирующий фокус: "${focusText}"
 
 ПРАВИЛА:
-1. Корневая причина должна удивить — не называй очевидное, копай глубже
-2. Каждая ветка дерева — системная причина, не симптом
-3. Гипотезы конкретные и проверяемые за 1-2 недели
-4. Одна гипотеза контринтуитивная — сложно принять сразу
-5. confidence — твоя честная оценка от 0 до 100, разная для каждой гипотезы, не шаблонная
+1. Корневая причина — неочевидная, не симптом
+2. Три ветки дерева — разные углы, не вариации одного
+3. Гипотезы конкретные, проверяемые за 1-2 недели без больших ресурсов
+4. Одна гипотеза должна удивить — контринтуитивная
+5. confidence: оцени реально исходя из доступных данных в задаче. Числа должны быть разными и отражать реальную уверенность — не копируй шаблон
 
 Верни ТОЛЬКО валидный JSON без markdown:
 {
+  "insight": "главный инсайт этой сессии — одно предложение которое изменит взгляд на проблему",
   "rca": {
-    "root": "неочевидная корневая причина (1 предложение)",
+    "root": "неочевидная корневая причина через призму рефрейма",
     "causes": [
-      {"cause": "системная причина 1", "deep": "глубинная причина за ней"},
-      {"cause": "системная причина 2", "deep": "глубинная причина за ней"},
-      {"cause": "системная причина 3", "deep": "глубинная причина за ней"}
+      {"cause": "системная причина 1", "deep": "что за ней стоит"},
+      {"cause": "системная причина 2", "deep": "что за ней стоит"},
+      {"cause": "системная причина 3", "deep": "что за ней стоит"}
     ]
   },
   "hypotheses": [
-    {"title": "гипотеза 1", "confidence": ЧИСЛО_ОТ_0_ДО_100, "test": "конкретное действие для проверки за 1-2 недели", "status": "strong"},
-    {"title": "гипотеза 2", "confidence": ЧИСЛО_ОТ_0_ДО_100, "test": "конкретное действие для проверки", "status": "test"},
-    {"title": "гипотеза 3", "confidence": ЧИСЛО_ОТ_0_ДО_100, "test": "конкретное действие для проверки", "status": "weak"}
+    {"title": "гипотеза 1", "confidence": 79, "test": "конкретное действие для проверки", "status": "strong"},
+    {"title": "гипотеза 2", "confidence": 52, "test": "конкретное действие для проверки", "status": "test"},
+    {"title": "гипотеза 3", "confidence": 31, "test": "конкретное действие для проверки", "status": "weak"}
   ]
 }
-Важно: confidence должен реально отражать силу доказательств. Не используй 72, 48, 30 — придумай свои числа исходя из контекста.
-status: "strong" если confidence >65%, "test" если 35-65%, "weak" если <35%`);
+Правило confidence: числа в примере выше — просто заглушки. Замени их своей реальной оценкой. status автоматически: strong если >65%, test если 35-65%, weak если <35%.`);
 
     const data = JSON.parse(res.replace(/```json|```/g, '').trim());
     currentSession.rca = data.rca;
-    currentSession.hypotheses = data.hypotheses.map((h, i) => ({ ...h, id: Date.now() + i, notes: '' }));
+    currentSession.insight = data.insight || '';
+    currentSession.hypotheses = data.hypotheses.map((h, i) => ({
+      ...h,
+      id: Date.now() + i,
+      notes: '',
+      // Пересчитываем status из confidence на случай если модель ошиблась
+      status: h.confidence > 65 ? 'strong' : h.confidence >= 35 ? 'test' : 'weak'
+    }));
 
     // Сохраняем в кэш
     currentSession.rcaCache[cacheKey] = {
       rca: data.rca,
+      insight: currentSession.insight,
       hypotheses: currentSession.hypotheses
     };
 
@@ -898,13 +977,14 @@ status: "strong" если confidence >65%, "test" если 35-65%, "weak" есл
 
 function renderRCA(rca, focusText) {
   document.getElementById('rca-focus-display').textContent = 'Фокус: ' + focusText;
+  const colors = ['c1', 'c2', 'c3'];
   document.getElementById('rca-container').innerHTML = `
     <div class="rca-wrap">
       <div class="rca-root-node">${rca.root}</div>
       <div class="rca-arrow-down">↓</div>
       <div class="rca-causes-row">
-        ${rca.causes.map(c => `
-          <div class="rca-cause-col">
+        ${rca.causes.map((c, i) => `
+          <div class="rca-cause-col ${colors[i] || ''}">
             <div class="rca-cause-node">${c.cause}</div>
             <div class="rca-mini-arrow">↓</div>
             <div class="rca-deep-node">${c.deep}</div>
@@ -913,8 +993,15 @@ function renderRCA(rca, focusText) {
     </div>`;
 }
 
-// ===== STEP 4 =====
 function goToHypotheses() {
+  // Показываем инсайт если есть
+  const insightEl = document.getElementById('session-insight-block');
+  if (currentSession.insight && insightEl) {
+    insightEl.style.display = 'block';
+    document.getElementById('session-insight-text').textContent = currentSession.insight;
+  } else if (insightEl) {
+    insightEl.style.display = 'none';
+  }
   renderHypotheses();
   goToStep('step-hypotheses');
 }
@@ -973,6 +1060,8 @@ function editNotes(id) {
 // ===== SAVE & EXPORT =====
 function saveSession() {
   if (!currentSession) return;
+  // Убедимся что insight сохраняется
+  if (!currentSession.insight) currentSession.insight = '';
   const idx = sessions.findIndex(s => s.id === currentSession.id);
   if (idx >= 0) sessions[idx] = currentSession;
   else sessions.unshift(currentSession);
@@ -1010,6 +1099,7 @@ h2{font-family:'Playfair Display',serif;font-size:17px;margin:26px 0 10px;paddin
 <h1>Reframe — Сессия рефрейминга</h1>
 <div class="meta">${new Date(s.date).toLocaleString('ru')}</div>
 <h2>Проблема</h2><div class="problem">${s.problem}</div>
+${s.insight ? `<div style="background:#14130f;color:#fff;padding:14px 18px;border-radius:8px;margin:16px 0;font-family:'Georgia',serif;font-size:15px;line-height:1.6;"><div style="font-size:10px;font-weight:bold;letter-spacing:.08em;color:rgba(255,255,255,.45);margin-bottom:6px;">ГЛАВНЫЙ ИНСАЙТ</div>${s.insight}</div>` : ''}
 <h2>Рефреймирующие вопросы</h2>
 ${s.questions.map(q=>`<div class="q-item"><div class="q-lens">${q.lens.toUpperCase()}</div><div class="q-text">${q.question}</div></div>`).join('')}
 <h2>Root Cause Analysis</h2>
