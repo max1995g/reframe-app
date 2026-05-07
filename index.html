@@ -546,11 +546,23 @@ label { font-size: 14px; font-weight: 500; color: var(--ink2); display: block; m
       <div class="step-line"></div>
       <div class="step-item"><div class="step-circle">4</div><span class="step-text">Гипотезы</span></div>
     </div>
-    <h2 style="font-family:'Playfair Display',serif;font-size:22px;margin-bottom:5px;font-weight:400;">Рефреймирующие вопросы</h2>
-    <p style="color:var(--ink3);font-size:13px;margin-bottom:18px;">Выбери один вопрос — нажми снова чтобы снять выбор и выбрать другой</p>
+    <h2 style="font-family:'Playfair Display',serif;font-size:28px;margin-bottom:5px;font-weight:400;">Рефреймирующие вопросы</h2>
+    <p style="color:var(--ink3);font-size:16px;margin-bottom:18px;">Выбери один вопрос — нажми снова чтобы снять выбор и выбрать другой</p>
     <div class="problem-quote" id="q-problem-display"></div>
     <div id="questions-list"></div>
-    <div style="display:flex;gap:9px;margin-top:14px;">
+
+    <!-- Направленный диалог — появляется после выбора вопроса -->
+    <div id="deep-dive-panel" style="display:none;margin-top:16px;background:#EEF7F2;border:1px solid #C8DDD0;border-radius:var(--r2);padding:18px 20px;">
+      <p style="font-size:13px;font-weight:500;color:var(--accent);margin-bottom:12px;">Хочешь углубиться в этот вопрос?</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-sm btn-outline" style="font-size:13px;" onclick="deepDive('why')">Почему эта линза подходит?</button>
+        <button class="btn btn-sm btn-outline" style="font-size:13px;" onclick="deepDive('example')">Пример из похожего бизнеса</button>
+        <button class="btn btn-sm btn-outline" style="font-size:13px;" onclick="deepDive('team')">Как обсудить это с командой?</button>
+      </div>
+      <div id="deep-dive-answer" style="display:none;margin-top:14px;font-size:15px;color:var(--ink2);line-height:1.7;border-top:1px solid #C8DDD0;padding-top:14px;"></div>
+    </div>
+
+    <div style="display:flex;gap:9px;margin-top:16px;">
       <button class="btn btn-outline" onclick="goToStep('step-input')">← Назад</button>
       <button class="btn btn-primary" id="btn-to-rca" onclick="goToRCA()" disabled>Построить RCA →</button>
     </div>
@@ -690,7 +702,9 @@ label { font-size: 14px; font-weight: 500; color: var(--ink2); display: block; m
 
 <script>
 const SESSION_LIMIT = 50;
-const MODEL = 'claude-sonnet-4-6';
+const MODEL_SONNET = 'claude-sonnet-4-6';  // Стратегические задачи
+const MODEL_HAIKU  = 'claude-haiku-4-5';   // Простые задачи — дешевле в ~6x
+const MODEL = MODEL_SONNET; // дефолт для testKey
 
 const HARDCODED_KEY = 'sk_nemate_2ewzgXtUnBhdBrmjI2F8vA9cU8yQhllj';
 
@@ -904,7 +918,7 @@ async function goToClarify() {
     {"id": "q2", "question": "вопрос 2"},
     {"id": "q3", "question": "вопрос 3"}
   ]
-}`);
+}`, MODEL_HAIKU, 600);
 
     const data = JSON.parse(res.replace(/```json|```/g, '').trim());
 
@@ -1038,15 +1052,43 @@ function renderQuestionsStep() {
 
 function toggleQ(el, idx) {
   const isSelected = el.classList.contains('selected');
-  // Снимаем выбор со всех
   document.querySelectorAll('.q-card').forEach(c => c.classList.remove('selected'));
   selectedQIdxs = [];
-  // Если не был выбран — выбираем
+  const panel = document.getElementById('deep-dive-panel');
+  const answer = document.getElementById('deep-dive-answer');
   if (!isSelected) {
     el.classList.add('selected');
     selectedQIdxs = [idx];
+    // Показываем панель диалога
+    panel.style.display = 'block';
+    answer.style.display = 'none';
+    answer.textContent = '';
+  } else {
+    panel.style.display = 'none';
   }
   document.getElementById('btn-to-rca').disabled = selectedQIdxs.length === 0;
+}
+
+async function deepDive(type) {
+  if (selectedQIdxs.length === 0) return;
+  const q = currentSession.questions[selectedQIdxs[0]];
+  const answer = document.getElementById('deep-dive-answer');
+  answer.style.display = 'block';
+  answer.innerHTML = '<span style="color:var(--ink3);">Думаю...</span>';
+
+  const prompts = {
+    why: `Объясни кратко (2-3 предложения) почему линза "${q.lens}" подходит для этой проблемы: "${currentSession.problem}". Разговорный стиль, без жаргона.`,
+    example: `Приведи один конкретный пример (2-4 предложения) из реального бизнеса где линза "${q.lens}" помогла найти неожиданное решение похожей проблемы. Конкретные детали, без абстракций.`,
+    team: `Как использовать вопрос "${q.question}" на встрече с командой? Дай 2-3 конкретных совета как задать его чтобы получить честные ответы, а не формальные.`
+  };
+
+  try {
+    // Haiku — простой пояснительный запрос, не стратегический
+    const res = await callAPI(prompts[type], MODEL_HAIKU, 400);
+    answer.innerHTML = res;
+  } catch(e) {
+    answer.innerHTML = '<span style="color:var(--danger);">Ошибка: ' + e.message + '</span>';
+  }
 }
 
 function backToQuestions() {
@@ -1432,13 +1474,13 @@ function renderPasswords() {
 }
 
 // ===== API =====
-async function callAPI(prompt) {
+async function callAPI(prompt, model = MODEL_SONNET, maxTokens = 1500) {
   const res = await fetch('/api/proxy', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: MODEL,
-      max_tokens: 1500,
+      model: model,
+      max_tokens: maxTokens,
       temperature: 0.9,
       messages: [{ role: 'user', content: prompt }]
     })
