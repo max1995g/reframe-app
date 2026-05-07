@@ -321,7 +321,6 @@ body.font-large { font-size: 18px; }
   </nav>
   <style>#app-back-btn-placeholder{}</style>
   <button id="app-back-btn" onclick="backToLanding()">← На главную</button>
-  <script>function backToLanding(){document.getElementById('landing').style.display='flex';document.getElementById('appWrap').classList.remove('visible');document.getElementById('app-back-btn').style.display='none';}</script>
 
   <div class="land-hero">
     <span class="land-eyebrow">Основано на 4 мировых книгах по рефреймингу</span>
@@ -844,7 +843,6 @@ let selectedQIdxs = [];
 let questionStyle = localStorage.getItem('rf_style') || 'provocateur';
 let currentTheme = localStorage.getItem('rf_theme') || 'light';
 let currentFontSize = localStorage.getItem('rf_fontsize') || 'medium';
-let selectedQIdxs = [];
 
 // ===== INIT =====
 window.onload = () => {
@@ -907,6 +905,12 @@ function toggleAdvanced() {
   p.style.display = p.style.display === 'none' ? 'block' : 'none';
 }
 
+function backToLanding() {
+  document.getElementById('landing').style.display = 'flex';
+  document.getElementById('appWrap').classList.remove('visible');
+  document.getElementById('app-back-btn').style.display = 'none';
+}
+
 function goToApp() {
   document.getElementById('landing').style.display = 'none';
   document.getElementById('appWrap').classList.add('visible');
@@ -966,6 +970,8 @@ function setProgressStep(step) {
     }
   }
 }
+
+function renderUsageBar() {
   const usage = getUsage();
   const count = usage.count || 0;
   const pct = Math.round(count / SESSION_LIMIT * 100);
