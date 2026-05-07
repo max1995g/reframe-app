@@ -837,9 +837,10 @@ let selectedQIdxs = [];
 // ===== INIT =====
 window.onload = () => {
   updateApiStatus(!!apiKey);
-  applyTheme(currentTheme);
-  applyFontSize(currentFontSize);
-  applyStyle(questionStyle);
+  // Применяем сохранённые настройки — в try/catch чтобы не ломать запуск
+  try { applyTheme(currentTheme); } catch(e) {}
+  try { applyFontSize(currentFontSize); } catch(e) {}
+  try { applyStyle(questionStyle); } catch(e) {}
   if (HARDCODED_KEY) {
     document.getElementById('landing').style.display = 'none';
     document.getElementById('appWrap').classList.add('visible');
@@ -850,8 +851,10 @@ window.onload = () => {
 
 function applyTheme(t) {
   document.body.classList.toggle('dark-theme', t === 'dark');
-  document.getElementById('theme-light').className = 'btn btn-sm ' + (t === 'light' ? 'btn-primary' : 'btn-outline');
-  document.getElementById('theme-dark').className = 'btn btn-sm ' + (t === 'dark' ? 'btn-primary' : 'btn-outline');
+  const light = document.getElementById('theme-light');
+  const dark = document.getElementById('theme-dark');
+  if (light) light.className = 'btn btn-sm ' + (t === 'light' ? 'btn-primary' : 'btn-outline');
+  if (dark) dark.className = 'btn btn-sm ' + (t === 'dark' ? 'btn-primary' : 'btn-outline');
 }
 function setTheme(t) {
   currentTheme = t;
