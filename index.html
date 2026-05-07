@@ -413,12 +413,18 @@ body.font-large { font-size: 18px; }
       </div>
       <div style="flex:1;min-width:220px;">
         <p style="font-size:11px;font-weight:500;letter-spacing:0.1em;color:var(--ink3);margin-bottom:8px;">ОБ АВТОРЕ</p>
-        <p style="font-family:'Playfair Display',serif;font-size:20px;color:var(--ink);margin-bottom:10px;font-weight:400;">Канал о рефреймировании</p>
+        <p style="font-family:'Playfair Display',serif;font-size:20px;color:var(--ink);margin-bottom:10px;font-weight:400;">Канал о рефрейминге</p>
         <p style="font-size:14px;color:var(--ink2);line-height:1.7;margin-bottom:16px;">Разбираю мировые бизнес- и научные кейсы через призму рефрейминга. Показываю как одна смена точки зрения меняет результат — в продажах, стратегии и управлении командой.</p>
-        <a href="https://www.youtube.com/@ProblemReframing" target="_blank" style="display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:500;color:var(--ink);text-decoration:none;padding:9px 18px;border-radius:var(--r);border:1px solid var(--border2);background:#fff;transition:all 0.15s;" onmouseover="this.style.background='var(--paper2)'" onmouseout="this.style.background='#fff'">
-          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="1" y="3" width="13" height="9" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M6 5.5l4 2-4 2V5.5z" fill="currentColor"/></svg>
-          Смотреть на YouTube
-        </a>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a href="https://www.youtube.com/@ProblemReframing" target="_blank" style="display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:500;color:var(--ink);text-decoration:none;padding:9px 18px;border-radius:var(--r);border:1px solid var(--border2);background:#fff;transition:all 0.15s;" onmouseover="this.style.background='var(--paper2)'" onmouseout="this.style.background='#fff'">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="1" y="3" width="13" height="9" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M6 5.5l4 2-4 2V5.5z" fill="currentColor"/></svg>
+            YouTube
+          </a>
+          <a href="https://t.me/problemreframing" target="_blank" style="display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:500;color:var(--ink);text-decoration:none;padding:9px 18px;border-radius:var(--r);border:1px solid var(--border2);background:#fff;transition:all 0.15s;" onmouseover="this.style.background='var(--paper2)'" onmouseout="this.style.background='#fff'">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M13.5 2L1 6.5l4 1.5 1.5 4.5 2.5-2.5 3 2.5 1.5-10.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            Telegram
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -818,9 +824,15 @@ body.font-large { font-size: 18px; }
 
 <script>
 const SESSION_LIMIT = 50;
-const MODEL_SONNET = 'claude-sonnet-4-6';  // Стратегические задачи
-const MODEL_HAIKU  = 'claude-haiku-4-5';   // Простые задачи — дешевле в ~6x
-const MODEL = MODEL_SONNET; // дефолт для testKey
+const MODEL_SONNET = 'claude-sonnet-4-6';
+const MODEL_HAIKU  = 'claude-haiku-4-5';
+const MODEL = MODEL_SONNET;
+
+const STYLE_INSTRUCTIONS = {
+  strategist:   'Формулируй вопросы через призму системных причин и долгосрочных последствий. Каждый вопрос должен вести к пониманию структурных факторов.',
+  executor:     'Формулируй вопросы через призму конкретных действий и быстрых проверок. Каждый вопрос должен вести к шагу который можно сделать на этой неделе.',
+  provocateur:  'Формулируй вопросы которые переворачивают базовые предположения. Каждый вопрос должен вызывать лёгкий дискомфорт — "я об этом не думал".'
+};
 
 const HARDCODED_KEY = 'sk_nemate_2ewzgXtUnBhdBrmjI2F8vA9cU8yQhllj';
 
@@ -894,12 +906,6 @@ function toggleAdvanced() {
   const p = document.getElementById('advanced-panel');
   p.style.display = p.style.display === 'none' ? 'block' : 'none';
 }
-
-const STYLE_INSTRUCTIONS = {
-  strategist: 'Формулируй вопросы через призму системных причин и долгосрочных последствий. Каждый вопрос должен вести к пониманию структурных факторов.',
-  executor: 'Формулируй вопросы через призму конкретных действий и быстрых проверок. Каждый вопрос должен вести к шагу который можно сделать на этой неделе.',
-  provocateur: 'Формулируй вопросы которые переворачивают базовые предположения. Каждый вопрос должен вызывать лёгкий дискомфорт — "я об этом не думал".'
-};
 
 function goToApp() {
   document.getElementById('landing').style.display = 'none';
