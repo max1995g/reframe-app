@@ -456,10 +456,12 @@ label { font-size: 14px; font-weight: 500; color: var(--ink2); display: block; m
     <div id="usage-display"></div>
     <div id="demo-banner" style="display:none;background:var(--accent-light);border:1px solid var(--accent);border-radius:var(--r2);padding:14px 18px;margin-bottom:20px;cursor:pointer;" onclick="loadDemo()">
       <p style="font-size:12px;font-weight:500;color:var(--accent);margin-bottom:3px;">ПОСМОТРИ КАК ЭТО РАБОТАЕТ</p>
-      <p style="font-size:13px;color:var(--ink2);margin:0;">Нажми чтобы загрузить готовый пример сессии → увидишь рефреймы, RCA и гипотезы для реального бизнес-кейса</p>
+      <p style="font-size:14px;color:var(--ink2);margin:0;">Нажми чтобы загрузить готовый пример сессии → увидишь рефреймы, RCA и гипотезы для реального бизнес-кейса</p>
     </div>
     <div class="steps">
       <div class="step-item"><div class="step-circle active">1</div><span class="step-text active">Проблема</span></div>
+      <div class="step-line"></div>
+      <div class="step-item"><div class="step-circle">1.5</div><span class="step-text">Уточнения</span></div>
       <div class="step-line"></div>
       <div class="step-item"><div class="step-circle">2</div><span class="step-text">Рефреймы</span></div>
       <div class="step-line"></div>
@@ -470,13 +472,66 @@ label { font-size: 14px; font-weight: 500; color: var(--ink2); display: block; m
     <div class="card">
       <label>Опиши проблему своими словами</label>
       <textarea id="problem-input" rows="4" placeholder="Например: клиенты уходят после первого месяца, хотя онбординг хороший..."></textarea>
-      <div style="display:flex;gap:7px;margin-top:8px;flex-wrap:wrap;">
+      <p style="font-size:13px;color:var(--ink3);margin-top:8px;line-height:1.5;">💡 Подсказка: <em>[что происходит] + [как давно] + [что уже пробовали] + [какой результат хочешь]</em></p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
+        <div>
+          <label>Сфера бизнеса</label>
+          <select id="industry-select">
+            <option value="">Выбери сферу (необязательно)</option>
+            <option>SaaS / IT-продукт</option>
+            <option>E-commerce / Розница</option>
+            <option>Услуги / Консалтинг</option>
+            <option>Производство</option>
+            <option>Образование / EdTech</option>
+            <option>Медицина / Здоровье</option>
+            <option>HoReCa / Рестораны</option>
+            <option>Недвижимость</option>
+            <option>Финансы / Инвестиции</option>
+            <option>Другое</option>
+          </select>
+        </div>
+        <div>
+          <label>Размер команды</label>
+          <select id="size-select">
+            <option value="">Выбери размер (необязательно)</option>
+            <option>Я сам / Фриланс</option>
+            <option>2–10 человек</option>
+            <option>11–50 человек</option>
+            <option>51–200 человек</option>
+            <option>200+ человек</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;gap:7px;margin-top:14px;flex-wrap:wrap;">
         <button class="btn btn-xs btn-outline" onclick="fillEx('Мы теряем 40% клиентов после первого месяца подписки, хотя первые отзывы положительные')">Пример: отток</button>
         <button class="btn btn-xs btn-outline" onclick="fillEx('Команда не выполняет план продаж 3 месяца подряд — лиды есть, но конверсия падает')">Пример: продажи</button>
         <button class="btn btn-xs btn-outline" onclick="fillEx('Новый продукт не продаётся несмотря на большой маркетинговый бюджет')">Пример: продукт</button>
       </div>
     </div>
-    <div style="margin-top:14px;">
+    <div style="margin-top:16px;">
+      <button class="btn btn-primary" onclick="goToClarify()">Далее → уточнения</button>
+    </div>
+  </div>
+
+  <!-- STEP 1.5: CLARIFICATIONS -->
+  <div id="step-clarify" style="display:none;">
+    <div class="steps">
+      <div class="step-item"><div class="step-circle done">✓</div><span class="step-text">Проблема</span></div>
+      <div class="step-line"></div>
+      <div class="step-item"><div class="step-circle active" style="font-size:10px;">1.5</div><span class="step-text active">Уточнения</span></div>
+      <div class="step-line"></div>
+      <div class="step-item"><div class="step-circle">2</div><span class="step-text">Рефреймы</span></div>
+      <div class="step-line"></div>
+      <div class="step-item"><div class="step-circle">3</div><span class="step-text">RCA</span></div>
+      <div class="step-line"></div>
+      <div class="step-item"><div class="step-circle">4</div><span class="step-text">Гипотезы</span></div>
+    </div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:28px;margin-bottom:6px;font-weight:400;">Уточним детали</h2>
+    <p style="color:var(--ink3);font-size:16px;margin-bottom:20px;">AI сгенерировал 3 вопроса специально под твою проблему — ответь коротко</p>
+    <div class="problem-quote" id="clarify-problem-display"></div>
+    <div id="clarify-questions-list"></div>
+    <div style="display:flex;gap:9px;margin-top:20px;">
+      <button class="btn btn-outline" onclick="goToStep('step-input')">← Назад</button>
       <button class="btn btn-primary" onclick="analyzeStep1()">Проанализировать →</button>
     </div>
   </div>
@@ -783,7 +838,7 @@ function showScreen(name) {
 }
 
 function goToStep(id) {
-  ['step-input','step-questions','step-rca','step-hypotheses','step-loading','step-limit'].forEach(s => {
+  ['step-input','step-clarify','step-questions','step-rca','step-hypotheses','step-loading','step-limit'].forEach(s => {
     document.getElementById(s).style.display = 'none';
   });
   document.getElementById(id).style.display = 'block';
@@ -813,24 +868,117 @@ function updateApiKey() {
 // ===== STEP 1 =====
 function fillEx(txt) { document.getElementById('problem-input').value = txt; }
 
-async function analyzeStep1() {
+// ===== STEP 1 → 1.5: GENERATE CLARIFYING QUESTIONS =====
+async function goToClarify() {
   const problem = document.getElementById('problem-input').value.trim();
-  if (!problem) return showToast('Введи проблему');
-  if (!apiKey) return showScreen('setup');
+  if (!problem) return showToast('Опиши проблему');
+  if (!apiKey && !HARDCODED_KEY) return showScreen('setup');
+
+  const industry = document.getElementById('industry-select').value;
+  const size = document.getElementById('size-select').value;
+
+  goToStep('step-loading');
+  document.getElementById('loading-msg').textContent = 'Формирую уточняющие вопросы...';
+
+  try {
+    const context = [
+      problem,
+      industry ? `Сфера: ${industry}` : '',
+      size ? `Размер: ${size}` : ''
+    ].filter(Boolean).join('. ');
+
+    const res = await callAPI(`Ты эксперт по рефреймингу бизнес-проблем. Пользователь описал проблему. Задай ровно 3 коротких уточняющих вопроса которые помогут понять проблему глубже.
+
+Контекст: "${context}"
+
+ПРАВИЛА:
+1. Вопросы короткие — 1 предложение, разговорный стиль
+2. Каждый вопрос вскрывает разный аспект: один про факты/цифры, один про попытки решения, один про контекст/людей
+3. Вопросы должны быть специфичны для ЭТОЙ проблемы, не универсальные
+4. НЕ спрашивать то что уже указано в описании
+
+Верни ТОЛЬКО валидный JSON без markdown:
+{
+  "questions": [
+    {"id": "q1", "question": "вопрос 1"},
+    {"id": "q2", "question": "вопрос 2"},
+    {"id": "q3", "question": "вопрос 3"}
+  ]
+}`);
+
+    const data = JSON.parse(res.replace(/```json|```/g, '').trim());
+
+    // Сохраняем базовый контекст
+    currentSession = {
+      id: Date.now(),
+      date: new Date().toISOString(),
+      problem,
+      industry,
+      size,
+      clarifyQuestions: data.questions,
+      clarifyAnswers: {},
+      questions: [], selectedQ: [], rca: null, hypotheses: [], insight: '', rcaCache: {}
+    };
+
+    // Рендерим экран уточнений
+    document.getElementById('clarify-problem-display').textContent = problem;
+    const list = document.getElementById('clarify-questions-list');
+    list.innerHTML = '';
+    data.questions.forEach(q => {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.style.marginBottom = '12px';
+      div.innerHTML = `
+        <label style="font-size:15px;font-weight:400;color:var(--ink);margin-bottom:10px;display:block;line-height:1.5;">${q.question}</label>
+        <textarea id="clarify-${q.id}" rows="2" placeholder="Ответь коротко, можно 1-2 предложения..."></textarea>`;
+      list.appendChild(div);
+    });
+
+    goToStep('step-clarify');
+  } catch(e) {
+    goToStep('step-input');
+    showToast('Ошибка: ' + e.message);
+  }
+}
+
+async function analyzeStep1() {
+  if (!currentSession) return showToast('Сначала опиши проблему');
   if (!checkAndIncrementLimit()) { goToStep('step-limit'); return; }
 
-  currentSession = { id: Date.now(), date: new Date().toISOString(), problem, questions: [], selectedQ: [], rca: null, hypotheses: [] };
+  // Собираем ответы на уточнения
+  if (currentSession.clarifyQuestions) {
+    currentSession.clarifyQuestions.forEach(q => {
+      const el = document.getElementById('clarify-' + q.id);
+      if (el) currentSession.clarifyAnswers[q.id] = el.value.trim();
+    });
+  }
+
   selectedQIdxs = [];
   goToStep('step-loading');
 
-  const msgs = ['Применяю 25 линз Shapiro...', 'Ищу рефреймы по Wedell-Wedellsborg...', 'Формирую вопросы по Berger...', 'Строю FrED-структуру по Chevallier...'];
+  const msgs = ['Применяю линзы Shapiro...', 'Ищу рефреймы по Wedell-Wedellsborg...', 'Формирую вопросы по Berger...'];
   let mi = 0;
   const lt = setInterval(() => { document.getElementById('loading-msg').textContent = msgs[mi++ % msgs.length]; }, 1400);
+
+  // Полный контекст с уточнениями
+  const clarifyContext = currentSession.clarifyQuestions
+    ? currentSession.clarifyQuestions.map(q => {
+        const ans = currentSession.clarifyAnswers[q.id];
+        return ans ? `Вопрос: ${q.question}\nОтвет: ${ans}` : '';
+      }).filter(Boolean).join('\n\n')
+    : '';
+
+  const fullContext = [
+    `Проблема: "${currentSession.problem}"`,
+    currentSession.industry ? `Сфера: ${currentSession.industry}` : '',
+    currentSession.size ? `Размер компании: ${currentSession.size}` : '',
+    clarifyContext ? `\nДополнительный контекст:\n${clarifyContext}` : ''
+  ].filter(Boolean).join('\n');
 
   try {
     const res = await callAPI(`Ты эксперт по рефреймингу бизнес-проблем на основе книги Shapiro "Invisible Solutions" (25 линз).
 
-Проблема: "${problem}"
+${fullContext}
 
 СТРУКТУРА ОТВЕТА — строго:
 - 3 вопроса из разных линз Shapiro (выбери наиболее релевантные из 25)
@@ -839,11 +987,12 @@ async function analyzeStep1() {
 
 ПРАВИЛА для всех вопросов:
 1. Разговорные и короткие — как спрашивает умный друг, не консультант
-2. Переворачивают базовое предположение, а не описывают проблему
+2. Переворачивают базовое предположение с учётом всего контекста выше
 3. Без жаргона, одно предложение
-4. НЕ использовать вопросы про стейкхолдеров и "кому выгодно" — они редко в кассу
+4. НЕ использовать вопросы про стейкхолдеров и "кому выгодно"
+5. Учитывай сферу, размер компании и ответы на уточнения
 
-Линзы Shapiro для выбора (бери разные): Result, Real Problem, Constraints, Reframe the Question, Analogy, Bad Idea, Flip, Substitute, Eliminate, Reduce, Leverage, Access, Emotion, Sequence, Deconstruct, Hypernym, Hyponym, Observation, Variations, Insights, Assets, Concerns, Stretch, Performance Paradox, Conflicts
+Линзы Shapiro: Result, Real Problem, Constraints, Reframe the Question, Analogy, Bad Idea, Flip, Substitute, Eliminate, Reduce, Leverage, Access, Emotion, Sequence, Deconstruct, Hypernym, Hyponym, Observation, Variations, Insights, Assets, Concerns, Stretch, Performance Paradox, Conflicts
 
 Верни ТОЛЬКО валидный JSON без markdown:
 {
@@ -862,7 +1011,7 @@ async function analyzeStep1() {
     renderQuestionsStep();
   } catch(e) {
     clearInterval(lt);
-    goToStep('step-input');
+    goToStep('step-clarify');
     showToast('Ошибка: ' + e.message);
   }
 }
