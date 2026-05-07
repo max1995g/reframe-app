@@ -226,6 +226,53 @@ label { font-size: 14px; font-weight: 500; color: var(--ink2); display: block; m
 .session-insight { background: #2D4A3E; color: #F5F0E8; border-radius: var(--r2); padding: 20px 24px; margin-bottom: 16px; }
 .session-insight-label { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; color: #7FB89A; margin-bottom: 8px; }
 .session-insight-text { font-family: 'Playfair Display', serif; font-size: 18px; color: #F5F0E8; line-height: 1.6; font-weight: 400; }
+/* Progress steps */
+.progress-step { display:flex; align-items:center; gap:12px; padding:12px 16px; background:#fff; border:1px solid var(--border); border-radius:var(--r); transition:all 0.3s; }
+.progress-step.pending { opacity:0.4; }
+.progress-step.done { border-color:var(--accent); background:var(--accent-light); }
+.progress-step.active { border-color:var(--accent2); background:#EEF7F2; }
+.pstep-icon { font-size:16px; min-width:20px; text-align:center; }
+.pstep-text { font-size:15px; color:var(--ink2); font-weight:500; }
+.progress-step.done .pstep-text { color:var(--accent); }
+
+/* Skeleton */
+.skeleton-card { background:#fff; border:1px solid var(--border); border-radius:var(--r2); padding:20px 22px; margin-bottom:10px; }
+.skeleton-line { height:14px; background:linear-gradient(90deg,var(--paper2) 25%,var(--paper3) 50%,var(--paper2) 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:7px; margin-bottom:10px; }
+.skeleton-line:last-child { margin-bottom:0; }
+.skeleton-line.w25 { width:25%; height:10px; }
+.skeleton-line.w30 { width:30%; height:10px; }
+.skeleton-line.w35 { width:35%; height:10px; }
+.skeleton-line.w55 { width:55%; }
+.skeleton-line.w60 { width:60%; }
+.skeleton-line.w70 { width:70%; }
+.skeleton-line.w85 { width:85%; }
+.skeleton-line.w90 { width:90%; }
+.skeleton-line.w95 { width:95%; }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+/* Style cards */
+.style-card { background: var(--paper2); border: 1.5px solid var(--border); border-radius: var(--r2); padding: 16px; cursor: pointer; transition: all 0.15s; }
+.style-card:hover { border-color: var(--accent2); background: var(--accent-light); }
+.style-card.active { border-color: var(--accent); background: var(--accent-light); }
+.style-icon { font-size: 22px; margin-bottom: 8px; }
+.style-title { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+.style-desc { font-size: 12px; color: var(--ink3); line-height: 1.4; }
+.style-card.active .style-title { color: var(--accent); }
+.style-card.active .style-desc { color: var(--accent2); }
+
+/* Dark theme */
+body.dark-theme { --ink:#E8F0EB; --ink2:#B8D4C0; --ink3:#7A9E88; --paper:#1A2420; --paper2:#222E28; --paper3:#2A3830; --accent:#5DB882; --accent2:#4A9E6E; --accent-light:#1E3828; --border:rgba(232,240,235,0.1); --border2:rgba(232,240,235,0.2); }
+body.dark-theme .card, body.dark-theme .q-card, body.dark-theme .hyp-card, body.dark-theme .history-item { background: #222E28; }
+body.dark-theme .q-card:hover, body.dark-theme .q-card.selected { background: #1E3828; }
+body.dark-theme input, body.dark-theme textarea, body.dark-theme select { background: #1A2420; color: var(--ink); border-color: var(--border2); }
+body.dark-theme .sidebar { background: #111A14; }
+body.dark-theme #app-back-btn { background: #222E28; color: var(--ink2); }
+
+/* Font sizes */
+body.font-small { font-size: 14px; }
+body.font-medium { font-size: 16px; }
+body.font-large { font-size: 18px; }
+
 .toast { position: fixed; bottom: 22px; right: 22px; background: var(--ink); color: #fff; padding: 11px 16px; border-radius: var(--r); font-size: 13px; opacity: 0; transform: translateY(6px); transition: all 0.2s; z-index: 999; pointer-events: none; }
 .toast.show { opacity: 1; transform: translateY(0); }
 
@@ -617,9 +664,28 @@ label { font-size: 14px; font-weight: 500; color: var(--ink2); display: block; m
   </div>
 
   <div id="step-loading" style="display:none;">
-    <div class="loading-wrap">
-      <div class="loading-spinner"></div>
-      <div class="loading-text" id="loading-msg">Анализирую проблему...</div>
+    <!-- Прогресс по шагам -->
+    <div style="margin-bottom:28px;">
+      <div id="progress-steps" style="display:flex;flex-direction:column;gap:10px;max-width:360px;">
+        <div class="progress-step" id="pstep-1">
+          <div class="pstep-icon">⏳</div>
+          <div class="pstep-text">Анализирую проблему</div>
+        </div>
+        <div class="progress-step pending" id="pstep-2">
+          <div class="pstep-icon">○</div>
+          <div class="pstep-text">Применяю линзы Shapiro</div>
+        </div>
+        <div class="progress-step pending" id="pstep-3">
+          <div class="pstep-icon">○</div>
+          <div class="pstep-text">Формирую вопросы</div>
+        </div>
+      </div>
+    </div>
+    <!-- Скелетон -->
+    <div id="skeleton-wrap">
+      <div class="skeleton-card"><div class="skeleton-line w30"></div><div class="skeleton-line w60"></div><div class="skeleton-line w90"></div></div>
+      <div class="skeleton-card"><div class="skeleton-line w25"></div><div class="skeleton-line w70"></div><div class="skeleton-line w85"></div></div>
+      <div class="skeleton-card"><div class="skeleton-line w35"></div><div class="skeleton-line w55"></div><div class="skeleton-line w95"></div></div>
     </div>
   </div>
 
@@ -680,20 +746,70 @@ label { font-size: 14px; font-weight: 500; color: var(--ink2); display: block; m
 <!-- SETTINGS -->
 <div id="screen-settings" class="screen">
   <h1 class="page-title">Настройки</h1>
-  <p class="page-sub">API ключ и данные</p>
-  <div class="card" style="max-width:420px;">
-    <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin-bottom:14px;font-weight:400;">API ключ OpenRouter</h3>
-    <label>Текущий ключ</label>
-    <input type="text" id="settings-api-key" style="margin-bottom:12px;font-family:monospace;font-size:13px;">
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="btn btn-primary btn-sm" onclick="updateApiKey()">Сохранить</button>
-      <button class="btn btn-outline btn-sm" onclick="testKey()">Проверить соединение</button>
+  <p class="page-sub">Персонализация и данные</p>
+
+  <!-- Внешний вид -->
+  <div class="card" style="max-width:560px;margin-bottom:12px;">
+    <h3 style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:18px;font-weight:400;">Внешний вид</h3>
+    <div style="margin-bottom:20px;">
+      <label style="margin-bottom:10px;">Тема</label>
+      <div style="display:flex;gap:10px;">
+        <button id="theme-light" class="btn btn-sm" onclick="setTheme('light')" style="flex:1;">☀️ Светлая</button>
+        <button id="theme-dark" class="btn btn-sm" onclick="setTheme('dark')" style="flex:1;">🌙 Тёмная</button>
+      </div>
     </div>
-    <div id="test-result" style="margin-top:12px;font-size:13px;display:none;padding:10px 12px;border-radius:var(--r);"></div>
-    <hr class="divider">
-    <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin-bottom:10px;font-weight:400;">Данные</h3>
-    <p style="font-size:13px;color:var(--ink3);margin-bottom:12px;">Все данные хранятся в localStorage браузера</p>
+    <div>
+      <label style="margin-bottom:10px;">Размер шрифта</label>
+      <div style="display:flex;gap:10px;">
+        <button id="font-small" class="btn btn-sm" onclick="setFontSize('small')" style="flex:1;font-size:13px;">A — Компактный</button>
+        <button id="font-medium" class="btn btn-sm" onclick="setFontSize('medium')" style="flex:1;font-size:15px;">A — Стандарт</button>
+        <button id="font-large" class="btn btn-sm" onclick="setFontSize('large')" style="flex:1;font-size:17px;">A — Крупный</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Стиль вопросов -->
+  <div class="card" style="max-width:560px;margin-bottom:12px;">
+    <h3 style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:6px;font-weight:400;">Стиль анализа</h3>
+    <p style="font-size:14px;color:var(--ink3);margin-bottom:18px;line-height:1.5;">Все 25 линз Shapiro доступны всегда — стиль меняет угол формулировки вопросов</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;">
+      <div id="style-strategist" class="style-card" onclick="setStyle('strategist')">
+        <div class="style-icon">🧭</div>
+        <div class="style-title">Стратег</div>
+        <div class="style-desc">Системные причины и долгосрочные последствия</div>
+      </div>
+      <div id="style-executor" class="style-card" onclick="setStyle('executor')">
+        <div class="style-icon">⚡</div>
+        <div class="style-title">Исполнитель</div>
+        <div class="style-desc">Конкретные действия проверяемые за 1-2 недели</div>
+      </div>
+      <div id="style-provocateur" class="style-card active" onclick="setStyle('provocateur')">
+        <div class="style-icon">🔥</div>
+        <div class="style-title">Провокатор</div>
+        <div class="style-desc">Переворачивает базовые предположения — дискомфортно, но точно</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Данные -->
+  <div class="card" style="max-width:560px;margin-bottom:12px;">
+    <h3 style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:10px;font-weight:400;">Данные</h3>
+    <p style="font-size:14px;color:var(--ink3);margin-bottom:14px;">Все сессии хранятся в браузере</p>
     <button class="btn btn-danger btn-sm" onclick="clearData()">Очистить все данные</button>
+  </div>
+
+  <!-- Дополнительно (скрыто) -->
+  <div style="max-width:560px;">
+    <button class="btn btn-outline btn-sm" onclick="toggleAdvanced()" style="color:var(--ink3);font-size:13px;">⚙️ Дополнительно (API)</button>
+    <div id="advanced-panel" style="display:none;margin-top:12px;" class="card">
+      <label>API ключ</label>
+      <input type="text" id="settings-api-key" style="margin-bottom:12px;font-family:monospace;font-size:13px;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-primary btn-sm" onclick="updateApiKey()">Сохранить</button>
+        <button class="btn btn-outline btn-sm" onclick="testKey()">Проверить</button>
+      </div>
+      <div id="test-result" style="margin-top:12px;font-size:13px;display:none;padding:10px 12px;border-radius:var(--r);"></div>
+    </div>
   </div>
 </div>
 
@@ -713,16 +829,73 @@ let sessions = JSON.parse(localStorage.getItem('rf_sessions') || '[]');
 let passwords = JSON.parse(localStorage.getItem('rf_passwords') || '[]');
 let currentSession = null;
 let selectedQIdxs = [];
+let questionStyle = localStorage.getItem('rf_style') || 'provocateur';
+let currentTheme = localStorage.getItem('rf_theme') || 'light';
+let currentFontSize = localStorage.getItem('rf_fontsize') || 'medium';
+let selectedQIdxs = [];
 
 // ===== INIT =====
 window.onload = () => {
   updateApiStatus(!!apiKey);
+  applyTheme(currentTheme);
+  applyFontSize(currentFontSize);
+  applyStyle(questionStyle);
   if (HARDCODED_KEY) {
     document.getElementById('landing').style.display = 'none';
     document.getElementById('appWrap').classList.add('visible');
     document.getElementById('app-back-btn').style.display = 'block';
     showScreen('new-session');
   }
+};
+
+function applyTheme(t) {
+  document.body.classList.toggle('dark-theme', t === 'dark');
+  document.getElementById('theme-light').className = 'btn btn-sm ' + (t === 'light' ? 'btn-primary' : 'btn-outline');
+  document.getElementById('theme-dark').className = 'btn btn-sm ' + (t === 'dark' ? 'btn-primary' : 'btn-outline');
+}
+function setTheme(t) {
+  currentTheme = t;
+  localStorage.setItem('rf_theme', t);
+  applyTheme(t);
+}
+
+function applyFontSize(s) {
+  document.body.classList.remove('font-small','font-medium','font-large');
+  document.body.classList.add('font-' + s);
+  ['small','medium','large'].forEach(sz => {
+    const el = document.getElementById('font-' + sz);
+    if (el) el.className = 'btn btn-sm ' + (s === sz ? 'btn-primary' : 'btn-outline');
+  });
+}
+function setFontSize(s) {
+  currentFontSize = s;
+  localStorage.setItem('rf_fontsize', s);
+  applyFontSize(s);
+}
+
+function applyStyle(s) {
+  questionStyle = s;
+  ['strategist','executor','provocateur'].forEach(st => {
+    const el = document.getElementById('style-' + st);
+    if (el) el.classList.toggle('active', st === s);
+  });
+}
+function setStyle(s) {
+  questionStyle = s;
+  localStorage.setItem('rf_style', s);
+  applyStyle(s);
+  showToast('Стиль изменён ✓');
+}
+
+function toggleAdvanced() {
+  const p = document.getElementById('advanced-panel');
+  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+}
+
+const STYLE_INSTRUCTIONS = {
+  strategist: 'Формулируй вопросы через призму системных причин и долгосрочных последствий. Каждый вопрос должен вести к пониманию структурных факторов.',
+  executor: 'Формулируй вопросы через призму конкретных действий и быстрых проверок. Каждый вопрос должен вести к шагу который можно сделать на этой неделе.',
+  provocateur: 'Формулируй вопросы которые переворачивают базовые предположения. Каждый вопрос должен вызывать лёгкий дискомфорт — "я об этом не думал".'
 };
 
 function goToApp() {
@@ -764,7 +937,26 @@ function checkAndIncrementLimit() {
   return true;
 }
 
-function renderUsageBar() {
+function setProgressStep(step) {
+  // step: 1, 2, 3
+  for (let i = 1; i <= 3; i++) {
+    const el = document.getElementById('pstep-' + i);
+    if (!el) continue;
+    if (i < step) {
+      el.classList.remove('active','pending');
+      el.classList.add('done');
+      el.querySelector('.pstep-icon').textContent = '✓';
+    } else if (i === step) {
+      el.classList.remove('done','pending');
+      el.classList.add('active');
+      el.querySelector('.pstep-icon').textContent = '⏳';
+    } else {
+      el.classList.remove('done','active');
+      el.classList.add('pending');
+      el.querySelector('.pstep-icon').textContent = '○';
+    }
+  }
+}
   const usage = getUsage();
   const count = usage.count || 0;
   const pct = Math.round(count / SESSION_LIMIT * 100);
@@ -844,9 +1036,13 @@ function showScreen(name) {
   if (name === 'new-session') { goToStep('step-input'); renderUsageBar(); }
   if (name === 'settings') {
     const k = localStorage.getItem('rf_api_key') || '';
-    document.getElementById('settings-api-key').value = k;
+    const el = document.getElementById('settings-api-key');
+    if (el) el.value = k;
     const result = document.getElementById('test-result');
     if (result) result.style.display = 'none';
+    applyTheme(currentTheme);
+    applyFontSize(currentFontSize);
+    applyStyle(questionStyle);
   }
   document.getElementById('sidebar').classList.remove('open');
 }
@@ -892,7 +1088,8 @@ async function goToClarify() {
   const size = document.getElementById('size-select').value;
 
   goToStep('step-loading');
-  document.getElementById('loading-msg').textContent = 'Формирую уточняющие вопросы...';
+  document.getElementById('loading-msg') && (document.getElementById('loading-msg').textContent = 'Формирую уточняющие вопросы...');
+  setProgressStep(1);
 
   try {
     const context = [
@@ -972,7 +1169,11 @@ async function analyzeStep1() {
 
   const msgs = ['Применяю линзы Shapiro...', 'Ищу рефреймы по Wedell-Wedellsborg...', 'Формирую вопросы по Berger...'];
   let mi = 0;
-  const lt = setInterval(() => { document.getElementById('loading-msg').textContent = msgs[mi++ % msgs.length]; }, 1400);
+  setProgressStep(1);
+  const lt = setInterval(() => {
+    mi++;
+    setProgressStep(Math.min(mi + 1, 3));
+  }, 1400);
 
   // Полный контекст с уточнениями
   const clarifyContext = currentSession.clarifyQuestions
@@ -990,9 +1191,12 @@ async function analyzeStep1() {
   ].filter(Boolean).join('\n');
 
   try {
+    const styleInstruction = STYLE_INSTRUCTIONS[questionStyle] || STYLE_INSTRUCTIONS.provocateur;
     const res = await callAPI(`Ты эксперт по рефреймингу бизнес-проблем на основе книги Shapiro "Invisible Solutions" (25 линз).
 
 ${fullContext}
+
+СТИЛЬ АНАЛИЗА: ${styleInstruction}
 
 СТРУКТУРА ОТВЕТА — строго:
 - 3 вопроса из разных линз Shapiro (выбери наиболее релевантные из 25)
@@ -1005,17 +1209,23 @@ ${fullContext}
 3. Без жаргона, одно предложение
 4. НЕ использовать вопросы про стейкхолдеров и "кому выгодно"
 5. Учитывай сферу, размер компании и ответы на уточнения
+6. Для каждого вопроса укажи distance: "close" (близко к текущему мышлению), "expand" (расширяет взгляд), "flip" (переворачивает всё)
 
-Линзы Shapiro: Result, Real Problem, Constraints, Reframe the Question, Analogy, Bad Idea, Flip, Substitute, Eliminate, Reduce, Leverage, Access, Emotion, Sequence, Deconstruct, Hypernym, Hyponym, Observation, Variations, Insights, Assets, Concerns, Stretch, Performance Paradox, Conflicts
+Линзы Shapiro — точный список из книги (используй номер и название):
+Reduce Abstraction: #1:Leverage, #2:Deconstruct, #3:Reduce, #4:Eliminate, #5:Hyponym
+Increase Abstraction: #6:Analogy, #7:Result, #8:Concern Reframe, #9:Stretch, #10:Hypernym
+Change Perspective: #11:Resequence, #12:Reassign, #13:Access, #14:Emotion, #15:Substitute
+Switch Elements: #16:Flip, #17:Conflicts, #18:Performance Paradox, #19:Pain vs Gain, #20:Bad Idea
+Zero-In: #21:Real Problem, #22:Real Business, #23:Insights, #24:Variations, #25:Observation
 
 Верни ТОЛЬКО валидный JSON без markdown:
 {
   "questions": [
-    {"lens": "Shapiro — Lens [N]: [Название]", "lens_hint": "одно предложение что означает эта линза", "question": "вопрос"},
-    {"lens": "Shapiro — Lens [N]: [Название]", "lens_hint": "одно предложение", "question": "вопрос"},
-    {"lens": "Shapiro — Lens [N]: [Название]", "lens_hint": "одно предложение", "question": "вопрос"},
-    {"lens": "Wedell-Wedellsborg — [Название метода]", "lens_hint": "одно предложение", "question": "вопрос"},
-    {"lens": "Berger — Why → What If → How", "lens_hint": "одно предложение", "question": "вопрос"}
+    {"lens": "Shapiro #[номер]: [Название]", "lens_hint": "одно предложение что означает эта линза", "question": "вопрос", "distance": "close"},
+    {"lens": "Shapiro #[номер]: [Название]", "lens_hint": "одно предложение", "question": "вопрос", "distance": "expand"},
+    {"lens": "Shapiro #[номер]: [Название]", "lens_hint": "одно предложение", "question": "вопрос", "distance": "flip"},
+    {"lens": "Wedell-Wedellsborg — [Название метода]", "lens_hint": "одно предложение", "question": "вопрос", "distance": "expand"},
+    {"lens": "Berger — Why → What If → How", "lens_hint": "одно предложение", "question": "вопрос", "distance": "flip"}
   ]
 }`);
 
@@ -1035,11 +1245,20 @@ function renderQuestionsStep() {
   document.getElementById('q-problem-display').textContent = currentSession.problem;
   const c = document.getElementById('questions-list');
   c.innerHTML = '';
+  const distanceLabels = {
+    close:  { text: 'Близко к твоему фрейму', color: '#6B8F7A', bg: '#EDE8DE' },
+    expand: { text: 'Расширяет взгляд',        color: '#8B6914', bg: '#FDF3D0' },
+    flip:   { text: 'Переворачивает всё',       color: '#7A2424', bg: '#FDEAEA' }
+  };
   currentSession.questions.forEach((q, i) => {
+    const d = distanceLabels[q.distance] || distanceLabels.expand;
     const el = document.createElement('div');
     el.className = 'q-card';
     el.innerHTML = `
-      <div class="q-lens">${q.lens.toUpperCase()}</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;">
+        <div class="q-lens">${q.lens.toUpperCase()}</div>
+        <span style="font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;background:${d.bg};color:${d.color};white-space:nowrap;margin-left:8px;">${d.text}</span>
+      </div>
       ${q.lens_hint ? `<div class="q-hint">${q.lens_hint}</div>` : ''}
       <div class="q-text">${q.question}</div>`;
     el.onclick = () => toggleQ(el, i);
@@ -1047,6 +1266,8 @@ function renderQuestionsStep() {
   });
   selectedQIdxs = [];
   document.getElementById('btn-to-rca').disabled = true;
+  const panel = document.getElementById('deep-dive-panel');
+  if (panel) panel.style.display = 'none';
   goToStep('step-questions');
 }
 
@@ -1119,7 +1340,8 @@ async function goToRCA() {
 
   // Нет кэша — делаем один запрос сразу с RCA + гипотезами
   goToStep('step-loading');
-  document.getElementById('loading-msg').textContent = 'Строю RCA и гипотезы...';
+  document.getElementById('loading-msg') && (document.getElementById('loading-msg').textContent = 'Строю RCA и гипотезы...');
+  setProgressStep(2);
 
   try {
     const res = await callAPI(`Ты стратегический аналитик. Построй Root Cause Analysis и гипотезы для проверки.
@@ -1490,7 +1712,14 @@ async function callAPI(prompt, model = MODEL_SONNET, maxTokens = 1500) {
     throw new Error(e.error?.message || 'Ошибка API ' + res.status);
   }
   const data = await res.json();
-  return data.choices[0].message.content;
+  // Поддерживаем оба формата: Anthropic (content) и OpenAI (choices)
+  if (data.content && data.content[0]) {
+    return data.content[0].text || '';
+  }
+  if (data.choices && data.choices[0]) {
+    return data.choices[0].message.content || '';
+  }
+  throw new Error('Неизвестный формат ответа API: ' + JSON.stringify(data).substring(0, 200));
 }
 
 // ===== UTILS =====
