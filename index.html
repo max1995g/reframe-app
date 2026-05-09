@@ -294,18 +294,107 @@ body.font-large { font-size: 18px; }
 
 @media (max-width: 768px) {
   .land-nav { padding: 18px 20px; }
+  .land-title { font-size: clamp(28px, 8vw, 48px); letter-spacing: -0.5px; }
+  .land-sub { font-size: 15px; }
+  .land-cta { flex-direction: column; align-items: stretch; gap: 10px; }
+  .btn-land-primary, .btn-land-outline { text-align: center; }
+  .land-examples { padding: 40px 16px 60px; }
+  .examples-grid { grid-template-columns: 1fr; gap: 12px; }
+  .land-features { padding: 40px 16px; }
+  .features-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+
+  /* Sidebar mobile */
   .sidebar { transform: translateX(-100%); }
   .sidebar.open { transform: translateX(0); }
-  .main { margin-left: 0; padding: 20px; }
-  .land-features { padding: 48px 20px; }
+
+  /* Main content */
+  .main { margin-left: 0; padding: 16px; max-width: 100%; }
+  .page-title { font-size: 28px; margin-bottom: 4px; }
+  .page-sub { font-size: 15px; margin-bottom: 24px; }
+
+  /* Steps — scroll horizontally on narrow screens */
+  .steps { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 8px; gap: 4px; }
+  .steps::-webkit-scrollbar { height: 0; }
+  .step-text { display: none; }
+  .step-line { width: 12px; }
+
+  /* Cards */
+  .card { padding: 18px 16px; }
+  .card + .card { margin-top: 10px; }
+
+  /* Input grid — stacked on mobile */
+  #problem-grid { grid-template-columns: 1fr !important; }
+
+  /* Clarify questions */
+  #clarify-questions-list .card { margin-bottom: 10px; }
+
+  /* Q-cards */
+  .q-card { padding: 16px; }
+  .q-text { font-size: 15px; }
+
+  /* Deep dive panel buttons — stack */
+  #deep-dive-panel > div { flex-direction: column; }
+  #deep-dive-panel .btn { width: 100%; justify-content: center; }
+
+  /* RCA */
+  .rca-causes-row { grid-template-columns: 1fr; gap: 8px; }
+  .rca-wrap { padding: 14px; }
+
+  /* Hypothesis cards */
+  .hyp-top { flex-direction: column; gap: 6px; }
+  .hyp-actions { gap: 6px; }
+  .hyp-actions .btn { font-size: 11px; padding: 5px 8px; }
+
+  /* Action plan */
+  #action-plan-actions { flex-direction: column; }
+  #action-plan-actions .btn { width: 100%; justify-content: center; }
+
+  /* Settings */
+  .style-grid-mobile { grid-template-columns: 1fr !important; }
+
+  /* Mode select cards */
+  .mode-cards { flex-direction: column; }
+
+  /* Profile grid */
+  .profile-grid { grid-template-columns: 1fr !important; }
+
+  /* Metrics */
+  .grid2 { grid-template-columns: 1fr 1fr; }
+
+  /* Toast */
+  .toast { left: 16px; right: 16px; bottom: 16px; }
 }
+
+@media (max-width: 480px) {
+  .land-nav { padding: 14px 16px; }
+  .land-logo { font-size: 18px; }
+  .land-nav-btn { padding: 8px 14px; font-size: 13px; }
+  .features-grid { grid-template-columns: 1fr; }
+  .main { padding: 12px; }
+}
+
+/* Mobile hamburger */
+#mobile-menu-btn { display: none; }
+@media (max-width: 768px) {
+  #mobile-menu-btn { display: flex; align-items: center; justify-content: center; position: fixed; top: 16px; left: 16px; z-index: 300; width: 40px; height: 40px; background: var(--ink); border-radius: var(--r); border: none; cursor: pointer; color: white; }
+  .sidebar { z-index: 250; box-shadow: 4px 0 20px rgba(0,0,0,0.2); }
+  .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 249; }
+  .sidebar-overlay.visible { display: block; }
+  .main { padding-top: 68px; }
+}
+
 #app-back-btn { display:none; position:fixed; top:18px; right:18px; z-index:200; background:var(--paper); border:1px solid #C8DDD0; border-radius:var(--r); padding:8px 16px; font-size:13px; font-family:inherit; cursor:pointer; color:var(--ink2); }
 #app-back-btn:hover { background: var(--paper2); }
+@media (max-width: 768px) { #app-back-btn { top: 14px; right: 14px; padding: 7px 12px; font-size: 12px; } }
 </style>
 </head>
 <body>
 
 <div id="toast" class="toast"></div>
+<div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+<button id="mobile-menu-btn" onclick="toggleSidebar()">
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 4.5h14M2 9h14M2 13.5h14" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg>
+</button>
 
 <!-- ===== LANDING ===== -->
 <div id="landing" class="landing">
@@ -366,6 +455,35 @@ body.font-large { font-size: 18px; }
         <div style="margin-top:12px;font-size:12px;color:var(--ink3);line-height:1.5;">Решение: дали команде самим попользоваться продуктом месяц. Уверенность в разговорах изменилась — конверсия выросла на 40%.</div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- #13: Value numbers section -->
+  <div style="background:#fff;padding:56px 24px;border-top:1px solid var(--border);">
+    <div style="max-width:900px;margin:0 auto;">
+      <p style="font-family:'Playfair Display',serif;font-size:13px;letter-spacing:0.1em;color:var(--ink3);text-align:center;margin-bottom:36px;text-transform:uppercase;">Что внутри инструмента</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:20px;">
+        <div style="background:var(--paper);border-radius:var(--r2);padding:24px;text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:48px;color:var(--ink);line-height:1;margin-bottom:10px;">25</div>
+          <div style="font-size:14px;font-weight:500;color:var(--ink2);margin-bottom:6px;">линз Shapiro</div>
+          <div style="font-size:12px;color:var(--ink3);line-height:1.5;">Все 25 способов переформулировать проблему — от сужения до переворота</div>
+        </div>
+        <div style="background:var(--paper);border-radius:var(--r2);padding:24px;text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:48px;color:var(--accent);line-height:1;margin-bottom:10px;">10</div>
+          <div style="font-size:14px;font-weight:500;color:var(--ink2);margin-bottom:6px;">минут на анализ</div>
+          <div style="font-size:12px;color:var(--ink3);line-height:1.5;">От описания проблемы до гипотез с планом проверки</div>
+        </div>
+        <div style="background:var(--paper);border-radius:var(--r2);padding:24px;text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:48px;color:var(--gold);line-height:1;margin-bottom:10px;">4</div>
+          <div style="font-size:14px;font-weight:500;color:var(--ink2);margin-bottom:6px;">книги в основе</div>
+          <div style="font-size:12px;color:var(--ink3);line-height:1.5;">Shapiro, Wedell-Wedellsborg, Berger, Chevallier — лучшие методы рефрейминга</div>
+        </div>
+        <div style="background:var(--paper);border-radius:var(--r2);padding:24px;text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:48px;color:var(--danger);line-height:1;margin-bottom:10px;">3</div>
+          <div style="font-size:14px;font-weight:500;color:var(--ink2);margin-bottom:6px;">шага к действию</div>
+          <div style="font-size:12px;color:var(--ink3);line-height:1.5;">Конкретный план на неделю — что делать прямо сейчас, чтобы проверить гипотезу</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -459,6 +577,10 @@ body.font-large { font-size: 18px; }
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 1.5v1M7 11.5v1M1.5 7h1M11.5 7h1M3.1 3.1l.7.7M10.2 10.2l.7.7M3.1 10.9l.7-.7M10.2 3.8l.7-.7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
       Настройки
     </div>
+    <div class="nav-item" onclick="showScreen('profile')" id="nav-profile">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="4.5" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 12.5c0-3 2.5-4.5 5.5-4.5s5.5 1.5 5.5 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Профиль бизнеса
+    </div>
   </nav>
   <div class="sidebar-footer">
     <div class="api-status">
@@ -510,6 +632,26 @@ body.font-large { font-size: 18px; }
       <p style="font-size:12px;font-weight:500;color:var(--accent);margin-bottom:3px;">ПОСМОТРИ КАК ЭТО РАБОТАЕТ</p>
       <p style="font-size:14px;color:var(--ink2);margin:0;">Нажми чтобы загрузить готовый пример сессии → увидишь рефреймы, RCA и гипотезы для реального бизнес-кейса</p>
     </div>
+
+    <!-- #11 Режим сессии -->
+    <div class="mode-cards" style="display:flex;gap:10px;margin-bottom:20px;">
+      <div id="mode-quick" onclick="setMode('quick')" style="flex:1;background:#fff;border:1.5px solid var(--border2);border-radius:var(--r2);padding:16px 18px;cursor:pointer;transition:all 0.15s;">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:5px;">
+          <span style="font-size:18px;">⚡</span>
+          <span style="font-size:15px;font-weight:500;color:var(--ink);">Быстрый инсайт</span>
+          <span style="font-size:11px;color:var(--ink3);margin-left:auto;">~3 мин</span>
+        </div>
+        <p style="font-size:13px;color:var(--ink3);line-height:1.5;margin:0;">Проблема → 3 вопроса → выбор → следующий шаг. Без RCA и гипотез.</p>
+      </div>
+      <div id="mode-deep" onclick="setMode('deep')" style="flex:1;background:var(--ink);border:1.5px solid var(--ink);border-radius:var(--r2);padding:16px 18px;cursor:pointer;transition:all 0.15s;">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:5px;">
+          <span style="font-size:18px;">🔬</span>
+          <span style="font-size:15px;font-weight:500;color:#fff;">Глубокий анализ</span>
+          <span style="font-size:11px;color:rgba(255,255,255,0.5);margin-left:auto;">~10 мин</span>
+        </div>
+        <p style="font-size:13px;color:rgba(255,255,255,0.65);line-height:1.5;margin:0;">Полный флоу: уточнения → рефреймы → RCA → гипотезы → план действий.</p>
+      </div>
+    </div>
     <div class="steps">
       <div class="step-item"><div class="step-circle active">1</div><span class="step-text active">Проблема</span></div>
       <div class="step-line"></div>
@@ -525,7 +667,7 @@ body.font-large { font-size: 18px; }
       <label>Опиши проблему своими словами</label>
       <textarea id="problem-input" rows="4" placeholder="Например: клиенты уходят после первого месяца, хотя онбординг хороший..."></textarea>
       <p style="font-size:13px;color:var(--ink3);margin-top:8px;line-height:1.5;">💡 Подсказка: <em>[что происходит] + [как давно] + [что уже пробовали] + [какой результат хочешь]</em></p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
+      <div id="problem-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
         <div>
           <label>Сфера бизнеса</label>
           <select id="industry-select">
@@ -561,7 +703,7 @@ body.font-large { font-size: 18px; }
       </div>
     </div>
     <div style="margin-top:16px;">
-      <button class="btn btn-primary" onclick="goToClarify()">Далее → уточнения</button>
+      <button class="btn btn-primary" id="btn-next-step" onclick="goToClarify()">Далее → уточнения</button>
     </div>
   </div>
 
@@ -661,9 +803,29 @@ body.font-large { font-size: 18px; }
       <p style="font-size:13px;font-weight:500;color:var(--accent);margin-bottom:3px;">Следующий шаг — Chevallier FrED: Explore → Decide</p>
       <p style="font-size:13px;color:var(--ink2);line-height:1.5;">Для каждой гипотезы: метрика проверки, минимальный эксперимент, дедлайн. Не инвестируй крупно до подтверждения.</p>
     </div>
+
+    <!-- #12 Action plan block -->
+    <div id="action-plan-wrap" style="display:none;margin-top:16px;background:#fff;border:1px solid var(--border);border-radius:var(--r2);padding:20px 22px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <div>
+          <p style="font-size:14px;font-weight:500;color:var(--ink);">План на эту неделю</p>
+          <p style="font-size:12px;color:var(--ink3);">3 конкретных шага с дедлайнами</p>
+        </div>
+        <button class="btn btn-sm btn-outline" onclick="generateActionPlan()" id="btn-gen-plan">Сгенерировать →</button>
+      </div>
+      <div id="action-plan-content" style="display:none;">
+        <div id="action-plan-steps" style="margin-bottom:14px;"></div>
+        <div id="action-plan-actions" style="display:flex;gap:9px;flex-wrap:wrap;">
+          <button class="btn btn-sm btn-outline" onclick="copyActionPlan()">📋 Скопировать текст</button>
+          <button class="btn btn-sm btn-outline" onclick="emailActionPlan()">✉️ Отправить по email</button>
+        </div>
+      </div>
+      <div id="action-plan-loading" style="display:none;font-size:13px;color:var(--ink3);">Составляю план...</div>
+    </div>
     <div style="display:flex;gap:9px;margin-top:14px;flex-wrap:wrap;">
       <button class="btn btn-outline" onclick="goToStep('step-rca')">← Назад</button>
       <button class="btn btn-accent" onclick="saveSession()">✓ Сохранить сессию</button>
+      <button class="btn btn-outline" onclick="toggleActionPlan()">📋 План на неделю</button>
       <button class="btn btn-outline" onclick="exportPDF()">↓ PDF</button>
     </div>
   </div>
@@ -700,6 +862,26 @@ body.font-large { font-size: 18px; }
       <div class="limit-title">Лимит сессий исчерпан</div>
       <div class="limit-desc">Ты использовал все 50 сессий этого месяца. Лимит обновится в начале следующего месяца.</div>
       <button class="btn btn-primary" onclick="goToStep('step-input')">Понятно</button>
+    </div>
+  </div>
+
+  <!-- #11 Quick insight result step -->
+  <div id="step-quick-result" style="display:none;">
+    <h2 style="font-family:'Playfair Display',serif;font-size:26px;margin-bottom:5px;font-weight:400;">Рефреймирующие вопросы</h2>
+    <p style="color:var(--ink3);font-size:15px;margin-bottom:18px;">Выбери один вопрос — тот что вызывает наибольший дискомфорт или удивление</p>
+    <div class="problem-quote" id="quick-problem-display"></div>
+    <div id="quick-questions-list" style="margin-bottom:16px;"></div>
+    <div id="quick-next-step-wrap" style="display:none;background:var(--accent-light);border:1px solid #C8DDD0;border-radius:var(--r2);padding:18px 20px;margin-bottom:16px;">
+      <p style="font-size:13px;font-weight:500;color:var(--accent);margin-bottom:8px;">Следующий шаг</p>
+      <div id="quick-next-step-text" style="font-size:15px;color:var(--ink2);line-height:1.7;"></div>
+      <div style="display:flex;gap:9px;margin-top:12px;flex-wrap:wrap;">
+        <button class="btn btn-sm btn-outline" onclick="copyQuickStep()">📋 Скопировать</button>
+        <button class="btn btn-sm btn-outline" onclick="switchToDeep()">🔬 Углубить анализ</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:9px;">
+      <button class="btn btn-outline" onclick="goToStep('step-input')">← Начать заново</button>
+      <button class="btn btn-primary" id="btn-quick-next" onclick="generateQuickStep()" disabled>Что делать дальше? →</button>
     </div>
   </div>
 
@@ -818,6 +1000,60 @@ body.font-large { font-size: 18px; }
   </div>
 </div>
 
+<!-- PROFILE (#10) -->
+<div id="screen-profile" class="screen">
+  <h1 class="page-title">Профиль бизнеса</h1>
+  <p class="page-sub">Добавляется в каждый анализ — AI лучше понимает контекст</p>
+  <div class="card" style="max-width:560px;margin-bottom:12px;">
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:18px;padding:10px 14px;background:var(--paper2);border-radius:var(--r);line-height:1.5;">⚠️ Данные хранятся в браузере. Если очистишь кэш — профиль нужно будет заполнить снова.</p>
+    <div class="profile-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+      <div>
+        <label>Сфера бизнеса</label>
+        <select id="profile-industry">
+          <option value="">Не указано</option>
+          <option>SaaS / IT-продукт</option>
+          <option>E-commerce / Розница</option>
+          <option>Услуги / Консалтинг</option>
+          <option>Производство</option>
+          <option>Образование / EdTech</option>
+          <option>Медицина / Здоровье</option>
+          <option>HoReCa / Рестораны</option>
+          <option>Недвижимость</option>
+          <option>Финансы / Инвестиции</option>
+          <option>Другое</option>
+        </select>
+      </div>
+      <div>
+        <label>Размер команды</label>
+        <select id="profile-size-cat">
+          <option value="">Не указано</option>
+          <option>Я сам / Фриланс</option>
+          <option>2–10 человек</option>
+          <option>11–50 человек</option>
+          <option>51–200 человек</option>
+          <option>200+ человек</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label>Точное число сотрудников (необязательно)</label>
+      <input type="number" id="profile-size-exact" placeholder="Например: 23" min="1">
+    </div>
+    <div>
+      <label>Главная задача на ближайшие 3 месяца</label>
+      <textarea id="profile-goal" rows="3" placeholder="Например: выйти на 2 млн выручки в месяц / запустить новый продукт / снизить отток до 5%..."></textarea>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:9px;align-items:center;">
+      <button class="btn btn-primary" onclick="saveProfile()">Сохранить профиль</button>
+      <span id="profile-saved-hint" style="font-size:12px;color:var(--accent);display:none;">✓ Сохранено</span>
+    </div>
+  </div>
+  <div class="card" style="max-width:560px;background:var(--accent-light);border-color:#C8DDD0;">
+    <p style="font-size:14px;color:var(--accent);font-weight:500;margin-bottom:4px;">Как это работает</p>
+    <p style="font-size:13px;color:var(--ink2);line-height:1.6;">Профиль добавляется в каждый промпт — AI учитывает твою сферу, масштаб и цели при генерации рефреймов, RCA и гипотез. Вопросы становятся конкретнее.</p>
+  </div>
+</div>
+
 </main>
 </div>
 
@@ -826,6 +1062,28 @@ const SESSION_LIMIT = 50;
 const MODEL_SONNET = 'claude-sonnet-4-6';
 const MODEL_HAIKU  = 'claude-haiku-4-5';
 const MODEL = MODEL_SONNET;
+
+// ===== JARGON REPLACEMENTS (#9) =====
+const JARGON_RULE = `ЗАПРЕТ ЖАРГОНА — обязательно:
+- P&L → "прибыль по каналу"
+- SKU → "товар"
+- EBITDA → "прибыль"
+- CAC → "стоимость привлечения клиента"
+- LTV → "прибыль с клиента за всё время"
+- CPC → "стоимость клика"
+- CTR → "доля кликов"
+- MRR → "ежемесячная выручка"
+- Воронка → можно, но без "конверсионная воронка"
+- Стейкхолдер → "участник" или "заинтересованная сторона"
+Пиши как умный друг-предприниматель, не как консультант.`;
+
+// ===== EXECUTIVE COACH LANGUAGE (#8) =====
+const COACH_LANG = `ЯЗЫК КОУЧА (обязательно):
+- Говори про возможности и действия, не про проблемы и виновных
+- Вместо "причина в том что команда не справляется" → "команда может справляться лучше если..."
+- Вместо "проблема в отсутствии процесса" → "есть возможность выстроить процесс"
+- Запрет слов: "виноват", "ошибка", "провал", "не справляется", "слабое звено"
+- Гипотезы формулируй как гипотезы лидера — что ТЫ можешь сделать иначе`;
 
 const STYLE_INSTRUCTIONS = {
   strategist:   'Формулируй вопросы через призму системных причин и долгосрочных последствий. Каждый вопрос должен вести к пониманию структурных факторов.',
@@ -843,14 +1101,313 @@ let selectedQIdxs = [];
 let questionStyle = localStorage.getItem('rf_style') || 'provocateur';
 let currentTheme = localStorage.getItem('rf_theme') || 'light';
 let currentFontSize = localStorage.getItem('rf_fontsize') || 'medium';
+let currentMode = 'deep'; // 'quick' | 'deep'
+let businessProfile = JSON.parse(localStorage.getItem('rf_profile') || '{}');
+let actionPlanText = '';
+
+// ===== MODE (#11) =====
+function setMode(mode) {
+  currentMode = mode;
+  const quick = document.getElementById('mode-quick');
+  const deep = document.getElementById('mode-deep');
+  const btnNext = document.getElementById('btn-next-step');
+  if (mode === 'quick') {
+    quick.style.background = 'var(--ink)';
+    quick.style.border = '1.5px solid var(--ink)';
+    quick.querySelector('span:nth-child(2)').style.color = '#fff';
+    quick.querySelector('p').style.color = 'rgba(255,255,255,0.65)';
+    deep.style.background = '#fff';
+    deep.style.border = '1.5px solid var(--border2)';
+    deep.querySelector('span:nth-child(2)').style.color = 'var(--ink)';
+    deep.querySelector('p').style.color = 'var(--ink3)';
+    if (btnNext) btnNext.textContent = 'Получить рефреймы →';
+  } else {
+    deep.style.background = 'var(--ink)';
+    deep.style.border = '1.5px solid var(--ink)';
+    deep.querySelector('span:nth-child(2)').style.color = '#fff';
+    deep.querySelector('p').style.color = 'rgba(255,255,255,0.65)';
+    quick.style.background = '#fff';
+    quick.style.border = '1.5px solid var(--border2)';
+    quick.querySelector('span:nth-child(2)').style.color = 'var(--ink)';
+    quick.querySelector('p').style.color = 'var(--ink3)';
+    if (btnNext) btnNext.textContent = 'Далее → уточнения';
+  }
+}
+
+// ===== PROFILE (#10) =====
+function loadProfileFields() {
+  const p = businessProfile;
+  const ind = document.getElementById('profile-industry');
+  const sz = document.getElementById('profile-size-cat');
+  const exact = document.getElementById('profile-size-exact');
+  const goal = document.getElementById('profile-goal');
+  if (ind && p.industry) ind.value = p.industry;
+  if (sz && p.sizeCategory) sz.value = p.sizeCategory;
+  if (exact && p.sizeExact) exact.value = p.sizeExact;
+  if (goal && p.goal) goal.value = p.goal;
+}
+
+function saveProfile() {
+  businessProfile = {
+    industry: document.getElementById('profile-industry').value,
+    sizeCategory: document.getElementById('profile-size-cat').value,
+    sizeExact: document.getElementById('profile-size-exact').value,
+    goal: document.getElementById('profile-goal').value
+  };
+  localStorage.setItem('rf_profile', JSON.stringify(businessProfile));
+  const hint = document.getElementById('profile-saved-hint');
+  if (hint) { hint.style.display = 'inline'; setTimeout(() => hint.style.display = 'none', 2000); }
+  showToast('Профиль сохранён ✓');
+}
+
+function buildProfileContext() {
+  const p = businessProfile;
+  const parts = [];
+  if (p.industry) parts.push(`Сфера: ${p.industry}`);
+  if (p.sizeCategory) parts.push(`Размер команды: ${p.sizeCategory}`);
+  if (p.sizeExact) parts.push(`Точное число сотрудников: ${p.sizeExact}`);
+  if (p.goal) parts.push(`Главная задача на 3 месяца: "${p.goal}"`);
+  return parts.length ? '\n\nПрофиль бизнеса:\n' + parts.join('\n') : '';
+}
+
+// ===== MOBILE SIDEBAR =====
+function toggleSidebar() {
+  const s = document.getElementById('sidebar');
+  const o = document.getElementById('sidebar-overlay');
+  s.classList.toggle('open');
+  if (o) o.classList.toggle('visible');
+}
+function closeSidebar() {
+  const s = document.getElementById('sidebar');
+  const o = document.getElementById('sidebar-overlay');
+  s.classList.remove('open');
+  if (o) o.classList.remove('visible');
+}
+
+// ===== ACTION PLAN (#12) =====
+function toggleActionPlan() {
+  const wrap = document.getElementById('action-plan-wrap');
+  if (!wrap) return;
+  wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+}
+
+async function generateActionPlan() {
+  if (!currentSession) return;
+  const loading = document.getElementById('action-plan-loading');
+  const content = document.getElementById('action-plan-content');
+  const btn = document.getElementById('btn-gen-plan');
+  loading.style.display = 'block';
+  content.style.display = 'none';
+  if (btn) btn.disabled = true;
+
+  const hyps = currentSession.hypotheses.slice(0, 3).map((h, i) => `${i+1}. ${h.title} (проверка: ${h.test})`).join('\n');
+
+  try {
+    const res = await callAPI(`Ты бизнес-коуч. Составь план действий на эту неделю на основе гипотез.
+
+Проблема: "${currentSession.problem}"
+Гипотезы:
+${hyps}
+
+${JARGON_RULE}
+${COACH_LANG}
+
+ПРАВИЛА:
+- Ровно 3 шага, каждый конкретный и выполнимый за 1-7 дней
+- Каждый шаг: действие + дедлайн (конкретный день недели) + ожидаемый результат
+- Разговорный стиль, без жаргона
+- Шаги должны логически вытекать из гипотез
+
+Верни ТОЛЬКО валидный JSON:
+{
+  "steps": [
+    {"action": "конкретное действие", "deadline": "до среды", "result": "что получишь"},
+    {"action": "конкретное действие", "deadline": "до пятницы", "result": "что получишь"},
+    {"action": "конкретное действие", "deadline": "в эту пятницу", "result": "что получишь"}
+  ]
+}`, MODEL_HAIKU, 600);
+
+    const data = JSON.parse(res.replace(/```json|```/g, '').trim());
+    loading.style.display = 'none';
+    content.style.display = 'block';
+    if (btn) btn.disabled = false;
+
+    const stepsEl = document.getElementById('action-plan-steps');
+    actionPlanText = `ПЛАН НА ЭТУ НЕДЕЛЮ\nПроблема: ${currentSession.problem}\n\n`;
+    stepsEl.innerHTML = '';
+    data.steps.forEach((s, i) => {
+      const div = document.createElement('div');
+      div.style.cssText = 'padding:14px;background:var(--paper2);border-radius:var(--r);margin-bottom:9px;';
+      div.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+          <span style="font-size:13px;font-weight:500;color:var(--ink);">Шаг ${i+1}</span>
+          <span style="font-size:11px;font-weight:500;color:var(--accent);background:var(--accent-light);padding:2px 9px;border-radius:20px;">${s.deadline}</span>
+        </div>
+        <p style="font-size:14px;color:var(--ink);margin-bottom:4px;line-height:1.5;">${s.action}</p>
+        <p style="font-size:12px;color:var(--ink3);">→ ${s.result}</p>`;
+      stepsEl.appendChild(div);
+      actionPlanText += `Шаг ${i+1} (${s.deadline})\n${s.action}\n→ ${s.result}\n\n`;
+    });
+  } catch(e) {
+    loading.textContent = 'Ошибка: ' + e.message;
+    if (btn) btn.disabled = false;
+  }
+}
+
+function copyActionPlan() {
+  if (!actionPlanText) return showToast('Сначала сгенерируй план');
+  navigator.clipboard.writeText(actionPlanText).then(() => showToast('Скопировано ✓'));
+}
+
+function emailActionPlan() {
+  if (!actionPlanText) return showToast('Сначала сгенерируй план');
+  const subject = encodeURIComponent('План действий — Reframe');
+  const body = encodeURIComponent(actionPlanText);
+  window.open(`mailto:?subject=${subject}&body=${body}`);
+}
+
+// ===== QUICK MODE (#11) =====
+async function goToQuickMode() {
+  const problem = document.getElementById('problem-input').value.trim();
+  if (!problem) return showToast('Опиши проблему');
+  if (!apiKey && !HARDCODED_KEY) return showScreen('setup');
+  if (!checkAndIncrementLimit()) { goToStep('step-limit'); return; }
+
+  currentSession = {
+    id: Date.now(),
+    date: new Date().toISOString(),
+    problem,
+    industry: document.getElementById('industry-select').value,
+    size: document.getElementById('size-select').value,
+    questions: [], selectedQ: [], rca: null, hypotheses: [], insight: '', rcaCache: {}
+  };
+
+  goToStep('step-loading');
+  setProgressStep(1);
+  const lt = setInterval(() => setProgressStep(2), 1400);
+
+  const profileCtx = buildProfileContext();
+  const styleInstruction = STYLE_INSTRUCTIONS[questionStyle] || STYLE_INSTRUCTIONS.provocateur;
+
+  try {
+    const res = await callAPI(`Ты эксперт по рефреймингу. Дай 3 рефреймирующих вопроса для быстрого инсайта.
+
+Проблема: "${problem}"${profileCtx}
+
+СТИЛЬ: ${styleInstruction}
+
+${JARGON_RULE}
+
+ПРАВИЛА:
+- Разговорные, короткие, переворачивают предположение
+- Разные углы: один про факты, один про людей, один контринтуитивный
+- Для каждого укажи distance: "close", "expand", или "flip"
+
+Верни ТОЛЬКО валидный JSON:
+{
+  "questions": [
+    {"lens": "Shapiro #X: Название", "question": "вопрос", "distance": "close"},
+    {"lens": "Shapiro #X: Название", "question": "вопрос", "distance": "expand"},
+    {"lens": "Berger — What If", "question": "вопрос", "distance": "flip"}
+  ]
+}`, MODEL_HAIKU, 600);
+
+    clearInterval(lt);
+    const data = JSON.parse(res.replace(/```json|```/g, '').trim());
+    currentSession.questions = data.questions;
+
+    // Render quick result
+    document.getElementById('quick-problem-display').textContent = problem;
+    const list = document.getElementById('quick-questions-list');
+    list.innerHTML = '';
+    const distanceLabels = {
+      close:  { text: 'Близко к твоему фрейму', color: '#6B8F7A', bg: '#EDE8DE' },
+      expand: { text: 'Расширяет взгляд',        color: '#8B6914', bg: '#FDF3D0' },
+      flip:   { text: 'Переворачивает всё',       color: '#7A2424', bg: '#FDEAEA' }
+    };
+    data.questions.forEach((q, i) => {
+      const d = distanceLabels[q.distance] || distanceLabels.expand;
+      const el = document.createElement('div');
+      el.className = 'q-card';
+      el.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;">
+          <div class="q-lens">${q.lens.toUpperCase()}</div>
+          <span style="font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;background:${d.bg};color:${d.color};white-space:nowrap;margin-left:8px;">${d.text}</span>
+        </div>
+        <div class="q-text">${q.question}</div>`;
+      el.onclick = () => selectQuickQ(el, i);
+      list.appendChild(el);
+    });
+
+    document.getElementById('quick-next-step-wrap').style.display = 'none';
+    document.getElementById('btn-quick-next').disabled = true;
+    goToStep('step-quick-result');
+  } catch(e) {
+    clearInterval(lt);
+    goToStep('step-input');
+    showToast('Ошибка: ' + e.message);
+  }
+}
+
+let selectedQuickIdx = -1;
+function selectQuickQ(el, idx) {
+  document.querySelectorAll('#quick-questions-list .q-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedQuickIdx = idx;
+  document.getElementById('btn-quick-next').disabled = false;
+  document.getElementById('quick-next-step-wrap').style.display = 'none';
+}
+
+async function generateQuickStep() {
+  if (selectedQuickIdx < 0) return;
+  const q = currentSession.questions[selectedQuickIdx];
+  const btn = document.getElementById('btn-quick-next');
+  btn.disabled = true;
+  btn.textContent = 'Думаю...';
+
+  try {
+    const res = await callAPI(`Ты бизнес-коуч. Предложи один конкретный следующий шаг на основе рефрейма.
+
+Проблема: "${currentSession.problem}"
+Выбранный рефрейм: "${q.question}"
+
+${JARGON_RULE}
+${COACH_LANG}
+
+Ответь в 2-4 предложения: что конкретно сделать на этой неделе, чтобы проверить этот рефрейм. Разговорный стиль, действие — не теория.`, MODEL_HAIKU, 300);
+
+    document.getElementById('quick-next-step-text').textContent = res;
+    document.getElementById('quick-next-step-wrap').style.display = 'block';
+    btn.textContent = 'Обновить →';
+    btn.disabled = false;
+    currentSession.selectedQ = [q.question];
+    currentSession.insight = res;
+  } catch(e) {
+    showToast('Ошибка: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = 'Что делать дальше? →';
+  }
+}
+
+function copyQuickStep() {
+  const text = document.getElementById('quick-next-step-text').textContent;
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => showToast('Скопировано ✓'));
+}
+
+function switchToDeep() {
+  setMode('deep');
+  goToStep('step-input');
+  showToast('Переключён на глубокий анализ — нажми Далее');
+}
 
 // ===== INIT =====
 window.onload = () => {
   updateApiStatus(!!apiKey);
-  // Применяем сохранённые настройки — в try/catch чтобы не ломать запуск
   try { applyTheme(currentTheme); } catch(e) {}
   try { applyFontSize(currentFontSize); } catch(e) {}
   try { applyStyle(questionStyle); } catch(e) {}
+  try { setMode('deep'); } catch(e) {}
   if (HARDCODED_KEY) {
     document.getElementById('landing').style.display = 'none';
     document.getElementById('appWrap').classList.add('visible');
@@ -1059,12 +1616,16 @@ function showScreen(name) {
     applyFontSize(currentFontSize);
     applyStyle(questionStyle);
   }
+  if (name === 'profile') loadProfileFields();
   document.getElementById('sidebar').classList.remove('open');
+  const overlay = document.getElementById('sidebar-overlay');
+  if (overlay) overlay.classList.remove('visible');
 }
 
 function goToStep(id) {
-  ['step-input','step-clarify','step-questions','step-rca','step-hypotheses','step-loading','step-limit'].forEach(s => {
-    document.getElementById(s).style.display = 'none';
+  ['step-input','step-clarify','step-questions','step-rca','step-hypotheses','step-loading','step-limit','step-quick-result'].forEach(s => {
+    const el = document.getElementById(s);
+    if (el) el.style.display = 'none';
   });
   document.getElementById(id).style.display = 'block';
   window.scrollTo(0, 0);
@@ -1093,8 +1654,12 @@ function updateApiKey() {
 // ===== STEP 1 =====
 function fillEx(txt) { document.getElementById('problem-input').value = txt; }
 
-// ===== STEP 1 → 1.5: GENERATE CLARIFYING QUESTIONS =====
+// ===== STEP 1 → routing by mode =====
 async function goToClarify() {
+  if (currentMode === 'quick') {
+    return goToQuickMode();
+  }
+  // Deep mode continues as before
   const problem = document.getElementById('problem-input').value.trim();
   if (!problem) return showToast('Опиши проблему');
   if (!apiKey && !HARDCODED_KEY) return showScreen('setup');
@@ -1113,9 +1678,13 @@ async function goToClarify() {
       size ? `Размер: ${size}` : ''
     ].filter(Boolean).join('. ');
 
+    const profileCtx = buildProfileContext();
+
     const res = await callAPI(`Ты эксперт по рефреймингу бизнес-проблем. Пользователь описал проблему. Задай ровно 3 коротких уточняющих вопроса которые помогут понять проблему глубже.
 
-Контекст: "${context}"
+Контекст: "${context}"${profileCtx}
+
+${JARGON_RULE}
 
 ПРАВИЛА:
 1. Вопросы короткие — 1 предложение, разговорный стиль
@@ -1205,13 +1774,17 @@ async function analyzeStep1() {
     clarifyContext ? `\nДополнительный контекст:\n${clarifyContext}` : ''
   ].filter(Boolean).join('\n');
 
+  const profileCtx = buildProfileContext();
+
   try {
     const styleInstruction = STYLE_INSTRUCTIONS[questionStyle] || STYLE_INSTRUCTIONS.provocateur;
     const res = await callAPI(`Ты эксперт по рефреймингу бизнес-проблем на основе книги Shapiro "Invisible Solutions" (25 линз).
 
-${fullContext}
+${fullContext}${profileCtx}
 
 СТИЛЬ АНАЛИЗА: ${styleInstruction}
+
+${JARGON_RULE}
 
 СТРУКТУРА ОТВЕТА — строго:
 - 3 вопроса из разных линз Shapiro (выбери наиболее релевантные из 25)
@@ -1359,10 +1932,14 @@ async function goToRCA() {
   setProgressStep(2);
 
   try {
-    const res = await callAPI(`Ты стратегический аналитик. Построй Root Cause Analysis и гипотезы для проверки.
+    const res = await callAPI(`Ты стратегический коуч для собственников бизнеса. Построй Root Cause Analysis и гипотезы для проверки.
 
 Проблема: "${currentSession.problem}"
 Рефреймирующий фокус: "${focusText}"
+${buildProfileContext()}
+
+${JARGON_RULE}
+${COACH_LANG}
 
 ПРАВИЛА:
 1. Корневая причина — неочевидная, не симптом
