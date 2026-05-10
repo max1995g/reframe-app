@@ -268,10 +268,10 @@ body.dark-theme input, body.dark-theme textarea, body.dark-theme select { backgr
 body.dark-theme .sidebar { background: #111A14; }
 body.dark-theme #app-back-btn { background: #222E28; color: var(--ink2); }
 
-/* Font sizes */
-body.font-small { font-size: 14px; }
-body.font-medium { font-size: 16px; }
-body.font-large { font-size: 18px; }
+/* Font sizes — !important needed to override body's base font-size */
+body.font-small { font-size: 14px !important; }
+body.font-medium { font-size: 16px !important; }
+body.font-large { font-size: 18px !important; }
 
 .toast { position: fixed; bottom: 22px; right: 22px; background: var(--ink); color: #fff; padding: 11px 16px; border-radius: var(--r); font-size: 13px; opacity: 0; transform: translateY(6px); transition: all 0.2s; z-index: 999; pointer-events: none; }
 .toast.show { opacity: 1; transform: translateY(0); }
@@ -495,7 +495,7 @@ body.font-large { font-size: 18px; }
           <div class="feat-icon">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="white" stroke-width="1.4"/><path d="M9 5v4l2.5 2.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
           </div>
-          <div class="feat-title">5 рефреймирующих вопросов</div>
+          <div class="feat-title">5 переформулированных вопросов</div>
           <div class="feat-desc">AI применяет 25 линз Shapiro и 7 методов Wedell-Wedellsborg к твоей конкретной проблеме</div>
         </div>
         <div class="feat">
@@ -749,7 +749,7 @@ body.font-large { font-size: 18px; }
     <div id="deep-dive-panel" style="display:none;margin-top:16px;background:#EEF7F2;border:1px solid #C8DDD0;border-radius:var(--r2);padding:18px 20px;">
       <p style="font-size:13px;font-weight:500;color:var(--accent);margin-bottom:12px;">Хочешь углубиться в этот вопрос?</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn btn-sm btn-outline" style="font-size:13px;" onclick="deepDive('why')">Почему эта линза подходит?</button>
+        <button class="btn btn-sm btn-outline" style="font-size:13px;" onclick="deepDive('why')">Почему этот инструмент подходит?</button>
         <button class="btn btn-sm btn-outline" style="font-size:13px;" onclick="deepDive('example')">Пример из похожего бизнеса</button>
         <button class="btn btn-sm btn-outline" style="font-size:13px;" onclick="deepDive('team')">Как обсудить это с командой?</button>
       </div>
@@ -1045,6 +1045,7 @@ body.font-large { font-size: 18px; }
     </div>
     <div style="margin-top:16px;display:flex;gap:9px;align-items:center;">
       <button class="btn btn-primary" onclick="saveProfile()">Сохранить профиль</button>
+      <button class="btn btn-danger btn-sm" onclick="clearProfile()">Очистить профиль</button>
       <span id="profile-saved-hint" style="font-size:12px;color:var(--accent);display:none;">✓ Сохранено</span>
     </div>
   </div>
@@ -1158,6 +1159,17 @@ function saveProfile() {
   const hint = document.getElementById('profile-saved-hint');
   if (hint) { hint.style.display = 'inline'; setTimeout(() => hint.style.display = 'none', 2000); }
   showToast('Профиль сохранён ✓');
+}
+
+function clearProfile() {
+  if (!confirm('Очистить профиль бизнеса?')) return;
+  businessProfile = {};
+  localStorage.removeItem('rf_profile');
+  document.getElementById('profile-industry').value = '';
+  document.getElementById('profile-size-cat').value = '';
+  document.getElementById('profile-size-exact').value = '';
+  document.getElementById('profile-goal').value = '';
+  showToast('Профиль очищен');
 }
 
 function buildProfileContext() {
@@ -1472,11 +1484,8 @@ function goToApp() {
   document.getElementById('landing').style.display = 'none';
   document.getElementById('appWrap').classList.add('visible');
   document.getElementById('app-back-btn').style.display = 'block';
-  if (apiKey) {
-    showScreen('new-session');
-  } else {
-    showScreen('setup');
-  }
+  // #21: Setup screen hidden — hardcoded key always active
+  showScreen('new-session');
 }
 
 function updateApiStatus(ok) {
@@ -1605,7 +1614,18 @@ function showScreen(name) {
   if (name === 'history') renderHistory();
   if (name === 'tracker') renderTracker();
   if (name === 'passwords') renderPasswords();
-  if (name === 'new-session') { goToStep('step-input'); renderUsageBar(); }
+  if (name === 'new-session') {
+    goToStep('step-input');
+    renderUsageBar();
+    // #16: Pre-fill from business profile
+    try {
+      const p = businessProfile;
+      const ind = document.getElementById('industry-select');
+      const sz = document.getElementById('size-select');
+      if (p.industry && ind) ind.value = p.industry;
+      if (p.sizeCategory && sz) sz.value = p.sizeCategory;
+    } catch(e) {}
+  }
   if (name === 'settings') {
     const k = localStorage.getItem('rf_api_key') || '';
     const el = document.getElementById('settings-api-key');
@@ -1838,19 +1858,40 @@ function renderQuestionsStep() {
     expand: { text: 'Расширяет взгляд',        color: '#8B6914', bg: '#FDF3D0' },
     flip:   { text: 'Переворачивает всё',       color: '#7A2424', bg: '#FDEAEA' }
   };
+
+  // #28: find recommended question — prefer flip, else expand
+  const flipIdx = currentSession.questions.findIndex(q => q.distance === 'flip');
+  const expandIdx = currentSession.questions.findIndex(q => q.distance === 'expand');
+  const recommendedIdx = flipIdx >= 0 ? flipIdx : (expandIdx >= 0 ? expandIdx : 0);
+
   currentSession.questions.forEach((q, i) => {
     const d = distanceLabels[q.distance] || distanceLabels.expand;
+    const isRecommended = i === recommendedIdx;
     const el = document.createElement('div');
+    // #26: start invisible for animation
     el.className = 'q-card';
+    el.style.cssText = 'opacity:0;transform:translateY(12px);transition:opacity 0.35s ease,transform 0.35s ease;';
+    if (isRecommended) {
+      el.style.borderColor = '#2D4A3E';
+      el.style.borderWidth = '2px';
+    }
     el.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;flex-wrap:wrap;gap:6px;">
         <div class="q-lens">${q.lens.toUpperCase()}</div>
-        <span style="font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;background:${d.bg};color:${d.color};white-space:nowrap;margin-left:8px;">${d.text}</span>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+          ${isRecommended ? `<span style="font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;background:#2D4A3E;color:#fff;">★ Начни с этого</span>` : ''}
+          <span style="font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;background:${d.bg};color:${d.color};white-space:nowrap;">${d.text}</span>
+        </div>
       </div>
       ${q.lens_hint ? `<div class="q-hint">${q.lens_hint}</div>` : ''}
       <div class="q-text">${q.question}</div>`;
     el.onclick = () => toggleQ(el, i);
     c.appendChild(el);
+    // #26: staggered fade-in
+    setTimeout(() => {
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    }, 80 + i * 150);
   });
   selectedQIdxs = [];
   document.getElementById('btn-to-rca').disabled = true;
@@ -1886,8 +1927,8 @@ async function deepDive(type) {
   answer.innerHTML = '<span style="color:var(--ink3);">Думаю...</span>';
 
   const prompts = {
-    why: `Объясни кратко (2-3 предложения) почему линза "${q.lens}" подходит для этой проблемы: "${currentSession.problem}". Разговорный стиль, без жаргона.`,
-    example: `Приведи один конкретный пример (2-4 предложения) из реального бизнеса где линза "${q.lens}" помогла найти неожиданное решение похожей проблемы. Конкретные детали, без абстракций.`,
+    why: `Объясни кратко (2-3 предложения) почему инструмент "${q.lens}" подходит для этой проблемы: "${currentSession.problem}". Разговорный стиль, без жаргона.`,
+    example: `Приведи один конкретный пример (2-4 предложения) из реального бизнеса где инструмент "${q.lens}" помог найти неожиданное решение похожей проблемы. Конкретные детали, без абстракций.`,
     team: `Как использовать вопрос "${q.question}" на встрече с командой? Дай 2-3 конкретных совета как задать его чтобы получить честные ответы, а не формальные.`
   };
 
@@ -2091,40 +2132,183 @@ function exportPDF() {
   if (!currentSession) return;
   const s = currentSession;
   const sL = { strong:'Сильная', test:'Требует теста', weak:'Слабая', confirmed:'✓ Подтверждена', rejected:'✗ Отклонена' };
+  const confColor = { strong:'#1e4d2b', test:'#8B6914', weak:'#7A2424', confirmed:'#1e4d2b', rejected:'#7A2424' };
+  const causeColors = [
+    { border:'#E8A090', bg:'#FDE8E3', headBg:'#c0392b', label:'Ветка A' },
+    { border:'#D4B86A', bg:'#FDF4D0', headBg:'#8B6914', label:'Ветка B' },
+    { border:'#A8BAE8', bg:'#DDE8F8', headBg:'#1a3070', label:'Ветка C' }
+  ];
   const win = window.open('', '_blank');
-  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Reframe — Отчёт</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  if (!win) return showToast('Разрешите всплывающие окна');
+  win.document.write(`<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
+<title>Reframe — Отчёт</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-body{font-family:'DM Sans',sans-serif;max-width:660px;margin:40px auto;padding:0 20px;color:#14130f;line-height:1.6;font-size:14px;}
-h1{font-family:'Playfair Display',serif;font-size:26px;margin-bottom:3px;font-weight:400;}
-.meta{color:#888;font-size:12px;margin-bottom:28px;}
-h2{font-family:'Playfair Display',serif;font-size:17px;margin:26px 0 10px;padding-bottom:5px;border-bottom:1px solid #e4e0d5;font-weight:400;}
-.problem{background:#f7f4ee;padding:12px 16px;border-left:3px solid #14130f;margin-bottom:8px;font-size:14px;}
-.q-item{margin-bottom:10px;}.q-lens{font-size:10px;color:#1e4d2b;font-weight:500;letter-spacing:.06em;}
-.q-text{font-family:'Playfair Display',serif;font-size:14px;margin-top:2px;}
-.rca-root{background:#14130f;color:#fff;padding:8px 14px;display:inline-block;border-radius:6px;font-size:13px;margin-bottom:10px;}
-.causes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
-.cause-col{border:1px solid #e4e0d5;border-radius:6px;padding:8px;}
-.cause{font-size:12px;font-weight:500;}.deep{font-size:11px;color:#666;margin-top:3px;}
-.hyp{border:1px solid #e4e0d5;border-radius:8px;padding:12px;margin-bottom:8px;}
-.hyp-head{display:flex;justify-content:space-between;margin-bottom:5px;}
-.hyp-t{font-size:13px;font-weight:500;}.hyp-b{font-size:11px;padding:2px 7px;border-radius:20px;background:#e6f0e9;color:#1e4d2b;}
-.bar{height:3px;background:#e4e0d5;border-radius:2px;margin:5px 0;}
-.bar-fill{height:100%;background:#1e4d2b;border-radius:2px;}
-.test{font-size:12px;color:#555;}
-@media print{body{margin:0;}}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:#F5F0E8;color:#1A2E24;font-size:13px;line-height:1.6;}
+.page{max-width:720px;margin:0 auto;background:#fff;min-height:100vh;}
+/* Header */
+.pdf-header{background:#2D4A3E;padding:28px 40px 24px;display:flex;justify-content:space-between;align-items:flex-start;}
+.pdf-logo{font-family:'Playfair Display',serif;font-size:26px;color:#F5F0E8;letter-spacing:-0.5px;font-weight:400;}
+.pdf-logo-sub{font-size:10px;color:rgba(245,240,232,0.5);margin-top:2px;letter-spacing:0.08em;}
+.pdf-meta{text-align:right;font-size:11px;color:rgba(245,240,232,0.55);line-height:1.8;}
+/* Body */
+.pdf-body{padding:32px 40px;}
+/* Problem */
+.section-label{font-size:9px;font-weight:500;letter-spacing:0.15em;color:#6B8F7A;margin-bottom:8px;text-transform:uppercase;}
+.problem-block{background:#F5F0E8;border-left:3px solid #2D4A3E;padding:14px 18px;border-radius:0 8px 8px 0;font-size:14px;color:#1A2E24;line-height:1.6;margin-bottom:6px;}
+/* Insight */
+.insight-block{background:#2D4A3E;border-radius:10px;padding:18px 22px;margin:20px 0;}
+.insight-label{font-size:9px;font-weight:500;letter-spacing:0.12em;color:rgba(127,184,154,0.7);margin-bottom:7px;}
+.insight-text{font-family:'Playfair Display',serif;font-size:16px;color:#F5F0E8;line-height:1.6;font-weight:400;font-style:italic;}
+/* Divider */
+.section-divider{border:none;border-top:1px solid #E0D8CC;margin:24px 0;}
+/* Questions */
+.q-item{margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #F0EBE0;}
+.q-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.q-lens-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.q-lens{font-size:9px;font-weight:500;letter-spacing:0.08em;color:#3D7A5A;}
+.q-dist{font-size:9px;padding:1px 7px;border-radius:20px;}
+.q-dist.close{background:#EDE8DE;color:#6B8F7A;}
+.q-dist.expand{background:#FDF3D0;color:#8B6914;}
+.q-dist.flip{background:#FDEAEA;color:#7A2424;}
+.q-text{font-family:'Playfair Display',serif;font-size:14px;color:#1A2E24;line-height:1.5;}
+/* RCA */
+.rca-root{background:#1A2E24;color:#fff;border-radius:8px;padding:12px 18px;text-align:center;font-size:13px;font-weight:500;line-height:1.4;margin-bottom:14px;}
+.rca-arrow{text-align:center;font-size:16px;color:#6B8F7A;margin:6px 0;line-height:1;}
+.rca-branches{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.rca-branch{border-radius:8px;overflow:hidden;border:1px solid;}
+.rca-branch-head{padding:8px 10px;font-size:11px;font-weight:500;color:#fff;line-height:1.3;}
+.rca-branch-deep{padding:8px 10px;font-size:11px;color:#333;line-height:1.4;}
+/* Hypotheses */
+.hyp{border:1px solid #E0D8CC;border-radius:8px;padding:14px 16px;margin-bottom:10px;}
+.hyp:last-child{margin-bottom:0;}
+.hyp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px;}
+.hyp-title{font-size:13px;font-weight:500;color:#1A2E24;line-height:1.45;flex:1;}
+.hyp-badge{font-size:10px;padding:2px 8px;border-radius:20px;white-space:nowrap;font-weight:500;}
+.conf-bar-wrap{display:flex;align-items:center;gap:9px;margin-bottom:6px;}
+.conf-track{flex:1;height:4px;background:#E0D8CC;border-radius:2px;overflow:hidden;}
+.conf-fill{height:100%;border-radius:2px;}
+.conf-pct{font-size:11px;color:#6B8F7A;min-width:28px;}
+.hyp-test{font-size:12px;color:#2D4A3E;line-height:1.5;}
+.hyp-test strong{font-weight:500;color:#1A2E24;}
+/* Action plan */
+.action-step{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #F0EBE0;}
+.action-step:last-child{border-bottom:none;}
+.action-num{width:22px;height:22px;border-radius:50%;background:#2D4A3E;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.action-text{flex:1;}
+.action-title{font-size:13px;color:#1A2E24;font-weight:500;margin-bottom:2px;}
+.action-deadline{font-size:11px;color:#3D7A5A;font-weight:500;}
+/* Footer */
+.pdf-footer{background:#F5F0E8;padding:16px 40px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #E0D8CC;}
+.pdf-footer-left{font-size:10px;color:#6B8F7A;line-height:1.6;}
+.pdf-footer-right{font-size:9px;color:#6B8F7A;letter-spacing:0.08em;text-align:right;}
+@media print{
+  body{background:#fff;}
+  .page{box-shadow:none;}
+  @page{margin:0;}
+}
 </style></head><body>
-<h1>Reframe — Сессия рефрейминга</h1>
-<div class="meta">${new Date(s.date).toLocaleString('ru')}</div>
-<h2>Проблема</h2><div class="problem">${s.problem}</div>
-${s.insight ? `<div style="background:#14130f;color:#fff;padding:14px 18px;border-radius:8px;margin:16px 0;font-family:'Georgia',serif;font-size:15px;line-height:1.6;"><div style="font-size:10px;font-weight:bold;letter-spacing:.08em;color:rgba(255,255,255,.45);margin-bottom:6px;">ГЛАВНЫЙ ИНСАЙТ</div>${s.insight}</div>` : ''}
-<h2>Рефреймирующие вопросы</h2>
-${s.questions.map(q=>`<div class="q-item"><div class="q-lens">${q.lens.toUpperCase()}</div><div class="q-text">${q.question}</div></div>`).join('')}
-<h2>Root Cause Analysis</h2>
-<div><div class="rca-root">${s.rca.root}</div></div>
-<div class="causes">${s.rca.causes.map(c=>`<div class="cause-col"><div class="cause">${c.cause}</div><div class="deep">${c.deep}</div></div>`).join('')}</div>
-<h2>Гипотезы</h2>
-${s.hypotheses.map(h=>`<div class="hyp"><div class="hyp-head"><span class="hyp-t">${h.title}</span><span class="hyp-b">${sL[h.status]||h.status}</span></div><div class="bar"><div class="bar-fill" style="width:${h.confidence}%"></div></div><div class="test"><strong>Проверка:</strong> ${h.test}</div>${h.notes?`<div style="margin-top:4px;font-size:12px;color:#555;">${h.notes}</div>`:''}</div>`).join('')}
+<div class="page">
+
+<div class="pdf-header">
+  <div>
+    <div class="pdf-logo">Reframe</div>
+    <div class="pdf-logo-sub">AI-КОУЧ ПО РЕФРЕЙМИНГУ</div>
+  </div>
+  <div class="pdf-meta">
+    <div>Сессия рефрейминга</div>
+    <div>${new Date(s.date).toLocaleString('ru', {day:'numeric',month:'long',year:'numeric'})}</div>
+    <div>${new Date(s.date).toLocaleString('ru', {hour:'2-digit',minute:'2-digit'})}</div>
+  </div>
+</div>
+
+<div class="pdf-body">
+
+  <div class="section-label">Проблема</div>
+  <div class="problem-block">${s.problem}</div>
+
+  ${s.insight ? `
+  <div class="insight-block">
+    <div class="insight-label">ГЛАВНЫЙ ИНСАЙТ СЕССИИ</div>
+    <div class="insight-text">${s.insight}</div>
+  </div>` : ''}
+
+  <hr class="section-divider">
+  <div class="section-label">Переформулированные вопросы</div>
+  <div style="margin-top:12px;">
+    ${s.questions.map(q => {
+      const distClass = q.distance || 'expand';
+      const distText = {close:'Близко к фрейму',expand:'Расширяет взгляд',flip:'Переворачивает всё'}[distClass] || '';
+      return `<div class="q-item">
+        <div class="q-lens-row">
+          <div class="q-lens">${q.lens.toUpperCase()}</div>
+          <span class="q-dist ${distClass}">${distText}</span>
+        </div>
+        <div class="q-text">${q.question}</div>
+      </div>`;
+    }).join('')}
+  </div>
+
+  ${s.rca ? `
+  <hr class="section-divider">
+  <div class="section-label">Root Cause Analysis</div>
+  <div style="margin-top:12px;">
+    <div class="rca-root">${s.rca.root}</div>
+    <div class="rca-arrow">↓</div>
+    <div class="rca-branches">
+      ${s.rca.causes.map((c, i) => {
+        const col = causeColors[i] || causeColors[0];
+        return `<div class="rca-branch" style="border-color:${col.border};">
+          <div class="rca-branch-head" style="background:${col.headBg};">${c.cause}</div>
+          <div class="rca-branch-deep" style="background:${col.bg};">${c.deep}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>` : ''}
+
+  ${s.hypotheses && s.hypotheses.length ? `
+  <hr class="section-divider">
+  <div class="section-label">Гипотезы для проверки</div>
+  <div style="margin-top:12px;">
+    ${s.hypotheses.map(h => {
+      const col = confColor[h.status] || '#888';
+      return `<div class="hyp">
+        <div class="hyp-top">
+          <div class="hyp-title">${h.title}</div>
+          <span class="hyp-badge" style="background:${col}22;color:${col};">${sL[h.status]||h.status}</span>
+        </div>
+        <div class="conf-bar-wrap">
+          <div class="conf-track"><div class="conf-fill" style="width:${h.confidence}%;background:${col};"></div></div>
+          <span class="conf-pct">${h.confidence}%</span>
+        </div>
+        <div class="hyp-test"><strong>Как проверить:</strong> ${h.test}</div>
+        ${h.notes ? `<div style="margin-top:5px;font-size:11px;color:#6B8F7A;">${h.notes}</div>` : ''}
+      </div>`;
+    }).join('')}
+  </div>` : ''}
+
+  <hr class="section-divider">
+  <div class="section-label">Следующий шаг</div>
+  <div style="margin-top:10px;background:#F5F0E8;border-radius:8px;padding:14px 16px;">
+    <p style="font-size:12px;color:#2D4A3E;line-height:1.6;">Для каждой гипотезы: определи метрику успеха, запусти минимальный эксперимент, поставь дедлайн. <strong>Не инвестируй крупно до подтверждения.</strong></p>
+    <p style="font-size:11px;color:#6B8F7A;margin-top:8px;">Основано на методе FrED (Frame → Explore → Decide) — Chevallier "Solvable"</p>
+  </div>
+
+</div>
+
+<div class="pdf-footer">
+  <div class="pdf-footer-left">
+    Reframe — AI-коуч по рефреймингу<br>
+    reframe-app.onrender.com
+  </div>
+  <div class="pdf-footer-right">
+    Основано на Shapiro · Wedell-Wedellsborg<br>
+    Berger · Chevallier
+  </div>
+</div>
+
+</div>
 <script>window.onload=()=>window.print()<\/script>
 </body></html>`);
   win.document.close();
