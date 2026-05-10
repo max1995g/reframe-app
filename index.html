@@ -269,13 +269,19 @@ body.dark-theme input, body.dark-theme textarea, body.dark-theme select { backgr
 body.dark-theme .sidebar { background: #111A14; }
 body.dark-theme #app-back-btn { background: #222E28; color: var(--ink2); }
 
-/* #35 Font sizes — rem-based, scales everything */
+/* #35 Font sizes — CSS variable approach for reliable scaling */
+:root { --base-font: 16px; }
 body.font-small { font-size: 13px; }
 body.font-medium { font-size: 16px; }
 body.font-large { font-size: 19px; }
 
 .toast { position: fixed; bottom: 22px; right: 22px; background: var(--ink); color: #fff; padding: 11px 16px; border-radius: var(--r); font-size: 0.8125rem; opacity: 0; transform: translateY(6px); transition: all 0.2s; z-index: 999; pointer-events: none; }
 .toast.show { opacity: 1; transform: translateY(0); }
+
+/* Instant CSS tooltip — no delay unlike title attribute */
+.tip { position: relative; display: inline-flex; align-items: center; justify-content: center; cursor: help; }
+.tip::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; font-size: 0.75rem; line-height: 1.45; padding: 7px 10px; border-radius: 7px; white-space: normal; width: 220px; pointer-events: none; opacity: 0; transition: opacity 0.1s; z-index: 1000; text-align: left; font-weight: 400; }
+.tip:hover::after { opacity: 1; }
 
 /* Limit screen */
 .limit-wrap { max-width: 440px; margin: 80px auto; text-align: center; padding: 20px; }
@@ -990,9 +996,9 @@ body.font-large { font-size: 19px; }
     <div>
       <label style="margin-bottom:10px;">Размер шрифта</label>
       <div style="display:flex;gap:10px;">
-        <button id="font-small" class="btn btn-sm" onclick="setFontSize('small')" style="flex:1;font-size:13px;">A — Компактный</button>
-        <button id="font-medium" class="btn btn-sm" onclick="setFontSize('medium')" style="flex:1;font-size:15px;">A — Стандарт</button>
-        <button id="font-large" class="btn btn-sm" onclick="setFontSize('large')" style="flex:1;font-size:17px;">A — Крупный</button>
+        <button id="font-small" class="btn btn-sm" onclick="setFontSize('small')" style="flex:1;">A — Компактный</button>
+        <button id="font-medium" class="btn btn-sm" onclick="setFontSize('medium')" style="flex:1;">A — Стандарт</button>
+        <button id="font-large" class="btn btn-sm" onclick="setFontSize('large')" style="flex:1;">A — Крупный</button>
       </div>
     </div>
   </div>
@@ -1773,6 +1779,10 @@ function loadDemo() {
 
 // ===== NAVIGATION =====
 function showScreen(name) {
+  // #34: save draft whenever leaving new-session mid-flow
+  if (currentSession && currentSession.id !== 'demo') {
+    saveDraft(currentStep);
+  }
   // Автосохраняем текущую сессию если она есть и есть гипотезы
   if (currentSession && currentSession.hypotheses && currentSession.hypotheses.length > 0) {
     const idx = sessions.findIndex(s => s.id === currentSession.id);
@@ -2285,7 +2295,6 @@ function buildHypCard(h, editable) {
   const colors = { strong: '#1e4d2b', test: '#c4930a', weak: '#8b1a1a', confirmed: '#1e4d2b', rejected: '#8b1a1a' };
   const labels = { strong: 'Сильная', test: 'Требует теста', weak: 'Слабая', confirmed: '✓ Подтверждена', rejected: '✗ Отклонена' };
   const bc = { strong: 'badge-green', test: 'badge-gold', weak: 'badge-red', confirmed: 'badge-green', rejected: 'badge-red' };
-  // #31: ease of testing label
   const easeLabel = h.confidence >= 66 ? 'Легко проверить' : h.confidence >= 35 ? 'Средняя сложность' : 'Требует усилий';
   const easeColor = h.confidence >= 66 ? 'var(--accent)' : h.confidence >= 35 ? 'var(--gold)' : 'var(--danger)';
   const div = document.createElement('div');
@@ -2300,17 +2309,17 @@ function buildHypCard(h, editable) {
       <div class="conf-bar"><div class="conf-fill" style="width:${h.confidence}%;background:${colors[h.status] || '#888'};"></div></div>
       <span class="conf-label">${h.confidence}%</span>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+    <div style="display:flex;align-items:center;gap:7px;margin-bottom:12px;">
       <span style="font-size:0.75rem;font-weight:500;color:${easeColor};">${easeLabel}</span>
-      <span title="% показывает насколько легко проверить эту гипотезу — не насколько она верна. Контринтуитивные идеи часто самые важные." style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;border:1px solid var(--border2);font-size:0.625rem;color:var(--ink3);cursor:help;flex-shrink:0;">?</span>
+      <span class="tip" data-tip="% показывает насколько легко проверить гипотезу — не насколько она верна. Контринтуитивные идеи часто самые важные." style="width:15px;height:15px;border-radius:50%;border:1px solid var(--border2);font-size:0.625rem;color:var(--ink3);flex-shrink:0;font-family:inherit;">?</span>
     </div>
     <div class="hyp-test"><strong>Как проверить:</strong> ${h.test}</div>
     ${h.notes ? `<div style="margin-top:7px;font-size:0.8125rem;color:var(--ink3);border-top:1px solid var(--border);padding-top:7px;">${h.notes}</div>` : ''}
     ${editable ? `
-    <div class="hyp-actions">
-      <button class="btn btn-xs ${h.status==='strong'?'btn-accent':'btn-outline'}" onclick="setHypStatus('${h.id}','strong')">Сильная</button>
-      <button class="btn btn-xs ${h.status==='test'?'btn-primary':'btn-outline'}" onclick="setHypStatus('${h.id}','test')">Тест</button>
+    <div class="hyp-actions" style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+      <span style="font-size:0.75rem;color:var(--ink3);margin-right:2px;">Статус:</span>
       <button class="btn btn-xs ${h.status==='confirmed'?'btn-accent':'btn-outline'}" onclick="setHypStatus('${h.id}','confirmed')">✓ Подтверждена</button>
+      <button class="btn btn-xs ${h.status==='test'?'btn-primary':'btn-outline'}" onclick="setHypStatus('${h.id}','test')">В тесте</button>
       <button class="btn btn-xs ${h.status==='rejected'?'btn-danger':'btn-outline'}" onclick="setHypStatus('${h.id}','rejected')">✗ Отклонена</button>
       <button class="btn btn-xs btn-outline" onclick="editNotes('${h.id}')">Заметка</button>
     </div>` : ''}`;
