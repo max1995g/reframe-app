@@ -262,18 +262,43 @@ label { font-size: 0.875rem; font-weight: 500; color: var(--ink2); display: bloc
 .style-card.active .style-desc { color: var(--accent2); }
 
 /* Dark theme */
-body.dark-theme { --ink:#E8F0EB; --ink2:#B8D4C0; --ink3:#7A9E88; --paper:#1A2420; --paper2:#222E28; --paper3:#2A3830; --accent:#5DB882; --accent2:#4A9E6E; --accent-light:#1E3828; --border:rgba(232,240,235,0.1); --border2:rgba(232,240,235,0.2); }
-body.dark-theme .card, body.dark-theme .q-card, body.dark-theme .hyp-card, body.dark-theme .history-item { background: #222E28; }
-body.dark-theme .q-card:hover, body.dark-theme .q-card.selected { background: #1E3828; }
-body.dark-theme input, body.dark-theme textarea, body.dark-theme select { background: #1A2420; color: var(--ink); border-color: var(--border2); }
-body.dark-theme .sidebar { background: #111A14; }
-body.dark-theme #app-back-btn { background: #222E28; color: var(--ink2); }
+body.dark-theme { --ink:#E8F0EB; --ink2:#C8DCC8; --ink3:#8AAF96; --paper:#161E19; --paper2:#1E2A22; --paper3:#263020; --accent:#5DB882; --accent2:#4A9E6E; --accent-light:#1A3325; --border:rgba(232,240,235,0.08); --border2:rgba(232,240,235,0.16); --gold:#C4930A; --gold-light:#2A2010; --danger:#C05050; --danger-light:#2A1818; }
+body.dark-theme .card { background: #1E2A22; border-color: rgba(232,240,235,0.1); }
+body.dark-theme .q-card { background: #1E2A22; border-color: rgba(200,220,200,0.15); }
+body.dark-theme .q-card:hover { background: #243020; border-color: var(--accent2); }
+body.dark-theme .q-card.selected { background: #1A3325; border-color: var(--accent); }
+body.dark-theme .hyp-card { background: #1E2A22; border-color: rgba(200,220,200,0.12); }
+body.dark-theme .history-item { background: #1E2A22; border-color: rgba(232,240,235,0.08); }
+body.dark-theme .history-item:hover { border-color: rgba(232,240,235,0.2); }
+body.dark-theme input, body.dark-theme textarea, body.dark-theme select { background: #161E19; color: var(--ink); border-color: var(--border2); }
+body.dark-theme input:focus, body.dark-theme textarea:focus { background: #1E2A22; border-color: var(--accent); }
+body.dark-theme .sidebar { background: #0F1812; }
+body.dark-theme #app-back-btn { background: #1E2A22; color: var(--ink2); border-color: var(--border2); }
+body.dark-theme .rca-wrap { background: #1A2420; }
+body.dark-theme .rca-cause-node { background: #1E2A22; border-color: var(--border2); }
+body.dark-theme .rca-deep-node { background: #161E19; color: var(--ink2); }
+body.dark-theme .session-insight { background: #0F1812; }
+body.dark-theme .progress-step { background: #1E2A22; border-color: var(--border); }
+body.dark-theme .skeleton-card { background: #1E2A22; }
+body.dark-theme .style-card { background: #1E2A22; border-color: var(--border2); }
+body.dark-theme .style-card:hover, body.dark-theme .style-card.active { background: var(--accent-light); }
+body.dark-theme .metric { background: #1E2A22; }
+body.dark-theme .usage-bar-wrap { background: #1E2A22; }
+body.dark-theme #resume-banner { background: #1A3325; border-color: var(--accent); }
+/* Mode cards dark */
+body.dark-theme #mode-quick, body.dark-theme #mode-deep { border-color: var(--border2); }
+/* Financial context panel dark */
+body.dark-theme #fin-ctx-panel { background: #1E2A22; border-color: var(--border2); }
+/* Setup card dark */
+body.dark-theme .setup-card { background: #1E2A22; border-color: var(--border); }
+/* Deep dive panel dark */
+body.dark-theme #deep-dive-panel { background: #1A3325; border-color: rgba(93,184,130,0.2); }
 
-/* #35 Font sizes — CSS variable approach for reliable scaling */
-:root { --base-font: 16px; }
-body.font-small { font-size: 13px; }
-body.font-medium { font-size: 16px; }
-body.font-large { font-size: 19px; }
+/* #35/#37 Font sizes — MUST be on html element, rem is relative to html not body */
+html { font-size: 16px; }
+html.font-small { font-size: 13px; }
+html.font-medium { font-size: 16px; }
+html.font-large { font-size: 19px; }
 
 .toast { position: fixed; bottom: 22px; right: 22px; background: var(--ink); color: #fff; padding: 11px 16px; border-radius: var(--r); font-size: 0.8125rem; opacity: 0; transform: translateY(6px); transition: all 0.2s; z-index: 999; pointer-events: none; }
 .toast.show { opacity: 1; transform: translateY(0); }
@@ -1622,8 +1647,9 @@ function setTheme(t) {
 }
 
 function applyFontSize(s) {
-  document.body.classList.remove('font-small','font-medium','font-large');
-  document.body.classList.add('font-' + s);
+  // #37: must apply to html element — rem is relative to html, not body
+  document.documentElement.classList.remove('font-small','font-medium','font-large');
+  document.documentElement.classList.add('font-' + s);
   ['small','medium','large'].forEach(sz => {
     const el = document.getElementById('font-' + sz);
     if (el) el.className = 'btn btn-sm ' + (s === sz ? 'btn-primary' : 'btn-outline');
@@ -2293,7 +2319,7 @@ function renderHypotheses() {
 
 function buildHypCard(h, editable) {
   const colors = { strong: '#1e4d2b', test: '#c4930a', weak: '#8b1a1a', confirmed: '#1e4d2b', rejected: '#8b1a1a' };
-  const labels = { strong: 'Сильная', test: 'Требует теста', weak: 'Слабая', confirmed: '✓ Подтверждена', rejected: '✗ Отклонена' };
+  const labels = { strong: 'Высокий потенциал', test: 'Требует проверки', weak: 'Контринтуитивная', confirmed: '✓ Подтверждена', rejected: '✗ Отклонена' };
   const bc = { strong: 'badge-green', test: 'badge-gold', weak: 'badge-red', confirmed: 'badge-green', rejected: 'badge-red' };
   const easeLabel = h.confidence >= 66 ? 'Легко проверить' : h.confidence >= 35 ? 'Средняя сложность' : 'Требует усилий';
   const easeColor = h.confidence >= 66 ? 'var(--accent)' : h.confidence >= 35 ? 'var(--gold)' : 'var(--danger)';
@@ -2357,7 +2383,7 @@ function saveSession() {
 function exportPDF() {
   if (!currentSession) return;
   const s = currentSession;
-  const sL = { strong:'Сильная', test:'Требует теста', weak:'Слабая', confirmed:'✓ Подтверждена', rejected:'✗ Отклонена' };
+  const sL = { strong:'Высокий потенциал', test:'Требует проверки', weak:'Контринтуитивная', confirmed:'✓ Подтверждена', rejected:'✗ Отклонена' };
   const confColor = { strong:'#1e4d2b', test:'#8B6914', weak:'#7A2424', confirmed:'#1e4d2b', rejected:'#7A2424' };
   const causeColors = [
     { border:'#E8A090', bg:'#FDE8E3', headBg:'#c0392b', label:'Ветка A' },
@@ -2566,7 +2592,7 @@ function renderHistory() {
 }
 
 function showSessionDetail(s) {
-  const sL = { strong:'Сильная', test:'Требует теста', weak:'Слабая', confirmed:'✓ Подтверждена', rejected:'✗ Отклонена' };
+  const sL = { strong:'Высокий потенциал', test:'Требует проверки', weak:'Контринтуитивная', confirmed:'✓ Подтверждена', rejected:'✗ Отклонена' };
   const bc = { strong:'badge-green', test:'badge-gold', weak:'badge-red', confirmed:'badge-green', rejected:'badge-red' };
   document.getElementById('session-detail-content').innerHTML = `
     <h1 class="page-title" style="font-size:22px;">${new Date(s.date).toLocaleString('ru',{day:'numeric',month:'long',year:'numeric'})}</h1>
@@ -2616,7 +2642,7 @@ function renderTracker() {
     <div class="metric"><div class="metric-val" style="color:var(--danger);">${rejected}</div><div class="metric-label">Отклонено</div></div>`;
   const list = document.getElementById('tracker-list');
   if (!all.length) { list.innerHTML = '<div class="empty-state">Гипотез пока нет — проведи первую сессию</div>'; return; }
-  const sL = { strong:'Сильная', test:'Требует теста', weak:'Слабая', confirmed:'✓ Подтверждена', rejected:'✗ Отклонена' };
+  const sL = { strong:'Высокий потенциал', test:'Требует проверки', weak:'Контринтуитивная', confirmed:'✓ Подтверждена', rejected:'✗ Отклонена' };
   const bc = { strong:'badge-green', test:'badge-gold', weak:'badge-red', confirmed:'badge-green', rejected:'badge-red' };
   const colors = { strong:'#1e4d2b', test:'#c4930a', weak:'#8b1a1a', confirmed:'#1e4d2b', rejected:'#8b1a1a' };
   list.innerHTML = '';
