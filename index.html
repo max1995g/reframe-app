@@ -702,6 +702,36 @@ body.font-large { font-size: 18px !important; }
         <button class="btn btn-xs btn-outline" onclick="fillEx('Новый продукт не продаётся несмотря на большой маркетинговый бюджет')">Пример: продукт</button>
       </div>
     </div>
+
+    <!-- #30C: Optional financial context -->
+    <div style="margin-top:10px;">
+      <button class="btn btn-xs btn-outline" onclick="toggleFinCtx()" id="btn-fin-ctx" style="color:var(--ink3);font-size:13px;width:100%;justify-content:space-between;padding:11px 16px;background:#fff;border-color:var(--border2);">
+        <span>💡 Добавить финансовый контекст — AI даст более точные гипотезы</span>
+        <span id="fin-ctx-arrow" style="font-size:10px;">▼</span>
+      </button>
+      <div id="fin-ctx-panel" style="display:none;background:#fff;border:1px solid var(--border2);border-top:none;border-radius:0 0 var(--r2) var(--r2);padding:18px 20px;">
+        <p style="font-size:12px;color:var(--ink3);margin-bottom:14px;line-height:1.5;">Не обязательно. Заполни что знаешь — чем точнее контекст, тем конкретнее гипотезы с реальными числами.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" id="fin-ctx-grid">
+          <div>
+            <label style="font-size:12px;">Топ-товар или направление</label>
+            <input type="text" id="fin-product" placeholder="Например: крем для лица">
+          </div>
+          <div>
+            <label style="font-size:12px;">Лучший канал продаж сейчас</label>
+            <input type="text" id="fin-channel" placeholder="Например: Wildberries">
+          </div>
+          <div>
+            <label style="font-size:12px;">Выручка за последний месяц</label>
+            <input type="text" id="fin-revenue" placeholder="Например: 180 000 ₽">
+          </div>
+          <div>
+            <label style="font-size:12px;">Маржа примерно (после всех расходов)</label>
+            <input type="text" id="fin-margin" placeholder="Например: 25%">
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div style="margin-top:16px;">
       <button class="btn btn-primary" id="btn-next-step" onclick="goToClarify()">Далее → уточнения</button>
     </div>
@@ -1180,6 +1210,31 @@ function buildProfileContext() {
   if (p.sizeExact) parts.push(`Точное число сотрудников: ${p.sizeExact}`);
   if (p.goal) parts.push(`Главная задача на 3 месяца: "${p.goal}"`);
   return parts.length ? '\n\nПрофиль бизнеса:\n' + parts.join('\n') : '';
+}
+
+// #30C Financial context
+function toggleFinCtx() {
+  const panel = document.getElementById('fin-ctx-panel');
+  const arrow = document.getElementById('fin-ctx-arrow');
+  const btn = document.getElementById('btn-fin-ctx');
+  const open = panel.style.display === 'none';
+  panel.style.display = open ? 'block' : 'none';
+  arrow.textContent = open ? '▲' : '▼';
+  btn.style.borderRadius = open ? 'var(--r2) var(--r2) 0 0' : 'var(--r2)';
+}
+
+function buildFinancialContext() {
+  const product = document.getElementById('fin-product')?.value.trim();
+  const channel = document.getElementById('fin-channel')?.value.trim();
+  const revenue = document.getElementById('fin-revenue')?.value.trim();
+  const margin = document.getElementById('fin-margin')?.value.trim();
+  const parts = [];
+  if (product) parts.push(`Топ-товар/направление: ${product}`);
+  if (channel) parts.push(`Лучший канал: ${channel}`);
+  if (revenue) parts.push(`Выручка за месяц: ${revenue}`);
+  if (margin) parts.push(`Маржа: ${margin}`);
+  if (!parts.length) return '';
+  return '\n\nФинансовый контекст (используй эти цифры в гипотезах — говори про конкретные числа, не абстракции):\n' + parts.join('\n');
 }
 
 // ===== MOBILE SIDEBAR =====
@@ -1795,31 +1850,44 @@ async function analyzeStep1() {
   ].filter(Boolean).join('\n');
 
   const profileCtx = buildProfileContext();
+  const finCtx = buildFinancialContext();
+  // Сохраняем финансовый контекст в сессию для RCA
+  currentSession.finCtx = finCtx;
 
   try {
     const styleInstruction = STYLE_INSTRUCTIONS[questionStyle] || STYLE_INSTRUCTIONS.provocateur;
     const res = await callAPI(`Ты эксперт по рефреймингу бизнес-проблем на основе книги Shapiro "Invisible Solutions" (25 линз).
 
-${fullContext}${profileCtx}
+${fullContext}${profileCtx}${finCtx}
 
 СТИЛЬ АНАЛИЗА: ${styleInstruction}
 
 ${JARGON_RULE}
 
-СТРУКТУРА ОТВЕТА — строго:
-- 3 вопроса из разных линз Shapiro (выбери наиболее релевантные из 25)
-- 1 вопрос из метода Wedell-Wedellsborg (Look outside the frame / Rethink the goal / Examine bright spots / Look in the mirror)
-- 1 вопрос из метода Berger (Why → What If → How)
+ТВОЯ ЗАДАЧА — настоящий рефрейминг, не анализ:
+Найди где пользователь неосознанно ограничивает себя в самой постановке проблемы.
+Атакуй предположения которые он считает очевидными. Сломай рамку.
 
-ПРАВИЛА для всех вопросов:
-1. Разговорные и короткие — как спрашивает умный друг, не консультант
-2. Переворачивают базовое предположение с учётом всего контекста выше
-3. Без жаргона, одно предложение
-4. НЕ использовать вопросы про стейкхолдеров и "кому выгодно"
-5. Учитывай сферу, размер компании и ответы на уточнения
-6. Для каждого вопроса укажи distance: "close" (близко к текущему мышлению), "expand" (расширяет взгляд), "flip" (переворачивает всё)
+СТРУКТУРА — строго 5 вопросов:
 
-Линзы Shapiro — точный список из книги (используй номер и название):
+1. Shapiro (close) — вопрос который уточняет реальную проблему за симптомом. Пользователь описал симптом — найди что за ним стоит на самом деле.
+
+2. Shapiro (expand) — вопрос который меняет единицу анализа: другой клиент, другой временной горизонт, другой ресурс, другая метрика успеха.
+
+3. Shapiro (flip) — вопрос который ПЕРЕВОРАЧИВАЕТ базовое предположение. Если пользователь думает "мне нужно больше X" — спроси "а что если меньше X даст больше результата". Если думает "проблема в рынке" — "а что если проблема в тебе". Должен вызывать лёгкий дискомфорт.
+
+4. Wedell-Wedellsborg — атакуй саму постановку проблемы. Не "как решить" а "правильную ли проблему ты решаешь". Один из этих углов: Look outside the frame / Rethink the goal / Look in the mirror / Examine bright spots.
+
+5. Berger (Why→What If→How) — контринтуитивный вопрос который предлагает альтернативную бизнес-логику: другую модель монетизации, другой сегмент, другой формат продукта. Должен удивить.
+
+ЖЁСТКИЕ ЗАПРЕТЫ:
+- Запрещено давать советы или решения — только вопросы
+- Запрещено три вопроса про одну и ту же идею с разных сторон
+- Запрещено "мягкие" вопросы которые подтверждают текущую логику пользователя
+- Каждый вопрос должен атаковать РАЗНОЕ базовое предположение
+- Вопрос не должен начинаться со слов "Как вы могли бы" или "Что если попробовать"
+
+Линзы Shapiro (используй номер и название):
 Reduce Abstraction: #1:Leverage, #2:Deconstruct, #3:Reduce, #4:Eliminate, #5:Hyponym
 Increase Abstraction: #6:Analogy, #7:Result, #8:Concern Reframe, #9:Stretch, #10:Hypernym
 Change Perspective: #11:Resequence, #12:Reassign, #13:Access, #14:Emotion, #15:Substitute
@@ -1829,7 +1897,7 @@ Zero-In: #21:Real Problem, #22:Real Business, #23:Insights, #24:Variations, #25:
 Верни ТОЛЬКО валидный JSON без markdown:
 {
   "questions": [
-    {"lens": "Shapiro #[номер]: [Название]", "lens_hint": "одно предложение что означает эта линза", "question": "вопрос", "distance": "close"},
+    {"lens": "Shapiro #[номер]: [Название]", "lens_hint": "одно предложение — какое предположение атакует эта линза", "question": "вопрос", "distance": "close"},
     {"lens": "Shapiro #[номер]: [Название]", "lens_hint": "одно предложение", "question": "вопрос", "distance": "expand"},
     {"lens": "Shapiro #[номер]: [Название]", "lens_hint": "одно предложение", "question": "вопрос", "distance": "flip"},
     {"lens": "Wedell-Wedellsborg — [Название метода]", "lens_hint": "одно предложение", "question": "вопрос", "distance": "expand"},
@@ -1973,40 +2041,56 @@ async function goToRCA() {
   setProgressStep(2);
 
   try {
-    const res = await callAPI(`Ты стратегический коуч для собственников бизнеса. Построй Root Cause Analysis и гипотезы для проверки.
+    const finCtx = currentSession.finCtx || '';
+    const res = await callAPI(`Ты стратегический коуч для собственников бизнеса. Построй Root Cause Analysis и три гипотезы с разными механизмами роста.
 
 Проблема: "${currentSession.problem}"
-Рефреймирующий фокус: "${focusText}"
-${buildProfileContext()}
+Рефреймирующий фокус (выбранный пользователем): "${focusText}"
+${buildProfileContext()}${finCtx}
 
 ${JARGON_RULE}
 ${COACH_LANG}
 
-ПРАВИЛА:
-1. Корневая причина — неочевидная, не симптом
-2. Три ветки дерева — разные углы, не вариации одного
-3. Гипотезы конкретные, проверяемые за 1-2 недели без больших ресурсов
-4. Одна гипотеза должна удивить — контринтуитивная
-5. confidence: оцени реально исходя из доступных данных в задаче. Числа должны быть разными и отражать реальную уверенность — не копируй шаблон
+ПРАВИЛА RCA:
+1. Корневая причина — неочевидная. Не симптом, не то что пользователь уже назвал.
+2. Три ветки дерева должны вести к ТРЁМ РАЗНЫМ точкам вмешательства — операционной, коммерческой, и структурной/поведенческой.
+3. Каждая ветка должна давать понятный выход — "если это причина, то вот что можно изменить".
+
+ПРАВИЛА ГИПОТЕЗ — самое важное:
+Три гипотезы должны быть про РАЗНЫЕ механизмы. Запрещено три вариации одной идеи.
+
+Гипотеза 1 — ОПЕРАЦИОННАЯ (горизонт: 1-2 недели):
+Что можно изменить прямо сейчас в текущих процессах, ресурсах или приоритетах без новых денег и людей. Конкретная, проверяемая за 2 недели.
+${finCtx ? 'Если есть финансовый контекст — используй реальные цифры в гипотезе и в методе проверки.' : ''}
+
+Гипотеза 2 — КОММЕРЧЕСКАЯ (горизонт: 1-2 месяца):
+Новый способ монетизации, новый клиентский сегмент, новый партнёр, новый формат сделки. Не оптимизация текущего — а другой способ зарабатывать на том же продукте или ресурсе.
+
+Гипотеза 3 — СМЕНА БИЗНЕС-МОДЕЛИ (горизонт: структурный):
+Должна удивить. Предложи что-то что меняет саму игру: подписка вместо разовых продаж, b2b вместо b2c, франшиза, лицензирование, совладение, платформа. Или переверни: убери то что считается обязательным. Должна вызывать реакцию "это безумие — или это гениально".
+
+ЖЁСТКИЙ ЗАПРЕТ: не давай три варианта "сфокусируйся на одном продукте". Это одна идея.
+
+${finCtx ? 'ВАЖНО: В методе проверки гипотез используй конкретные числа из финансового контекста — не абстрактные советы.' : ''}
 
 Верни ТОЛЬКО валидный JSON без markdown:
 {
-  "insight": "главный инсайт этой сессии — одно предложение которое изменит взгляд на проблему",
+  "insight": "главный инсайт — одно острое предложение которое ломает текущую логику пользователя, не описывает проблему",
   "rca": {
-    "root": "неочевидная корневая причина через призму рефрейма",
+    "root": "неочевидная корневая причина — не симптом, через призму рефрейма",
     "causes": [
-      {"cause": "системная причина 1", "deep": "что за ней стоит"},
-      {"cause": "системная причина 2", "deep": "что за ней стоит"},
-      {"cause": "системная причина 3", "deep": "что за ней стоит"}
+      {"cause": "операционная точка вмешательства", "deep": "конкретно что здесь можно изменить"},
+      {"cause": "коммерческая точка вмешательства", "deep": "конкретно что здесь можно изменить"},
+      {"cause": "структурная/поведенческая точка вмешательства", "deep": "конкретно что здесь можно изменить"}
     ]
   },
   "hypotheses": [
-    {"title": "гипотеза 1", "confidence": 79, "test": "конкретное действие для проверки", "status": "strong"},
-    {"title": "гипотеза 2", "confidence": 52, "test": "конкретное действие для проверки", "status": "test"},
-    {"title": "гипотеза 3", "confidence": 31, "test": "конкретное действие для проверки", "status": "weak"}
+    {"title": "операционная гипотеза — конкретное утверждение от первого лица", "confidence": 75, "test": "конкретные шаги проверки за 1-2 недели", "status": "strong"},
+    {"title": "коммерческая гипотеза — новый механизм монетизации или сегмент", "confidence": 55, "test": "конкретные шаги проверки за 1-2 месяца", "status": "test"},
+    {"title": "гипотеза смены модели — контринтуитивная, должна удивить", "confidence": 30, "test": "минимальный способ проверить идею без больших вложений", "status": "weak"}
   ]
 }
-Правило confidence: числа в примере выше — просто заглушки. Замени их своей реальной оценкой. status автоматически: strong если >65%, test если 35-65%, weak если <35%.`);
+Правило confidence: числа выше — заглушки. Оцени реально. status: strong >65%, test 35-65%, weak <35%.`);
 
     const data = JSON.parse(res.replace(/```json|```/g, '').trim());
     currentSession.rca = data.rca;
@@ -2208,6 +2292,8 @@ body{font-family:'DM Sans',sans-serif;background:#F5F0E8;color:#1A2E24;font-size
   .page{box-shadow:none;}
   @page{margin:0;}
 }
+/* #29: Force background colors when printing */
+* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
 </style></head><body>
 <div class="page">
 
