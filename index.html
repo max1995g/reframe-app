@@ -293,6 +293,26 @@ body.dark-theme #fin-ctx-panel { background: #1E2A22; border-color: var(--border
 body.dark-theme .setup-card { background: #1E2A22; border-color: var(--border); }
 /* Deep dive panel dark */
 body.dark-theme #deep-dive-panel { background: #1A3325; border-color: rgba(93,184,130,0.2); }
+/* #38: Override inline background:white on dynamic elements */
+body.dark-theme #resume-banner { background: #1A3325 !important; border-color: var(--accent) !important; color: var(--ink); }
+body.dark-theme #resume-banner p { color: var(--ink2) !important; }
+body.dark-theme #fin-ctx-panel { background: #1E2A22 !important; border-color: var(--border2) !important; }
+body.dark-theme #constraints-panel { background: #1E2A22 !important; border-color: var(--border2) !important; }
+body.dark-theme #btn-fin-ctx { background: #1E2A22 !important; border-color: var(--border2) !important; color: var(--ink2) !important; }
+body.dark-theme #btn-constraints { background: #1E2A22 !important; border-color: var(--border2) !important; color: var(--ink2) !important; }
+body.dark-theme #mode-quick { background: #1E2A22 !important; border-color: var(--border2) !important; }
+body.dark-theme #mode-quick span { color: var(--ink) !important; }
+body.dark-theme #mode-quick p { color: var(--ink3) !important; }
+body.dark-theme #mode-deep p { color: rgba(255,255,255,0.65) !important; }
+body.dark-theme .action-step { border-color: var(--border) !important; }
+body.dark-theme #action-plan-wrap { background: #1E2A22 !important; border-color: var(--border2) !important; }
+body.dark-theme #action-plan-steps > div { background: #161E19 !important; }
+body.dark-theme .ex-card { background: #1E2A22 !important; }
+body.dark-theme .usage-bar-wrap { background: #1E2A22 !important; }
+body.dark-theme #quick-next-step-wrap { background: var(--accent-light) !important; border-color: #C8DDD030 !important; }
+/* Value cards section */
+body.dark-theme [style*="background:#fff"] { background: #1E2A22 !important; }
+body.dark-theme [style*="background: #fff"] { background: #1E2A22 !important; }
 
 /* #35/#37 Font sizes — MUST be on html element, rem is relative to html not body */
 html { font-size: 16px; }
@@ -445,8 +465,8 @@ html.font-large { font-size: 19px; }
 
   <div class="land-hero">
     <span class="land-eyebrow">Основано на 4 мировых книгах по рефреймингу</span>
-    <h1 class="land-title">Ты решаешь<br><em>не ту проблему.</em><br>И теряешь деньги.</h1>
-    <p class="land-sub">Reframe — AI-коуч, который помогает переосмыслить любую бизнес-проблему, найти скрытые причины и сформировать гипотезы для проверки.</p>
+    <h1 class="land-title">Прежде чем решать —<br>убедись что решаешь<br><em>правильную проблему</em></h1>
+    <p class="land-sub">Перед важным решением — убедись что смотришь на ситуацию под всеми углами. 10 минут. Без консультанта.</p>
     <div class="land-cta">
       <button class="btn-land-primary" onclick="goToApp()">Открыть инструмент →</button>
       <button class="btn-land-outline" onclick="document.querySelector('.land-examples').scrollIntoView({behavior:'smooth'})">Посмотреть примеры</button>
@@ -658,7 +678,7 @@ html.font-large { font-size: 19px; }
 
   <div id="step-input">
     <h1 class="page-title">Новая сессия</h1>
-    <p class="page-sub">Опиши проблему — получишь рефреймы, RCA и гипотезы</p>
+    <p class="page-sub">Опиши что происходит — получишь углы которые ты не видел и конкретный следующий шаг</p>
     <div id="usage-display"></div>
 
     <!-- #34 Resume banner -->
@@ -849,7 +869,37 @@ html.font-large { font-size: 19px; }
     <p style="color:var(--ink3);font-size:13px;margin-bottom:18px;">Дерево причин через выбранные рефреймы</p>
     <div class="problem-quote" id="rca-focus-display"></div>
     <div id="rca-container"></div>
-    <div style="display:flex;gap:9px;margin-top:18px;">
+
+    <!-- #40 Constraints block -->
+    <div style="margin-top:16px;">
+      <button class="btn btn-xs btn-outline" onclick="toggleConstraints()" id="btn-constraints" style="color:var(--ink3);font-size:0.8125rem;width:100%;justify-content:space-between;padding:11px 16px;background:#fff;border-color:var(--border2);">
+        <span>⚠️ Указать текущие ограничения — гипотезы станут реалистичнее</span>
+        <span id="constraints-arrow" style="font-size:0.625rem;">▼</span>
+      </button>
+      <div id="constraints-panel" style="display:none;background:#fff;border:1px solid var(--border2);border-top:none;border-radius:0 0 var(--r2) var(--r2);padding:18px 20px;">
+        <p style="font-size:0.75rem;color:var(--ink3);margin-bottom:14px;line-height:1.5;">Не обязательно. Если отметишь что сейчас недоступно — AI не будет предлагать решения которые требуют этих ресурсов.</p>
+        <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:14px;">
+          <label style="display:flex;align-items:center;gap:9px;font-size:0.875rem;font-weight:400;cursor:pointer;">
+            <input type="checkbox" id="c-budget" style="width:16px;height:16px;min-width:16px;margin:0;"> Нет свободного бюджета на эксперименты
+          </label>
+          <label style="display:flex;align-items:center;gap:9px;font-size:0.875rem;font-weight:400;cursor:pointer;">
+            <input type="checkbox" id="c-people" style="width:16px;height:16px;min-width:16px;margin:0;"> Нет подходящих людей для реализации
+          </label>
+          <label style="display:flex;align-items:center;gap:9px;font-size:0.875rem;font-weight:400;cursor:pointer;">
+            <input type="checkbox" id="c-time" style="width:16px;height:16px;min-width:16px;margin:0;"> Нет времени — всё в операционке
+          </label>
+          <label style="display:flex;align-items:center;gap:9px;font-size:0.875rem;font-weight:400;cursor:pointer;">
+            <input type="checkbox" id="c-authority" style="width:16px;height:16px;min-width:16px;margin:0;"> Нет полномочий менять процессы
+          </label>
+        </div>
+        <div>
+          <label style="font-size:0.75rem;">Другое ограничение</label>
+          <input type="text" id="c-other" placeholder="Например: сезонный спад, партнёр блокирует решения...">
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:9px;margin-top:14px;">
       <button class="btn btn-outline" onclick="backToQuestions()">← Назад</button>
       <button class="btn btn-primary" onclick="goToHypotheses()">Сформировать гипотезы →</button>
     </div>
@@ -1371,6 +1421,29 @@ function toggleFinCtx() {
   panel.style.display = open ? 'block' : 'none';
   arrow.textContent = open ? '▲' : '▼';
   btn.style.borderRadius = open ? 'var(--r2) var(--r2) 0 0' : 'var(--r2)';
+}
+
+// #40 Constraints
+function toggleConstraints() {
+  const panel = document.getElementById('constraints-panel');
+  const arrow = document.getElementById('constraints-arrow');
+  const btn = document.getElementById('btn-constraints');
+  const open = panel.style.display === 'none';
+  panel.style.display = open ? 'block' : 'none';
+  arrow.textContent = open ? '▲' : '▼';
+  btn.style.borderRadius = open ? 'var(--r2) var(--r2) 0 0' : 'var(--r2)';
+}
+
+function buildConstraintsContext() {
+  const items = [];
+  if (document.getElementById('c-budget')?.checked) items.push('нет свободного бюджета на эксперименты');
+  if (document.getElementById('c-people')?.checked) items.push('нет подходящих людей для реализации');
+  if (document.getElementById('c-time')?.checked) items.push('нет времени — всё в операционке');
+  if (document.getElementById('c-authority')?.checked) items.push('нет полномочий менять процессы');
+  const other = document.getElementById('c-other')?.value.trim();
+  if (other) items.push(other);
+  if (!items.length) return '';
+  return `\n\nТЕКУЩИЕ ОГРАНИЧЕНИЯ (строго учитывай — не предлагай решения которые требуют этих ресурсов):\n${items.map(i => `- ${i}`).join('\n')}\nГипотезы должны быть реалистичны в этих условиях. Если ограничение критично для гипотезы — скажи об этом честно в методе проверки.`;
 }
 
 function buildFinancialContext() {
@@ -2204,11 +2277,12 @@ async function goToRCA() {
 
   try {
     const finCtx = currentSession.finCtx || '';
+    const constraintsCtx = buildConstraintsContext();
     const res = await callAPI(`Ты стратегический коуч для собственников бизнеса. Построй Root Cause Analysis и три гипотезы с разными механизмами роста.
 
 Проблема: "${currentSession.problem}"
 Рефреймирующий фокус (выбранный пользователем): "${focusText}"
-${buildProfileContext()}${finCtx}
+${buildProfileContext()}${finCtx}${constraintsCtx}
 
 ${JARGON_RULE}
 ${COACH_LANG}
