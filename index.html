@@ -169,6 +169,19 @@ label { font-size: 0.875rem; font-weight: 500; color: var(--ink2); display: bloc
 .conf-label { font-size: 0.8125rem; color: var(--ink3); min-width: 32px; }
 .hyp-test { font-size: 0.9375rem; color: var(--ink2); line-height: 1.6; }
 .hyp-test strong { color: var(--ink); font-weight: 500; }
+.hyp-roi { background: var(--gold-light); border: 1px solid rgba(139,105,20,0.22); border-radius: var(--r); padding: 11px 13px; margin: 11px 0; font-size: 0.875rem; color: var(--ink2); line-height: 1.55; }
+.hyp-roi strong { color: var(--gold); font-weight: 500; }
+.hyp-criteria-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.hyp-criteria { border-radius: var(--r); padding: 11px 13px; font-size: 0.8125rem; line-height: 1.5; }
+.hyp-criteria.success { background: var(--accent-light); border: 1px solid rgba(61,122,90,0.2); color: var(--ink2); }
+.hyp-criteria.kill { background: var(--danger-light); border: 1px solid rgba(122,36,36,0.18); color: var(--ink2); }
+.hyp-criteria-title { font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.08em; margin-bottom: 6px; text-transform: uppercase; }
+.hyp-criteria.success .hyp-criteria-title { color: var(--accent); }
+.hyp-criteria.kill .hyp-criteria-title { color: var(--danger); }
+.hyp-criteria ul { margin: 0; padding-left: 17px; }
+.hyp-criteria li { margin-bottom: 4px; }
+.hyp-decision { margin-top: 10px; background: var(--paper2); border-radius: var(--r); padding: 10px 12px; font-size: 0.8125rem; color: var(--ink2); line-height: 1.5; }
+.hyp-decision strong { color: var(--ink); font-weight: 500; }
 .hyp-actions { display: flex; gap: 5px; margin-top: 12px; flex-wrap: wrap; }
 
 .history-item { background: #fff; border: 1px solid var(--border); border-radius: var(--r2); padding: 16px 18px; margin-bottom: 9px; cursor: pointer; transition: border-color 0.15s; }
@@ -396,6 +409,7 @@ html.font-large { font-size: 19px; }
   .hyp-top { flex-direction: column; gap: 6px; }
   .hyp-actions { gap: 6px; }
   .hyp-actions .btn { font-size: 11px; padding: 5px 8px; }
+  .hyp-criteria-grid { grid-template-columns: 1fr; }
 
   /* Action plan */
   #action-plan-actions { flex-direction: column; }
@@ -554,15 +568,15 @@ html.font-large { font-size: 19px; }
           <div class="feat-icon">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2v4M9 12v4M2 9h4M12 9h4" stroke="white" stroke-width="1.4" stroke-linecap="round"/><circle cx="9" cy="9" r="3" stroke="white" stroke-width="1.4"/></svg>
           </div>
-          <div class="feat-title">Root Cause Analysis</div>
-          <div class="feat-desc">Визуальное дерево причин — от симптома до глубинной причины по методу FrED</div>
+          <div class="feat-title">Карта механизмов</div>
+          <div class="feat-desc">Три возможных механизма проблемы — операционный, коммерческий и структурный</div>
         </div>
         <div class="feat">
           <div class="feat-icon">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 14l4-5 3 3 5-8" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
           <div class="feat-title">Гипотезы с трекером</div>
-          <div class="feat-desc">Конкретные гипотезы для проверки с уровнем уверенности и методом теста</div>
+          <div class="feat-desc">Гипотезы с ROI, success criteria и kill criteria — понятно что проверять и когда остановиться</div>
         </div>
         <div class="feat">
           <div class="feat-icon">
@@ -693,7 +707,7 @@ html.font-large { font-size: 19px; }
     </div>
     <div id="demo-banner" style="display:none;background:var(--accent-light);border:1px solid var(--accent);border-radius:var(--r2);padding:14px 18px;margin-bottom:20px;cursor:pointer;" onclick="loadDemo()">
       <p style="font-size:12px;font-weight:500;color:var(--accent);margin-bottom:3px;">ПОСМОТРИ КАК ЭТО РАБОТАЕТ</p>
-      <p style="font-size:14px;color:var(--ink2);margin:0;">Нажми чтобы загрузить готовый пример сессии → увидишь рефреймы, RCA и гипотезы для реального бизнес-кейса</p>
+      <p style="font-size:14px;color:var(--ink2);margin:0;">Нажми чтобы загрузить готовый пример сессии → увидишь рефреймы, карту механизмов и гипотезы для реального бизнес-кейса</p>
     </div>
 
     <!-- #11 Режим сессии -->
@@ -704,7 +718,7 @@ html.font-large { font-size: 19px; }
           <span style="font-size:15px;font-weight:500;color:var(--ink);">Быстрый инсайт</span>
           <span style="font-size:11px;color:var(--ink3);margin-left:auto;">~3 мин</span>
         </div>
-        <p style="font-size:13px;color:var(--ink3);line-height:1.5;margin:0;">Проблема → 3 вопроса → выбор → следующий шаг. Без RCA и гипотез.</p>
+        <p style="font-size:13px;color:var(--ink3);line-height:1.5;margin:0;">Проблема → 3 вопроса → выбор → следующий шаг. Без карты механизмов и гипотез.</p>
       </div>
       <div id="mode-deep" onclick="setMode('deep')" style="flex:1;background:var(--ink);border:1.5px solid var(--ink);border-radius:var(--r2);padding:16px 18px;cursor:pointer;transition:all 0.15s;">
         <div style="display:flex;align-items:center;gap:9px;margin-bottom:5px;">
@@ -712,7 +726,7 @@ html.font-large { font-size: 19px; }
           <span style="font-size:15px;font-weight:500;color:#fff;">Глубокий анализ</span>
           <span style="font-size:11px;color:rgba(255,255,255,0.5);margin-left:auto;">~10 мин</span>
         </div>
-        <p style="font-size:13px;color:rgba(255,255,255,0.65);line-height:1.5;margin:0;">Полный флоу: уточнения → рефреймы → RCA → гипотезы → план действий.</p>
+        <p style="font-size:13px;color:rgba(255,255,255,0.65);line-height:1.5;margin:0;">Полный флоу: уточнения → рефреймы → карта механизмов → гипотезы → план действий.</p>
       </div>
     </div>
     <div class="steps">
@@ -722,7 +736,7 @@ html.font-large { font-size: 19px; }
       <div class="step-line"></div>
       <div class="step-item"><div class="step-circle">2</div><span class="step-text">Рефреймы</span></div>
       <div class="step-line"></div>
-      <div class="step-item"><div class="step-circle">3</div><span class="step-text">RCA</span></div>
+      <div class="step-item"><div class="step-circle">3</div><span class="step-text">Механизмы</span></div>
       <div class="step-line"></div>
       <div class="step-item"><div class="step-circle">4</div><span class="step-text">Гипотезы</span></div>
     </div>
@@ -763,6 +777,9 @@ html.font-large { font-size: 19px; }
         <button class="btn btn-xs btn-outline" onclick="fillEx('Мы теряем 40% клиентов после первого месяца подписки, хотя первые отзывы положительные')">Пример: отток</button>
         <button class="btn btn-xs btn-outline" onclick="fillEx('Команда не выполняет план продаж 3 месяца подряд — лиды есть, но конверсия падает')">Пример: продажи</button>
         <button class="btn btn-xs btn-outline" onclick="fillEx('Новый продукт не продаётся несмотря на большой маркетинговый бюджет')">Пример: продукт</button>
+        <button class="btn btn-xs btn-outline" onclick="fillEx('Выручка растёт, но денег в бизнесе почти не остаётся — маржа падает уже 4 месяца')">Пример: маржа</button>
+        <button class="btn btn-xs btn-outline" onclick="fillEx('Клиенты покупают один раз и не возвращаются, хотя продуктом в целом довольны')">Пример: повторные продажи</button>
+        <button class="btn btn-xs btn-outline" onclick="fillEx('Каждый месяц возникает кассовый разрыв: продажи есть, но не хватает денег на зарплаты и закупку')">Пример: кассовый разрыв</button>
       </div>
     </div>
 
@@ -809,7 +826,7 @@ html.font-large { font-size: 19px; }
       <div class="step-line"></div>
       <div class="step-item"><div class="step-circle">2</div><span class="step-text">Рефреймы</span></div>
       <div class="step-line"></div>
-      <div class="step-item"><div class="step-circle">3</div><span class="step-text">RCA</span></div>
+      <div class="step-item"><div class="step-circle">3</div><span class="step-text">Механизмы</span></div>
       <div class="step-line"></div>
       <div class="step-item"><div class="step-circle">4</div><span class="step-text">Гипотезы</span></div>
     </div>
@@ -829,7 +846,7 @@ html.font-large { font-size: 19px; }
       <div class="step-line"></div>
       <div class="step-item"><div class="step-circle active">2</div><span class="step-text active">Рефреймы</span></div>
       <div class="step-line"></div>
-      <div class="step-item"><div class="step-circle">3</div><span class="step-text">RCA</span></div>
+      <div class="step-item"><div class="step-circle">3</div><span class="step-text">Механизмы</span></div>
       <div class="step-line"></div>
       <div class="step-item"><div class="step-circle">4</div><span class="step-text">Гипотезы</span></div>
     </div>
@@ -851,7 +868,7 @@ html.font-large { font-size: 19px; }
 
     <div style="display:flex;gap:9px;margin-top:16px;">
       <button class="btn btn-outline" onclick="goToStep('step-input')">← Назад</button>
-      <button class="btn btn-primary" id="btn-to-rca" onclick="goToRCA()" disabled>Построить RCA →</button>
+      <button class="btn btn-primary" id="btn-to-rca" onclick="goToRCA()" disabled>Построить карту →</button>
     </div>
   </div>
 
@@ -861,12 +878,12 @@ html.font-large { font-size: 19px; }
       <div class="step-line"></div>
       <div class="step-item"><div class="step-circle done">✓</div><span class="step-text">Рефреймы</span></div>
       <div class="step-line"></div>
-      <div class="step-item"><div class="step-circle active">3</div><span class="step-text active">RCA</span></div>
+      <div class="step-item"><div class="step-circle active">3</div><span class="step-text active">Механизмы</span></div>
       <div class="step-line"></div>
       <div class="step-item"><div class="step-circle">4</div><span class="step-text">Гипотезы</span></div>
     </div>
-    <h2 style="font-family:'Playfair Display',serif;font-size:22px;margin-bottom:5px;font-weight:400;">Root Cause Analysis</h2>
-    <p style="color:var(--ink3);font-size:13px;margin-bottom:18px;">Дерево причин через выбранные рефреймы</p>
+    <h2 style="font-family:'Playfair Display',serif;font-size:22px;margin-bottom:5px;font-weight:400;">Карта механизмов проблемы</h2>
+    <p style="color:var(--ink3);font-size:13px;margin-bottom:18px;">Три рабочие версии того, как проблема может возникать и где в неё можно вмешаться</p>
     <div class="problem-quote" id="rca-focus-display"></div>
     <div id="rca-container"></div>
 
@@ -911,7 +928,7 @@ html.font-large { font-size: 19px; }
       <div class="step-line"></div>
       <div class="step-item"><div class="step-circle done">✓</div><span class="step-text">Рефреймы</span></div>
       <div class="step-line"></div>
-      <div class="step-item"><div class="step-circle done">✓</div><span class="step-text">RCA</span></div>
+      <div class="step-item"><div class="step-circle done">✓</div><span class="step-text">Механизмы</span></div>
       <div class="step-line"></div>
       <div class="step-item"><div class="step-circle active">4</div><span class="step-text active">Гипотезы</span></div>
     </div>
@@ -924,7 +941,7 @@ html.font-large { font-size: 19px; }
     <div id="hypotheses-list"></div>
     <div style="margin-top:18px;background:var(--accent-light);border-radius:var(--r2);padding:16px 18px;">
       <p style="font-size:13px;font-weight:500;color:var(--accent);margin-bottom:3px;">Следующий шаг — Chevallier FrED: Explore → Decide</p>
-      <p style="font-size:13px;color:var(--ink2);line-height:1.5;">Для каждой гипотезы: метрика проверки, минимальный эксперимент, дедлайн. Не инвестируй крупно до подтверждения.</p>
+      <p style="font-size:13px;color:var(--ink2);line-height:1.5;">Для каждой гипотезы: ROI, метрика проверки, минимальный эксперимент, success criteria, kill criteria и дедлайн. Не инвестируй крупно до подтверждения.</p>
     </div>
 
     <!-- #12 Action plan block -->
@@ -1174,7 +1191,7 @@ html.font-large { font-size: 19px; }
   </div>
   <div class="card" style="max-width:560px;background:var(--accent-light);border-color:#C8DDD0;">
     <p style="font-size:14px;color:var(--accent);font-weight:500;margin-bottom:4px;">Как это работает</p>
-    <p style="font-size:13px;color:var(--ink2);line-height:1.6;">Профиль добавляется в каждый промпт — AI учитывает твою сферу, масштаб и цели при генерации рефреймов, RCA и гипотез. Вопросы становятся конкретнее.</p>
+    <p style="font-size:13px;color:var(--ink2);line-height:1.6;">Профиль добавляется в каждый промпт — AI учитывает твою сферу, масштаб и цели при генерации рефреймов, карты механизмов и гипотез. Вопросы становятся конкретнее.</p>
   </div>
 </div>
 
@@ -1235,7 +1252,7 @@ const STEP_NAMES = {
   'step-input': 'Ввод проблемы',
   'step-clarify': 'Уточнения',
   'step-questions': 'Рефреймы',
-  'step-rca': 'Root Cause Analysis',
+  'step-rca': 'Карта механизмов',
   'step-hypotheses': 'Гипотезы',
   'step-quick-result': 'Быстрый инсайт'
 };
@@ -1490,7 +1507,15 @@ async function generateActionPlan() {
   content.style.display = 'none';
   if (btn) btn.disabled = true;
 
-  const hyps = currentSession.hypotheses.slice(0, 3).map((h, i) => `${i+1}. ${h.title} (проверка: ${h.test})`).join('\n');
+  const hyps = currentSession.hypotheses.slice(0, 3).map((raw, i) => {
+    const h = normalizeHypothesis(raw);
+    return `${i+1}. ${h.title}
+ROI: ${h.roi}
+Проверка: ${h.test}
+Success criteria: ${h.successCriteria.join('; ')}
+Kill criteria: ${h.killCriteria.join('; ')}
+Правило решения: ${h.decisionRule}`;
+  }).join('\n\n');
 
   try {
     const res = await callAPI(`Ты бизнес-коуч. Составь план действий на эту неделю на основе гипотез.
@@ -1505,6 +1530,7 @@ ${COACH_LANG}
 ПРАВИЛА:
 - Ровно 3 шага, каждый конкретный и выполнимый за 1-7 дней
 - Каждый шаг: действие + дедлайн (конкретный день недели) + ожидаемый результат
+- В каждом шаге учитывай ROI и kill criteria — пользователь должен понять когда остановиться
 - Разговорный стиль, без жаргона
 - Шаги должны логически вытекать из гипотез
 
@@ -1861,9 +1887,42 @@ function loadDemo() {
       ]
     },
     hypotheses: [
-      { id: 1, title: 'Топ-20% клиентов имеют общий триггер покупки который мы не используем в рекламе', confidence: 81, test: 'Позвонить 10 лучшим клиентам и спросить: что произошло прямо перед тем как вы решили купить?', status: 'strong', notes: '' },
-      { id: 2, title: 'Лендинг теряет 60%+ людей на первом экране потому что не отвечает на вопрос "это для меня?"', confidence: 67, test: 'Записать сессии через Hotjar на 50 посетителях — где они уходят и что читают', status: 'strong', notes: '' },
-      { id: 3, title: 'Реклама привлекает "исследователей" а не "покупателей" — нужен другой канал или оффер', confidence: 44, test: 'Запустить A/B тест: одно объявление с ценой, второе без — сравнить качество лидов', status: 'test', notes: '' }
+      {
+        id: 1,
+        title: 'Топ-20% клиентов имеют общий триггер покупки который мы не используем в рекламе',
+        confidence: 81,
+        roi: 'Потенциал: сохранить 60 000-120 000 ₽ рекламного бюджета в месяц и поднять продажи на 15-25% без увеличения расходов.',
+        test: 'Позвонить 10 лучшим клиентам и спросить: что произошло прямо перед тем как вы решили купить?',
+        successCriteria: ['7 из 10 клиентов называют один и тот же триггер покупки', 'Новый оффер по этому триггеру дает минимум +20% к конверсии в заявку', 'Стоимость качественной заявки падает минимум на 15%'],
+        killCriteria: ['Нет повторяющегося триггера минимум у 5 клиентов', 'После 7 дней теста новый оффер не улучшает конверсию хотя бы на 10%', 'Клиенты говорят что решение о покупке зависело не от сообщения, а от цены или наличия'],
+        decisionRule: 'Если есть общий триггер и тестовый оффер улучшает конверсию на 20%+, переносим бюджет на новые объявления. Если нет - закрываем гипотезу и проверяем качество обработки заявок.',
+        status: 'strong',
+        notes: ''
+      },
+      {
+        id: 2,
+        title: 'Лендинг теряет 60%+ людей на первом экране потому что не отвечает на вопрос "это для меня?"',
+        confidence: 67,
+        roi: 'Потенциал: вернуть 20-35% потерянных заявок и сохранить 30 000-80 000 ₽ в месяц на неэффективном трафике.',
+        test: 'Записать сессии через Hotjar на 50 посетителях и посмотреть где они уходят, что читают и до какого блока доходят.',
+        successCriteria: ['Больше 50% уходов происходит до второго экрана', 'Пользователи не кликают CTA или не читают блок с оффером', 'Новая версия первого экрана дает минимум +15% к кликам по CTA'],
+        killCriteria: ['Большинство пользователей доходит до формы, но не отправляет заявку', 'Новый первый экран не улучшает клики по CTA минимум на 10%', 'Главная потеря происходит после заявки, а не на лендинге'],
+        decisionRule: 'Если первый экран подтвержден как узкое место - переписываем оффер и CTA. Если нет - переносим внимание на форму, менеджера или качество лидов.',
+        status: 'strong',
+        notes: ''
+      },
+      {
+        id: 3,
+        title: 'Реклама привлекает "исследователей" а не "покупателей" — нужен другой канал или оффер',
+        confidence: 44,
+        roi: 'Потенциал: сократить до 30% пустых лидов и высвободить 40 000-100 000 ₽ в месяц на каналы с покупательским намерением.',
+        test: 'Запустить A/B тест: одно объявление с ценой и ограничением, второе без цены — сравнить долю людей готовых купить в течение 7 дней.',
+        successCriteria: ['Объявление с ценой дает меньше лидов, но минимум на 25% выше долю готовых купить', 'Менеджеры подтверждают что лиды стали конкретнее по запросу', 'Стоимость продажи не растет несмотря на меньший объем заявок'],
+        killCriteria: ['Качество лидов не меняется после добавления цены', 'Стоимость продажи растет больше чем на 20%', 'Люди с ценой приходят, но не покупают из-за продукта или доверия'],
+        decisionRule: 'Если качество лидов растет без ухудшения стоимости продажи - масштабируем фильтрующий оффер. Если нет - возвращаемся к продукту или доверию, а не к рекламе.',
+        status: 'test',
+        notes: ''
+      }
     ],
     rcaCache: {}
   };
@@ -1871,6 +1930,7 @@ function loadDemo() {
   document.getElementById('demo-banner').style.display = 'none';
   document.getElementById('session-insight-block').style.display = 'block';
   document.getElementById('session-insight-text').textContent = currentSession.insight;
+  renderRCA(currentSession.rca, currentSession.selectedQ.join(' / '));
   renderHypotheses();
   goToStep('step-hypotheses');
   showToast('Демо-сессия загружена ✓');
@@ -2085,7 +2145,7 @@ async function analyzeStep1() {
 
   const profileCtx = buildProfileContext();
   const finCtx = buildFinancialContext();
-  // Сохраняем финансовый контекст в сессию для RCA
+  // Сохраняем финансовый контекст в сессию для карты механизмов
   currentSession.finCtx = finCtx;
 
   try {
@@ -2270,15 +2330,15 @@ async function goToRCA() {
     return;
   }
 
-  // Нет кэша — делаем один запрос сразу с RCA + гипотезами
+  // Нет кэша — делаем один запрос сразу с картой механизмов + гипотезами
   goToStep('step-loading');
-  document.getElementById('loading-msg') && (document.getElementById('loading-msg').textContent = 'Строю RCA и гипотезы...');
+  document.getElementById('loading-msg') && (document.getElementById('loading-msg').textContent = 'Строю карту механизмов и гипотезы...');
   setProgressStep(2);
 
   try {
     const finCtx = currentSession.finCtx || '';
     const constraintsCtx = buildConstraintsContext();
-    const res = await callAPI(`Ты стратегический коуч для собственников бизнеса. Построй Root Cause Analysis и три гипотезы с разными механизмами роста.
+    const res = await callAPI(`Ты стратегический коуч для собственников бизнеса. Построй карту механизмов проблемы и три гипотезы с разными механизмами роста.
 
 Проблема: "${currentSession.problem}"
 Рефреймирующий фокус (выбранный пользователем): "${focusText}"
@@ -2287,13 +2347,19 @@ ${buildProfileContext()}${finCtx}${constraintsCtx}
 ${JARGON_RULE}
 ${COACH_LANG}
 
-ПРАВИЛА RCA — строго:
-1. Корневая причина — одно короткое неожиданное предложение. Запрещено повторять то что пользователь уже назвал. Должна создавать реакцию "я так не формулировал, но это точно".
+ПРАВИЛА КАРТЫ МЕХАНИЗМОВ — строго:
+1. Главный механизм — одно короткое неожиданное предложение. Это не "единственная корневая причина", а рабочая версия того, как проблема может производиться системой. Запрещено повторять то что пользователь уже назвал. Должна создавать реакцию "я так не формулировал, но это точно".
 2. Три ветки — названия максимум 5-7 слов. Описание максимум 2 предложения — что происходит, не что делать. Решения идут в гипотезы.
 3. Каждая ветка ведёт к разной точке вмешательства: операционной, коммерческой, структурной.
 
 ПРАВИЛА ГИПОТЕЗ — самое важное:
 Три гипотезы должны быть про РАЗНЫЕ механизмы. Запрещено три вариации одной идеи.
+
+Для каждой гипотезы обязательно дай экономический слой:
+- roi: сколько денег можно заработать, сохранить или не потерять. Если есть финансовый контекст — считай от этих цифр. Если цифр нет — дай осторожный диапазон в рублях/процентах и пометь как оценку.
+- successCriteria: 3 измеримых признака что гипотеза подтверждается. Укажи числа, сроки, пороги.
+- killCriteria: 3 измеримых признака что гипотезу надо закрыть. Это должно защищать собственника от продолжения мёртвой идеи.
+- decisionRule: что делать после теста: масштабировать / изменить / убить / перейти к другой гипотезе.
 
 Гипотеза 1 — ОПЕРАЦИОННАЯ (горизонт: 1-2 недели):
 Что можно изменить прямо сейчас в текущих процессах, ресурсах или приоритетах без новых денег и людей. Конкретная, проверяемая за 2 недели.
@@ -2313,7 +2379,7 @@ ${finCtx ? 'ВАЖНО: В методе проверки гипотез испо
 {
   "insight": "главный инсайт — одно острое предложение которое ломает текущую логику пользователя, не описывает проблему",
   "rca": {
-    "root": "неочевидная корневая причина — не симптом, через призму рефрейма",
+    "root": "неочевидный главный механизм проблемы — не симптом, через призму рефрейма",
     "causes": [
       {"cause": "операционная точка вмешательства", "deep": "конкретно что здесь можно изменить"},
       {"cause": "коммерческая точка вмешательства", "deep": "конкретно что здесь можно изменить"},
@@ -2321,18 +2387,46 @@ ${finCtx ? 'ВАЖНО: В методе проверки гипотез испо
     ]
   },
   "hypotheses": [
-    {"title": "операционная гипотеза — конкретное утверждение от первого лица", "confidence": 75, "test": "конкретные шаги проверки за 1-2 недели", "status": "strong"},
-    {"title": "коммерческая гипотеза — новый механизм монетизации или сегмент", "confidence": 55, "test": "конкретные шаги проверки за 1-2 месяца", "status": "test"},
-    {"title": "гипотеза смены модели — контринтуитивная, должна удивить", "confidence": 30, "test": "минимальный способ проверить идею без больших вложений", "status": "weak"}
+    {
+      "title": "операционная гипотеза — конкретное утверждение от первого лица",
+      "confidence": 75,
+      "roi": "оценка денег которые можно заработать/сохранить/не потерять",
+      "test": "конкретные шаги проверки за 1-2 недели",
+      "successCriteria": ["измеримый критерий успеха 1", "измеримый критерий успеха 2", "измеримый критерий успеха 3"],
+      "killCriteria": ["измеримый критерий убийства 1", "измеримый критерий убийства 2", "измеримый критерий убийства 3"],
+      "decisionRule": "что делать после теста при успехе и при провале",
+      "status": "strong"
+    },
+    {
+      "title": "коммерческая гипотеза — новый механизм монетизации или сегмент",
+      "confidence": 55,
+      "roi": "оценка денег которые можно заработать/сохранить/не потерять",
+      "test": "конкретные шаги проверки за 1-2 месяца",
+      "successCriteria": ["измеримый критерий успеха 1", "измеримый критерий успеха 2", "измеримый критерий успеха 3"],
+      "killCriteria": ["измеримый критерий убийства 1", "измеримый критерий убийства 2", "измеримый критерий убийства 3"],
+      "decisionRule": "что делать после теста при успехе и при провале",
+      "status": "test"
+    },
+    {
+      "title": "гипотеза смены модели — контринтуитивная, должна удивить",
+      "confidence": 30,
+      "roi": "оценка денег которые можно заработать/сохранить/не потерять",
+      "test": "минимальный способ проверить идею без больших вложений",
+      "successCriteria": ["измеримый критерий успеха 1", "измеримый критерий успеха 2", "измеримый критерий успеха 3"],
+      "killCriteria": ["измеримый критерий убийства 1", "измеримый критерий убийства 2", "измеримый критерий убийства 3"],
+      "decisionRule": "что делать после теста при успехе и при провале",
+      "status": "weak"
+    }
   ]
 }
-Правило confidence: числа выше — заглушки. Оцени реально. status: strong >65%, test 35-65%, weak <35%.`);
+Правило confidence: числа выше — заглушки. Оцени реально. status: strong >65%, test 35-65%, weak <35%.
+Критерии успеха и убийства должны быть настолько конкретными, чтобы через 7-30 дней можно было принять решение без спора.`);
 
     const data = JSON.parse(res.replace(/```json|```/g, '').trim());
     currentSession.rca = data.rca;
     currentSession.insight = data.insight || '';
     currentSession.hypotheses = data.hypotheses.map((h, i) => ({
-      ...h,
+      ...normalizeHypothesis(h),
       id: Date.now() + i,
       notes: '',
       // Пересчитываем status из confidence на случай если модель ошиблась
@@ -2391,7 +2485,42 @@ function renderHypotheses() {
   currentSession.hypotheses.forEach(h => c.appendChild(buildHypCard(h, true)));
 }
 
+function asCriteriaList(value, fallback) {
+  if (Array.isArray(value)) return value.filter(Boolean);
+  if (typeof value === 'string' && value.trim()) {
+    return value.split(/\n|;|•/).map(s => s.trim()).filter(Boolean);
+  }
+  return fallback || [];
+}
+
+function criteriaHtml(items) {
+  const list = asCriteriaList(items, []);
+  if (!list.length) return '<p style="margin:0;color:var(--ink3);">Не задано</p>';
+  return `<ul>${list.map(i => `<li>${i}</li>`).join('')}</ul>`;
+}
+
+function normalizeHypothesis(h) {
+  const title = h.title || 'Гипотеза для проверки';
+  return {
+    ...h,
+    roi: h.roi || h.estimatedROI || h.moneyImpact || 'ROI пока не рассчитан — добавь выручку, маржу или бюджет, чтобы получить оценку в деньгах.',
+    successCriteria: asCriteriaList(h.successCriteria || h.successFactors, [
+      'Метрика из проверки улучшилась минимум на 15-20%',
+      'Эффект повторяется не в одном случайном случае, а минимум в 3-5 наблюдениях',
+      'Результат можно получить без непропорциональных затрат времени или денег'
+    ]),
+    killCriteria: asCriteriaList(h.killCriteria, [
+      'После минимального теста ключевая метрика не улучшилась хотя бы на 10%',
+      'Проверка показала что узкое место находится в другом месте',
+      'Стоимость проверки или внедрения выше ожидаемого экономического эффекта'
+    ]),
+    decisionRule: h.decisionRule || 'Если success criteria выполнены — усиливаем гипотезу и масштабируем тест. Если kill criteria выполнены — закрываем гипотезу и переходим к следующей.',
+    title
+  };
+}
+
 function buildHypCard(h, editable) {
+  h = normalizeHypothesis(h);
   const colors = { strong: '#1e4d2b', test: '#c4930a', weak: '#8b1a1a', confirmed: '#1e4d2b', rejected: '#8b1a1a' };
   const labels = { strong: 'Высокий потенциал', test: 'Требует проверки', weak: 'Контринтуитивная', confirmed: '✓ Подтверждена', rejected: '✗ Отклонена' };
   const bc = { strong: 'badge-green', test: 'badge-gold', weak: 'badge-red', confirmed: 'badge-green', rejected: 'badge-red' };
@@ -2413,7 +2542,19 @@ function buildHypCard(h, editable) {
       <span style="font-size:0.75rem;font-weight:500;color:${easeColor};">${easeLabel}</span>
       <span class="tip" data-tip="% показывает насколько легко проверить гипотезу — не насколько она верна. Контринтуитивные идеи часто самые важные." style="width:15px;height:15px;border-radius:50%;border:1px solid var(--border2);font-size:0.625rem;color:var(--ink3);flex-shrink:0;font-family:inherit;">?</span>
     </div>
+    <div class="hyp-roi"><strong>ROI / деньги на кону:</strong> ${h.roi}</div>
     <div class="hyp-test"><strong>Как проверить:</strong> ${h.test}</div>
+    <div class="hyp-criteria-grid">
+      <div class="hyp-criteria success">
+        <div class="hyp-criteria-title">Success criteria</div>
+        ${criteriaHtml(h.successCriteria)}
+      </div>
+      <div class="hyp-criteria kill">
+        <div class="hyp-criteria-title">Kill criteria</div>
+        ${criteriaHtml(h.killCriteria)}
+      </div>
+    </div>
+    <div class="hyp-decision"><strong>Решение после теста:</strong> ${h.decisionRule}</div>
     ${h.notes ? `<div style="margin-top:7px;font-size:0.8125rem;color:var(--ink3);border-top:1px solid var(--border);padding-top:7px;">${h.notes}</div>` : ''}
     ${editable ? `
     <div class="hyp-actions" style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
@@ -2518,6 +2659,19 @@ body{font-family:'DM Sans',sans-serif;background:#F5F0E8;color:#1A2E24;font-size
 .conf-pct{font-size:11px;color:#6B8F7A;min-width:28px;}
 .hyp-test{font-size:12px;color:#2D4A3E;line-height:1.5;}
 .hyp-test strong{font-weight:500;color:#1A2E24;}
+.hyp-roi{background:#FDF3D0;border:1px solid #D4B86A;border-radius:8px;padding:9px 11px;margin:8px 0;font-size:11px;color:#2D4A3E;line-height:1.45;}
+.hyp-roi strong{color:#8B6914;font-weight:500;}
+.criteria-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px;}
+.criteria-box{border-radius:8px;padding:9px 11px;font-size:10px;line-height:1.45;}
+.criteria-box.success{background:#E8F5EE;border:1px solid #C8DDD0;color:#2D4A3E;}
+.criteria-box.kill{background:#FDEAEA;border:1px solid #E8A090;color:#2D4A3E;}
+.criteria-title{font-size:8px;font-weight:500;letter-spacing:0.1em;margin-bottom:5px;text-transform:uppercase;}
+.criteria-box.success .criteria-title{color:#3D7A5A;}
+.criteria-box.kill .criteria-title{color:#7A2424;}
+.criteria-box ul{margin:0;padding-left:14px;}
+.criteria-box li{margin-bottom:3px;}
+.decision-rule{margin-top:8px;background:#F5F0E8;border-radius:8px;padding:8px 10px;font-size:10px;color:#2D4A3E;line-height:1.45;}
+.decision-rule strong{font-weight:500;color:#1A2E24;}
 /* Action plan */
 .action-step{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #F0EBE0;}
 .action-step:last-child{border-bottom:none;}
@@ -2580,7 +2734,7 @@ body{font-family:'DM Sans',sans-serif;background:#F5F0E8;color:#1A2E24;font-size
 
   ${s.rca ? `
   <hr class="section-divider">
-  <div class="section-label">Root Cause Analysis</div>
+  <div class="section-label">Карта механизмов проблемы</div>
   <div style="margin-top:12px;">
     <div class="rca-root">${s.rca.root}</div>
     <div class="rca-arrow">↓</div>
@@ -2599,7 +2753,8 @@ body{font-family:'DM Sans',sans-serif;background:#F5F0E8;color:#1A2E24;font-size
   <hr class="section-divider">
   <div class="section-label">Гипотезы для проверки</div>
   <div style="margin-top:12px;">
-    ${s.hypotheses.map(h => {
+    ${s.hypotheses.map(raw => {
+      const h = normalizeHypothesis(raw);
       const col = confColor[h.status] || '#888';
       return `<div class="hyp">
         <div class="hyp-top">
@@ -2610,7 +2765,19 @@ body{font-family:'DM Sans',sans-serif;background:#F5F0E8;color:#1A2E24;font-size
           <div class="conf-track"><div class="conf-fill" style="width:${h.confidence}%;background:${col};"></div></div>
           <span class="conf-pct">${h.confidence}%</span>
         </div>
+        <div class="hyp-roi"><strong>ROI / деньги на кону:</strong> ${h.roi}</div>
         <div class="hyp-test"><strong>Как проверить:</strong> ${h.test}</div>
+        <div class="criteria-grid">
+          <div class="criteria-box success">
+            <div class="criteria-title">Success criteria</div>
+            <ul>${h.successCriteria.map(i => `<li>${i}</li>`).join('')}</ul>
+          </div>
+          <div class="criteria-box kill">
+            <div class="criteria-title">Kill criteria</div>
+            <ul>${h.killCriteria.map(i => `<li>${i}</li>`).join('')}</ul>
+          </div>
+        </div>
+        <div class="decision-rule"><strong>Решение после теста:</strong> ${h.decisionRule}</div>
         ${h.notes ? `<div style="margin-top:5px;font-size:11px;color:#6B8F7A;">${h.notes}</div>` : ''}
       </div>`;
     }).join('')}
@@ -2619,7 +2786,7 @@ body{font-family:'DM Sans',sans-serif;background:#F5F0E8;color:#1A2E24;font-size
   <hr class="section-divider">
   <div class="section-label">Следующий шаг</div>
   <div style="margin-top:10px;background:#F5F0E8;border-radius:8px;padding:14px 16px;">
-    <p style="font-size:12px;color:#2D4A3E;line-height:1.6;">Для каждой гипотезы: определи метрику успеха, запусти минимальный эксперимент, поставь дедлайн. <strong>Не инвестируй крупно до подтверждения.</strong></p>
+    <p style="font-size:12px;color:#2D4A3E;line-height:1.6;">Для каждой гипотезы: оцени ROI, запусти минимальный эксперимент, проверь success criteria и kill criteria. <strong>Не инвестируй крупно до подтверждения, закрывай гипотезу при выполнении kill criteria.</strong></p>
     <p style="font-size:11px;color:#6B8F7A;margin-top:8px;">Основано на методе FrED (Frame → Explore → Decide) — Chevallier "Solvable"</p>
   </div>
 
@@ -2673,14 +2840,28 @@ function showSessionDetail(s) {
     <div class="problem-quote">${s.problem}</div>
     <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin:0 0 10px;font-weight:400;">Рефреймирующие вопросы</h3>
     ${s.questions.map(q=>`<div class="q-card" style="cursor:default;"><div class="q-lens">${q.lens.toUpperCase()}</div><div class="q-text">${q.question}</div></div>`).join('')}
-    <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin:20px 0 10px;font-weight:400;">Root Cause Analysis</h3>
+    <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin:20px 0 10px;font-weight:400;">Карта механизмов проблемы</h3>
     <div class="rca-wrap">
       <div class="rca-root-node">${s.rca.root}</div>
       <div class="rca-arrow-down">↓</div>
       <div class="rca-causes-row">${s.rca.causes.map(c=>`<div class="rca-cause-col"><div class="rca-cause-node">${c.cause}</div><div class="rca-mini-arrow">↓</div><div class="rca-deep-node">${c.deep}</div></div>`).join('')}</div>
     </div>
     <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin:20px 0 10px;font-weight:400;">Гипотезы</h3>
-    ${s.hypotheses.map(h=>`<div class="hyp-card"><div class="hyp-top"><div class="hyp-title">${h.title}</div><span class="badge ${bc[h.status]||'badge-gray'}">${sL[h.status]||h.status}</span></div><div class="conf-row"><div class="conf-bar"><div class="conf-fill" style="width:${h.confidence}%;background:#1e4d2b;"></div></div><span class="conf-label">${h.confidence}%</span></div><div class="hyp-test"><strong>Проверка:</strong> ${h.test}</div>${h.notes?`<div style="margin-top:6px;font-size:13px;color:var(--ink3);">${h.notes}</div>`:''}</div>`).join('')}
+    ${s.hypotheses.map(raw => {
+      const h = normalizeHypothesis(raw);
+      return `<div class="hyp-card">
+        <div class="hyp-top"><div class="hyp-title">${h.title}</div><span class="badge ${bc[h.status]||'badge-gray'}">${sL[h.status]||h.status}</span></div>
+        <div class="conf-row"><div class="conf-bar"><div class="conf-fill" style="width:${h.confidence}%;background:#1e4d2b;"></div></div><span class="conf-label">${h.confidence}%</span></div>
+        <div class="hyp-roi"><strong>ROI / деньги на кону:</strong> ${h.roi}</div>
+        <div class="hyp-test"><strong>Проверка:</strong> ${h.test}</div>
+        <div class="hyp-criteria-grid">
+          <div class="hyp-criteria success"><div class="hyp-criteria-title">Success criteria</div>${criteriaHtml(h.successCriteria)}</div>
+          <div class="hyp-criteria kill"><div class="hyp-criteria-title">Kill criteria</div>${criteriaHtml(h.killCriteria)}</div>
+        </div>
+        <div class="hyp-decision"><strong>Решение после теста:</strong> ${h.decisionRule}</div>
+        ${h.notes?`<div style="margin-top:6px;font-size:13px;color:var(--ink3);">${h.notes}</div>`:''}
+      </div>`;
+    }).join('')}
     <div style="display:flex;gap:9px;margin-top:18px;flex-wrap:wrap;">
       <button class="btn btn-outline btn-sm" onclick="exportSessionPDF(${s.id})">↓ PDF</button>
       <button class="btn btn-danger btn-sm" onclick="deleteSession(${s.id})">Удалить</button>
@@ -2720,14 +2901,21 @@ function renderTracker() {
   const bc = { strong:'badge-green', test:'badge-gold', weak:'badge-red', confirmed:'badge-green', rejected:'badge-red' };
   const colors = { strong:'#1e4d2b', test:'#c4930a', weak:'#8b1a1a', confirmed:'#1e4d2b', rejected:'#8b1a1a' };
   list.innerHTML = '';
-  all.forEach(h => {
+  all.forEach(raw => {
+    const h = normalizeHypothesis(raw);
     const div = document.createElement('div');
     div.className = 'hyp-card';
     div.innerHTML = `
       <div style="font-size:11px;color:var(--ink3);margin-bottom:5px;">Из: ${h.prob.substring(0,65)}...</div>
       <div class="hyp-top"><div class="hyp-title">${h.title}</div><span class="badge ${bc[h.status]||'badge-gray'}">${sL[h.status]||h.status}</span></div>
       <div class="conf-row"><div class="conf-bar"><div class="conf-fill" style="width:${h.confidence}%;background:${colors[h.status]||'#888'};"></div></div><span class="conf-label">${h.confidence}%</span></div>
-      <div class="hyp-test"><strong>Проверка:</strong> ${h.test}</div>`;
+      <div class="hyp-roi"><strong>ROI / деньги на кону:</strong> ${h.roi}</div>
+      <div class="hyp-test"><strong>Проверка:</strong> ${h.test}</div>
+      <div class="hyp-criteria-grid">
+        <div class="hyp-criteria success"><div class="hyp-criteria-title">Success criteria</div>${criteriaHtml(h.successCriteria)}</div>
+        <div class="hyp-criteria kill"><div class="hyp-criteria-title">Kill criteria</div>${criteriaHtml(h.killCriteria)}</div>
+      </div>
+      <div class="hyp-decision"><strong>Решение после теста:</strong> ${h.decisionRule}</div>`;
     list.appendChild(div);
   });
 }
