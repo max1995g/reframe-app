@@ -1118,6 +1118,45 @@ html.font-large { font-size: 19px; }
     </div>
   </div>
 
+  <!-- Модели и стоимость -->
+  <div class="card" style="max-width:560px;margin-bottom:12px;">
+    <h3 style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:6px;font-weight:400;">Модели и стоимость</h3>
+    <p style="font-size:14px;color:var(--ink3);margin-bottom:18px;line-height:1.5;">Простые шаги идут на дешёвую модель. Сильная модель используется только там, где создаётся основной управленческий результат.</p>
+    <div style="margin-bottom:16px;">
+      <label style="margin-bottom:10px;">Стратегия</label>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;">
+        <button id="model-strategy-economy" class="btn btn-sm" onclick="setModelStrategy('economy')">Эконом</button>
+        <button id="model-strategy-balanced" class="btn btn-sm" onclick="setModelStrategy('balanced')">Баланс</button>
+        <button id="model-strategy-claude" class="btn btn-sm" onclick="setModelStrategy('claude')">Claude</button>
+        <button id="model-strategy-premium" class="btn btn-sm" onclick="setModelStrategy('premium')">Максимум</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;" class="style-grid-mobile">
+      <div>
+        <label style="font-size:12px;">Простые запросы</label>
+        <input type="text" id="model-simple" placeholder="gpt-5.4-mini">
+      </div>
+      <div>
+        <label style="font-size:12px;">Рефреймы</label>
+        <input type="text" id="model-reframe" placeholder="claude-sonnet-4-6">
+      </div>
+      <div>
+        <label style="font-size:12px;">ROI + kill criteria</label>
+        <input type="text" id="model-structured" placeholder="gpt-5.4">
+      </div>
+      <div>
+        <label style="font-size:12px;">Премиум-разбор</label>
+        <input type="text" id="model-premium" placeholder="gpt-5.5">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+      <button class="btn btn-primary btn-sm" onclick="saveModelSettings()">Сохранить модели</button>
+      <button class="btn btn-outline btn-sm" onclick="resetModelSettings()">Сбросить</button>
+      <span id="model-settings-hint" style="font-size:12px;color:var(--accent);display:none;">✓ Сохранено</span>
+    </div>
+    <p id="model-route-summary" style="font-size:12px;color:var(--ink3);margin-top:12px;line-height:1.55;"></p>
+  </div>
+
   <!-- Данные -->
   <div class="card" style="max-width:560px;margin-bottom:12px;">
     <h3 style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:10px;font-weight:400;">Данные</h3>
@@ -1200,9 +1239,43 @@ html.font-large { font-size: 19px; }
 
 <script>
 const SESSION_LIMIT = 50;
-const MODEL_SONNET = 'claude-sonnet-4-6';
-const MODEL_HAIKU  = 'claude-haiku-4-5';
-const MODEL = MODEL_SONNET;
+const MODEL_PRESETS = {
+  economy: {
+    label: 'Эконом',
+    simple: 'gpt-5.4-mini',
+    reframe: 'gpt-5.4-mini',
+    structured: 'gpt-5.4',
+    premium: 'gpt-5.4'
+  },
+  balanced: {
+    label: 'Баланс',
+    simple: 'gpt-5.4-mini',
+    reframe: 'claude-sonnet-4-6',
+    structured: 'gpt-5.4',
+    premium: 'gpt-5.5'
+  },
+  claude: {
+    label: 'Claude',
+    simple: 'claude-haiku-4-5',
+    reframe: 'claude-sonnet-4-6',
+    structured: 'claude-sonnet-4-6',
+    premium: 'claude-opus-4-7'
+  },
+  premium: {
+    label: 'Максимум',
+    simple: 'gpt-5.4-mini',
+    reframe: 'gpt-5.4',
+    structured: 'gpt-5.5',
+    premium: 'gpt-5.5'
+  }
+};
+const MODEL_FALLBACKS = {
+  simple: ['claude-haiku-4-5', 'gpt-5.4-mini', 'GPT-5.4-Mini', 'Claude Haiku 4.5'],
+  reframe: ['gpt-5.4', 'claude-sonnet-4-6', 'GPT-5.4', 'Claude Sonnet 4.6'],
+  structured: ['claude-sonnet-4-6', 'gpt-5.4', 'GPT-5.4', 'Claude Sonnet 4.6'],
+  premium: ['gpt-5.5', 'claude-opus-4-7', 'GPT-5.5', 'Claude Opus 4.7']
+};
+const MODEL_ROLES = ['simple', 'reframe', 'structured', 'premium'];
 
 // ===== JARGON REPLACEMENTS (#9) =====
 const JARGON_RULE = `ЗАПРЕТ ЖАРГОНА — обязательно:
@@ -1240,6 +1313,8 @@ let passwords = JSON.parse(localStorage.getItem('rf_passwords') || '[]');
 let currentSession = null;
 let selectedQIdxs = [];
 let questionStyle = localStorage.getItem('rf_style') || 'provocateur';
+let modelStrategy = localStorage.getItem('rf_model_strategy') || 'balanced';
+let modelOverrides = JSON.parse(localStorage.getItem('rf_model_overrides') || '{}');
 let currentTheme = localStorage.getItem('rf_theme') || 'light';
 let currentFontSize = localStorage.getItem('rf_fontsize') || 'medium';
 let currentMode = 'deep'; // 'quick' | 'deep'
@@ -1541,7 +1616,7 @@ ${COACH_LANG}
     {"action": "конкретное действие", "deadline": "до пятницы", "result": "что получишь"},
     {"action": "конкретное действие", "deadline": "в эту пятницу", "result": "что получишь"}
   ]
-}`, MODEL_HAIKU, 600);
+}`, 'simple', 520);
 
     const data = JSON.parse(res.replace(/```json|```/g, '').trim());
     loading.style.display = 'none';
@@ -1626,7 +1701,7 @@ ${JARGON_RULE}
     {"lens": "Shapiro #X: Название", "question": "вопрос", "distance": "expand"},
     {"lens": "Berger — What If", "question": "вопрос", "distance": "flip"}
   ]
-}`, MODEL_HAIKU, 600);
+}`, 'simple', 520);
 
     clearInterval(lt);
     const data = JSON.parse(res.replace(/```json|```/g, '').trim());
@@ -1690,7 +1765,7 @@ async function generateQuickStep() {
 ${JARGON_RULE}
 ${COACH_LANG}
 
-Ответь в 2-4 предложения: что конкретно сделать на этой неделе, чтобы проверить этот рефрейм. Разговорный стиль, действие — не теория.`, MODEL_HAIKU, 300);
+Ответь в 2-4 предложения: что конкретно сделать на этой неделе, чтобы проверить этот рефрейм. Разговорный стиль, действие — не теория.`, 'simple', 260);
 
     document.getElementById('quick-next-step-text').textContent = res;
     document.getElementById('quick-next-step-wrap').style.display = 'block';
@@ -1723,6 +1798,7 @@ window.onload = () => {
   try { applyTheme(currentTheme); } catch(e) {}
   try { applyFontSize(currentFontSize); } catch(e) {}
   try { applyStyle(questionStyle); } catch(e) {}
+  try { applyModelSettings(); } catch(e) {}
   try { setMode('deep'); } catch(e) {}
   if (HARDCODED_KEY) {
     document.getElementById('landing').style.display = 'none';
@@ -1772,6 +1848,67 @@ function setStyle(s) {
   localStorage.setItem('rf_style', s);
   applyStyle(s);
   showToast('Стиль изменён ✓');
+}
+
+function getModelConfig() {
+  return MODEL_PRESETS[modelStrategy] || MODEL_PRESETS.balanced;
+}
+
+function getModel(role) {
+  const preset = getModelConfig();
+  return (modelOverrides && modelOverrides[role]) || preset[role] || preset.structured || 'gpt-5.4';
+}
+
+function getFallbackModels(role) {
+  const primary = getModel(role);
+  return [primary, ...(MODEL_FALLBACKS[role] || [])].filter((m, i, arr) => m && arr.indexOf(m) === i);
+}
+
+function applyModelSettings() {
+  ['economy','balanced','claude','premium'].forEach(s => {
+    const el = document.getElementById('model-strategy-' + s);
+    if (el) el.className = 'btn btn-sm ' + (modelStrategy === s ? 'btn-primary' : 'btn-outline');
+  });
+  MODEL_ROLES.forEach(role => {
+    const el = document.getElementById('model-' + role);
+    if (el) el.value = getModel(role);
+  });
+  const summary = document.getElementById('model-route-summary');
+  if (summary) {
+    summary.textContent = `Сейчас: простые → ${getModel('simple')}; рефреймы → ${getModel('reframe')}; ROI/kill criteria → ${getModel('structured')}; премиум → ${getModel('premium')}.`;
+  }
+}
+
+function setModelStrategy(strategy) {
+  modelStrategy = strategy;
+  modelOverrides = {};
+  localStorage.setItem('rf_model_strategy', modelStrategy);
+  localStorage.removeItem('rf_model_overrides');
+  applyModelSettings();
+  showToast('Стратегия моделей изменена ✓');
+}
+
+function saveModelSettings() {
+  const overrides = {};
+  MODEL_ROLES.forEach(role => {
+    const value = document.getElementById('model-' + role)?.value.trim();
+    if (value) overrides[role] = value;
+  });
+  modelOverrides = overrides;
+  localStorage.setItem('rf_model_strategy', modelStrategy);
+  localStorage.setItem('rf_model_overrides', JSON.stringify(modelOverrides));
+  applyModelSettings();
+  const hint = document.getElementById('model-settings-hint');
+  if (hint) { hint.style.display = 'inline'; setTimeout(() => hint.style.display = 'none', 1800); }
+}
+
+function resetModelSettings() {
+  modelStrategy = 'balanced';
+  modelOverrides = {};
+  localStorage.setItem('rf_model_strategy', modelStrategy);
+  localStorage.removeItem('rf_model_overrides');
+  applyModelSettings();
+  showToast('Модели сброшены');
 }
 
 function toggleAdvanced() {
@@ -1979,6 +2116,7 @@ function showScreen(name) {
     applyTheme(currentTheme);
     applyFontSize(currentFontSize);
     applyStyle(questionStyle);
+    applyModelSettings();
   }
   if (name === 'profile') loadProfileFields();
   document.getElementById('sidebar').classList.remove('open');
@@ -2068,7 +2206,7 @@ ${JARGON_RULE}
     {"id": "q2", "question": "вопрос 2"},
     {"id": "q3", "question": "вопрос 3"}
   ]
-}`, MODEL_HAIKU, 600);
+}`, 'simple', 520);
 
     const data = JSON.parse(res.replace(/```json|```/g, '').trim());
 
@@ -2198,7 +2336,7 @@ Zero-In: #21:Real Problem, #22:Real Business, #23:Insights, #24:Variations, #25:
     {"lens": "Wedell-Wedellsborg — [Название метода]", "lens_hint": "одно предложение", "question": "вопрос", "distance": "expand"},
     {"lens": "Berger — Why → What If → How", "lens_hint": "одно предложение", "question": "вопрос", "distance": "flip"}
   ]
-}`);
+}`, 'reframe', 1100);
 
     clearInterval(lt);
     const data = JSON.parse(res.replace(/```json|```/g, '').trim());
@@ -2297,7 +2435,7 @@ async function deepDive(type) {
 
   try {
     // Haiku — простой пояснительный запрос, не стратегический
-    const res = await callAPI(prompts[type], MODEL_HAIKU, 400);
+    const res = await callAPI(prompts[type], 'simple', 360);
     answer.innerHTML = res;
   } catch(e) {
     answer.innerHTML = '<span style="color:var(--danger);">Ошибка: ' + e.message + '</span>';
@@ -2420,7 +2558,7 @@ ${finCtx ? 'ВАЖНО: В методе проверки гипотез испо
   ]
 }
 Правило confidence: числа выше — заглушки. Оцени реально. status: strong >65%, test 35-65%, weak <35%.
-Критерии успеха и убийства должны быть настолько конкретными, чтобы через 7-30 дней можно было принять решение без спора.`);
+Критерии успеха и убийства должны быть настолько конкретными, чтобы через 7-30 дней можно было принять решение без спора.`, 'structured', 2400);
 
     const data = JSON.parse(res.replace(/```json|```/g, '').trim());
     currentSession.rca = data.rca;
@@ -2988,30 +3126,50 @@ function renderPasswords() {
 }
 
 // ===== API =====
-async function callAPI(prompt, model = MODEL_SONNET, maxTokens = 1500) {
-  const res = await fetch('/api/proxy', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: model,
-      max_tokens: maxTokens,
-      temperature: 0.9,
-      messages: [{ role: 'user', content: prompt }]
-    })
-  });
-  if (!res.ok) {
-    const e = await res.json();
-    throw new Error(e.error?.message || 'Ошибка API ' + res.status);
+function isRecoverableModelError(message) {
+  return /credit|quota|balance|billing|payment|insufficient|лимит|кредит|баланс|недостат|model|not available|not found|invalid/i.test(message || '');
+}
+
+async function callAPI(prompt, modelOrRole = 'structured', maxTokens = 1500) {
+  const role = MODEL_ROLES.includes(modelOrRole) ? modelOrRole : null;
+  const models = role ? getFallbackModels(role) : [modelOrRole];
+  let lastError = null;
+
+  for (let i = 0; i < models.length; i++) {
+    const model = models[i];
+    try {
+      const res = await fetch('/api/proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model,
+          max_tokens: maxTokens,
+          temperature: role === 'simple' ? 0.55 : 0.85,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      if (!res.ok) {
+        let e = {};
+        try { e = await res.json(); } catch(_) {}
+        const msg = e.error?.message || e.message || 'Ошибка API ' + res.status;
+        throw new Error(msg);
+      }
+      const data = await res.json();
+      if (data.error) {
+        throw new Error(data.error.message || JSON.stringify(data.error).substring(0, 200));
+      }
+      // Поддерживаем оба формата: Anthropic (content) и OpenAI (choices)
+      if (data.content && data.content[0]) return data.content[0].text || '';
+      if (data.choices && data.choices[0]) return data.choices[0].message.content || '';
+      throw new Error('Неизвестный формат ответа API: ' + JSON.stringify(data).substring(0, 200));
+    } catch (e) {
+      lastError = e;
+      const canRetry = role && i < models.length - 1 && isRecoverableModelError(e.message);
+      if (!canRetry) break;
+      showToast(`Модель ${model} недоступна — пробую ${models[i + 1]}`);
+    }
   }
-  const data = await res.json();
-  // Поддерживаем оба формата: Anthropic (content) и OpenAI (choices)
-  if (data.content && data.content[0]) {
-    return data.content[0].text || '';
-  }
-  if (data.choices && data.choices[0]) {
-    return data.choices[0].message.content || '';
-  }
-  throw new Error('Неизвестный формат ответа API: ' + JSON.stringify(data).substring(0, 200));
+  throw lastError || new Error('Не удалось получить ответ API');
 }
 
 // ===== UTILS =====
@@ -3030,14 +3188,15 @@ async function testKey() {
     return;
   }
 
-  result.textContent = `Ключ в памяти: ${key.substring(0,12)}... (${key.length} символов). Отправляю тестовый запрос...`;
+  const testModel = getModel('simple');
+  result.textContent = `Ключ в памяти: ${key.substring(0,12)}... (${key.length} символов). Проверяю модель ${testModel}...`;
 
   try {
     const res = await fetch('/api/proxy', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: MODEL,
+        model: testModel,
         max_tokens: 10,
         messages: [{ role: 'user', content: 'Hi' }]
       })
@@ -3046,7 +3205,7 @@ async function testKey() {
     if (res.ok) {
       result.style.background = 'var(--accent-light)';
       result.style.color = 'var(--accent)';
-      result.textContent = '✓ Соединение работает! Модель: ' + MODEL;
+      result.textContent = '✓ Соединение работает! Модель: ' + testModel;
     } else {
       result.style.background = 'var(--danger-light)';
       result.style.color = 'var(--danger)';
