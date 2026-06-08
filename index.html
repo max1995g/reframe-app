@@ -46,6 +46,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(
 .btn-land-primary:hover { background: var(--accent); transform: translateY(-1px); }
 .btn-land-outline { background: transparent; color: var(--ink); border: 1.5px solid var(--border2); border-radius: var(--r); padding: 14px 32px; font-size: 0.9375rem; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; }
 .btn-land-outline:hover { background: var(--paper2); }
+.land-scenarios { display: grid; grid-template-columns: repeat(3, minmax(170px, 1fr)); gap: 10px; max-width: 760px; width: 100%; margin-top: 30px; position: relative; z-index: 1; }
+.scenario-btn { background: rgba(255,255,255,0.72); border: 1px solid var(--border2); border-radius: var(--r); padding: 13px 15px; font-family: inherit; color: var(--ink); cursor: pointer; text-align: left; transition: all 0.15s; }
+.scenario-btn:hover { background: #fff; border-color: var(--accent); transform: translateY(-1px); }
+.scenario-btn strong { display: block; font-size: 0.875rem; margin-bottom: 3px; color: var(--ink); font-weight: 500; }
+.scenario-btn span { display: block; font-size: 0.75rem; line-height: 1.4; color: var(--ink3); }
 
 /* Examples section */
 .land-examples { padding: 60px 24px 80px; max-width: 900px; margin: 0 auto; width: 100%; }
@@ -171,6 +176,14 @@ label { font-size: 0.875rem; font-weight: 500; color: var(--ink2); display: bloc
 .hyp-test strong { color: var(--ink); font-weight: 500; }
 .hyp-roi { background: var(--gold-light); border: 1px solid rgba(139,105,20,0.22); border-radius: var(--r); padding: 11px 13px; margin: 11px 0; font-size: 0.875rem; color: var(--ink2); line-height: 1.55; }
 .hyp-roi strong { color: var(--gold); font-weight: 500; }
+.hyp-risk { background: var(--danger-light); border: 1px solid rgba(122,36,36,0.18); border-radius: var(--r); padding: 10px 12px; margin: 10px 0; font-size: 0.8125rem; color: var(--ink2); line-height: 1.5; }
+.hyp-risk strong { color: var(--danger); font-weight: 500; }
+.hyp-priority { background: var(--paper2); border-radius: var(--r); padding: 10px 12px; margin: 10px 0; font-size: 0.8125rem; color: var(--ink2); line-height: 1.5; }
+.hyp-priority strong { color: var(--ink); font-weight: 500; }
+.evidence-log { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 10px; }
+.evidence-title { font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink3); margin-bottom: 7px; }
+.evidence-item { background: var(--paper2); border-radius: var(--r); padding: 9px 11px; margin-bottom: 7px; font-size: 0.8125rem; color: var(--ink2); line-height: 1.45; }
+.evidence-item strong { color: var(--ink); font-weight: 500; }
 .hyp-criteria-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
 .hyp-criteria { border-radius: var(--r); padding: 11px 13px; font-size: 0.8125rem; line-height: 1.5; }
 .hyp-criteria.success { background: var(--accent-light); border: 1px solid rgba(61,122,90,0.2); color: var(--ink2); }
@@ -363,6 +376,7 @@ html.font-large { font-size: 19px; }
   .land-sub { font-size: 15px; }
   .land-cta { flex-direction: column; align-items: stretch; gap: 10px; }
   .btn-land-primary, .btn-land-outline { text-align: center; }
+  .land-scenarios { grid-template-columns: 1fr; margin-top: 22px; }
   .land-examples { padding: 40px 16px 60px; }
   .examples-grid { grid-template-columns: 1fr; gap: 12px; }
   .land-features { padding: 40px 16px; }
@@ -478,17 +492,22 @@ html.font-large { font-size: 19px; }
   <button id="app-back-btn" onclick="backToLanding()">← На главную</button>
 
   <div class="land-hero">
-    <span class="land-eyebrow">Основано на 4 мировых книгах по рефреймингу</span>
-    <h1 class="land-title">Прежде чем решать —<br>убедись что решаешь<br><em>правильную проблему</em></h1>
-    <p class="land-sub">Перед важным решением — убедись что смотришь на ситуацию под всеми углами. 10 минут. Без консультанта.</p>
+    <span class="land-eyebrow">Перед тем как тратить бюджет, найди где теряются деньги</span>
+    <h1 class="land-title">Почему интерес<br>не превращается<br><em>в действие?</em></h1>
+    <p class="land-sub">Reframe помогает собственнику понять, где ломаются заявки, продажи, повторные покупки, доверие и конверсия. За 10 минут — 3 проверяемые гипотезы с ROI, рискованным предположением, success criteria, kill criteria и первым тестом на 7 дней.</p>
     <div class="land-cta">
-      <button class="btn-land-primary" onclick="goToApp()">Открыть инструмент →</button>
+      <button class="btn-land-primary" onclick="goToApp()">Проверить свою проблему →</button>
       <button class="btn-land-outline" onclick="document.querySelector('.land-examples').scrollIntoView({behavior:'smooth'})">Посмотреть примеры</button>
+    </div>
+    <div class="land-scenarios">
+      <button class="scenario-btn" onclick="startScenario('Команда не выполняет план продаж уже несколько месяцев: лиды есть, встречи есть, но сделки не растут', 'Услуги / Консалтинг')"><strong>Продажи не растут</strong><span>Понять, где деньги застревают между интересом и сделкой</span></button>
+      <button class="scenario-btn" onclick="startScenario('Есть интерес к продукту: люди смотрят, спрашивают, переходят по рекламе, но заявок почти нет', 'E-commerce / Розница')"><strong>Есть интерес, но нет заявок</strong><span>Найти, что мешает человеку сделать первый шаг</span></button>
+      <button class="scenario-btn" onclick="startScenario('Клиенты покупают один раз и не возвращаются, хотя продуктом в целом довольны', 'E-commerce / Розница')"><strong>Клиенты покупают один раз и не возвращаются</strong><span>Проверить, почему первая покупка не становится привычкой</span></button>
     </div>
   </div>
 
   <div class="land-examples">
-    <p class="land-examples-title">Как рефрейминг меняет взгляд на проблему</p>
+    <p class="land-examples-title">Где бизнес обычно теряет деньги</p>
     <div class="examples-grid">
 
       <div class="ex-card coral">
@@ -561,15 +580,15 @@ html.font-large { font-size: 19px; }
           <div class="feat-icon">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="white" stroke-width="1.4"/><path d="M9 5v4l2.5 2.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
           </div>
-          <div class="feat-title">5 переформулированных вопросов</div>
-          <div class="feat-desc">AI применяет 25 линз Shapiro и 7 методов Wedell-Wedellsborg к твоей конкретной проблеме</div>
+          <div class="feat-title">Находит скрытый разрыв</div>
+          <div class="feat-desc">Показывает, где интерес не превращается в заявку, покупку, повтор или доверие</div>
         </div>
         <div class="feat">
           <div class="feat-icon">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2v4M9 12v4M2 9h4M12 9h4" stroke="white" stroke-width="1.4" stroke-linecap="round"/><circle cx="9" cy="9" r="3" stroke="white" stroke-width="1.4"/></svg>
           </div>
-          <div class="feat-title">Карта механизмов</div>
-          <div class="feat-desc">Три возможных механизма проблемы — операционный, коммерческий и структурный</div>
+          <div class="feat-title">Карта потерь</div>
+          <div class="feat-desc">Три рабочие версии, где именно бизнес теряет деньги или действие клиента</div>
         </div>
         <div class="feat">
           <div class="feat-icon">
@@ -613,7 +632,7 @@ html.font-large { font-size: 19px; }
   </div>
 
   <div class="land-footer">
-    Основано на книгах Shapiro · Wedell-Wedellsborg · Berger · Chevallier &nbsp;·&nbsp; Reframe © 2025
+    Reframe помогает не инвестировать в решение, пока не проверена проблема &nbsp;·&nbsp; Reframe © 2026
   </div>
 </div>
 
@@ -651,7 +670,7 @@ html.font-large { font-size: 19px; }
   <div class="sidebar-footer">
     <div class="api-status">
       <div class="api-dot" id="apiDot"></div>
-      <span id="apiStatusText">API не подключён</span>
+      <span id="apiStatusText">Server proxy</span>
     </div>
   </div>
 </aside>
@@ -662,27 +681,25 @@ html.font-large { font-size: 19px; }
 <div id="screen-setup" class="screen active">
   <div class="setup-wrap">
     <div class="setup-logo">Reframe</div>
-    <p class="setup-sub">Подключи API ключ Anthropic для работы</p>
+    <p class="setup-sub">AI должен подключаться через server-side proxy</p>
     <div class="setup-card">
-      <h2 style="font-family:'Playfair Display',serif;font-size:20px;margin-bottom:5px;font-weight:400;">Подключить AI</h2>
-      <p style="font-size:13px;color:var(--ink3);margin-bottom:20px;">Используем OpenRouter — один ключ для доступа ко всем моделям</p>
+      <h2 style="font-family:'Playfair Display',serif;font-size:20px;margin-bottom:5px;font-weight:400;">Server proxy</h2>
+      <p style="font-size:13px;color:var(--ink3);margin-bottom:20px;">API-ключи нельзя хранить в клиентском коде. Для боевого запуска ключ, лимиты и оплата должны жить на сервере.</p>
       <div class="setup-step">
         <div class="setup-num">1</div>
-        <p>Зайди на <a href="https://openrouter.ai" target="_blank">openrouter.ai</a> и зарегистрируйся</p>
+        <p>Frontend отправляет запрос только в локальный или боевой endpoint `/api/proxy`.</p>
       </div>
       <div class="setup-step">
         <div class="setup-num">2</div>
-        <p>Keys → Create Key → скопируй ключ (начинается с <strong>sk-or-v1-</strong>)</p>
+        <p>Сервер сам выбирает модель, проверяет тариф, лимит и авторизацию пользователя.</p>
       </div>
       <div class="setup-step">
         <div class="setup-num">3</div>
-        <p>Credits → пополни баланс от $5 — хватит на тысячи сессий</p>
+        <p>Если proxy не отвечает, пользователь видит ошибку сервиса, а не поле для секретного ключа.</p>
       </div>
       <hr class="divider">
-      <label>API ключ OpenRouter</label>
-      <input type="password" id="setup-api-key" placeholder="sk-..." style="margin-bottom:12px;">
-      <button class="btn btn-primary" style="width:100%;" onclick="saveApiKey()">Подключить и начать →</button>
-      <p style="font-size:11px;color:var(--ink3);margin-top:10px;text-align:center;">Ключ сохраняется только локально в браузере</p>
+      <button class="btn btn-primary" style="width:100%;" onclick="showScreen('new-session')">Перейти в прототип →</button>
+      <p style="font-size:11px;color:var(--ink3);margin-top:10px;text-align:center;">TODO(server): перенести авторизацию, тарифы и биллинг на backend.</p>
     </div>
   </div>
 </div>
@@ -943,6 +960,10 @@ html.font-large { font-size: 19px; }
       <p style="font-size:13px;font-weight:500;color:var(--accent);margin-bottom:3px;">Следующий шаг — Chevallier FrED: Explore → Decide</p>
       <p style="font-size:13px;color:var(--ink2);line-height:1.5;">Для каждой гипотезы: ROI, метрика проверки, минимальный эксперимент, success criteria, kill criteria и дедлайн. Не инвестируй крупно до подтверждения.</p>
     </div>
+    <div style="margin-top:12px;background:#fff;border:1px solid var(--border);border-radius:var(--r2);padding:16px 18px;">
+      <p style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:3px;">Хочешь разобрать это глубже за 90 минут с автором инструмента?</p>
+      <p style="font-size:13px;color:var(--ink2);line-height:1.5;">Возьми 1-2 гипотезы с максимальным приоритетом, проведи первый 7-дневный тест и приходи с цифрами. Тогда разбор будет про деньги, решение и следующий эксперимент.</p>
+    </div>
 
     <!-- #12 Action plan block -->
     <div id="action-plan-wrap" style="display:none;margin-top:16px;background:#fff;border:1px solid var(--border);border-radius:var(--r2);padding:20px 22px;">
@@ -1049,8 +1070,8 @@ html.font-large { font-size: 19px; }
 
 <!-- PASSWORDS -->
 <div id="screen-passwords" class="screen">
-  <h1 class="page-title">Пароли доступа</h1>
-  <p class="page-sub">Генерируй уникальные коды для каждого подписчика</p>
+  <h1 class="page-title">Dev: временные коды доступа</h1>
+  <p class="page-sub">Временная admin-заглушка для прототипа, не монетизация продукта</p>
   <div style="display:flex;gap:9px;margin-bottom:20px;flex-wrap:wrap;">
     <button class="btn btn-primary" onclick="generatePassword()">+ Создать пароль</button>
     <button class="btn btn-gold" onclick="generateBatch(10)">Создать 10 паролей</button>
@@ -1065,7 +1086,7 @@ html.font-large { font-size: 19px; }
   </div>
   <div style="margin-top:14px;background:var(--paper2);border-radius:var(--r2);padding:14px 16px;">
     <p style="font-size:13px;color:var(--ink2);line-height:1.6;">
-      Каждый подписчик получает уникальный код. После оплаты — отправляй код вручную или через бот. Пользователь вводит его в настройках приложения. Лимит: 50 сессий в месяц на код.
+      Временный admin/dev-инструмент для ручного тестирования. Оплаты, тарифы, лимиты и выдача доступов должны проверяться на сервере, а не в браузере.
     </p>
   </div>
 </div>
@@ -1098,7 +1119,7 @@ html.font-large { font-size: 19px; }
   <!-- Стиль вопросов -->
   <div class="card" style="max-width:560px;margin-bottom:12px;">
     <h3 style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:6px;font-weight:400;">Стиль анализа</h3>
-    <p style="font-size:14px;color:var(--ink3);margin-bottom:18px;line-height:1.5;">Все 25 линз Shapiro доступны всегда — стиль меняет угол формулировки вопросов</p>
+    <p style="font-size:14px;color:var(--ink3);margin-bottom:18px;line-height:1.5;">Стиль меняет тон анализа: от спокойной диагностики до более неудобных вопросов про деньги, клиентов и решения.</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;">
       <div id="style-strategist" class="style-card" onclick="setStyle('strategist')">
         <div class="style-icon">🧭</div>
@@ -1118,8 +1139,8 @@ html.font-large { font-size: 19px; }
     </div>
   </div>
 
-  <!-- Модели и стоимость -->
-  <div class="card" style="max-width:560px;margin-bottom:12px;">
+  <!-- Модели и стоимость: скрыто для обычного пользователя, это dev-настройка прототипа -->
+  <div id="model-settings-card" class="card" style="max-width:560px;margin-bottom:12px;display:none;">
     <h3 style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:6px;font-weight:400;">Модели и стоимость</h3>
     <p style="font-size:14px;color:var(--ink3);margin-bottom:18px;line-height:1.5;">Простые шаги идут на дешёвую модель. Сильная модель используется только там, где создаётся основной управленческий результат.</p>
     <div style="margin-bottom:16px;">
@@ -1168,11 +1189,10 @@ html.font-large { font-size: 19px; }
   <div style="max-width:560px;">
     <button class="btn btn-outline btn-sm" onclick="toggleAdvanced()" style="color:var(--ink3);font-size:13px;">⚙️ Дополнительно (API)</button>
     <div id="advanced-panel" style="display:none;margin-top:12px;" class="card">
-      <label>API ключ</label>
-      <input type="text" id="settings-api-key" style="margin-bottom:12px;font-family:monospace;font-size:13px;">
+      <button class="btn btn-outline btn-sm" onclick="toggleModelDevSettings()" style="margin-bottom:12px;">Показать dev-настройки моделей</button>
+      <p style="font-size:13px;color:var(--ink3);line-height:1.55;margin-bottom:12px;">Ключи моделей должны храниться только на сервере. Этот блок нужен разработчику, чтобы проверить доступность `/api/proxy`.</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn btn-primary btn-sm" onclick="updateApiKey()">Сохранить</button>
-        <button class="btn btn-outline btn-sm" onclick="testKey()">Проверить</button>
+        <button class="btn btn-outline btn-sm" onclick="testKey()">Проверить server proxy</button>
       </div>
       <div id="test-result" style="margin-top:12px;font-size:13px;display:none;padding:10px 12px;border-radius:var(--r);"></div>
     </div>
@@ -1238,6 +1258,8 @@ html.font-large { font-size: 19px; }
 </div>
 
 <script>
+// TODO(server): лимиты сессий и оплаты должны проверяться на сервере.
+// localStorage ниже используется только как подсказка для прототипа.
 const SESSION_LIMIT = 50;
 const MODEL_PRESETS = {
   economy: {
@@ -1305,9 +1327,7 @@ const STYLE_INSTRUCTIONS = {
   provocateur:  'Формулируй вопросы которые переворачивают базовые предположения. Каждый вопрос должен вызывать лёгкий дискомфорт — "я об этом не думал".'
 };
 
-const HARDCODED_KEY = 'sk_nemate_2ewzgXtUnBhdBrmjI2F8vA9cU8yQhllj';
-
-let apiKey = HARDCODED_KEY || localStorage.getItem('rf_api_key') || '';
+let apiKey = localStorage.getItem('rf_api_key') || '';
 let sessions = JSON.parse(localStorage.getItem('rf_sessions') || '[]');
 let passwords = JSON.parse(localStorage.getItem('rf_passwords') || '[]');
 let currentSession = null;
@@ -1408,8 +1428,8 @@ function resumeSession() {
       const div = document.createElement('div');
       div.className = 'card';
       div.style.marginBottom = '12px';
-      div.innerHTML = `<label style="font-size:0.9375rem;font-weight:400;color:var(--ink);margin-bottom:10px;display:block;line-height:1.5;">${q.question}</label>
-        <textarea id="clarify-${q.id}" rows="2" placeholder="Ответь коротко...">${currentSession.clarifyAnswers?.[q.id] || ''}</textarea>`;
+      div.innerHTML = `<label style="font-size:0.9375rem;font-weight:400;color:var(--ink);margin-bottom:10px;display:block;line-height:1.5;">${escapeHTML(q.question)}</label>
+        <textarea id="clarify-${escapeHTML(q.id)}" rows="2" placeholder="Ответь коротко...">${escapeHTML(currentSession.clarifyAnswers?.[q.id] || '')}</textarea>`;
       list.appendChild(div);
     });
     goToStep('step-clarify');
@@ -1618,7 +1638,7 @@ ${COACH_LANG}
   ]
 }`, 'simple', 520);
 
-    const data = JSON.parse(res.replace(/```json|```/g, '').trim());
+    const data = parseModelJSON(res, 'actionPlan');
     loading.style.display = 'none';
     content.style.display = 'block';
     if (btn) btn.disabled = false;
@@ -1632,10 +1652,10 @@ ${COACH_LANG}
       div.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
           <span style="font-size:13px;font-weight:500;color:var(--ink);">Шаг ${i+1}</span>
-          <span style="font-size:11px;font-weight:500;color:var(--accent);background:var(--accent-light);padding:2px 9px;border-radius:20px;">${s.deadline}</span>
+          <span style="font-size:11px;font-weight:500;color:var(--accent);background:var(--accent-light);padding:2px 9px;border-radius:20px;">${escapeHTML(s.deadline)}</span>
         </div>
-        <p style="font-size:14px;color:var(--ink);margin-bottom:4px;line-height:1.5;">${s.action}</p>
-        <p style="font-size:12px;color:var(--ink3);">→ ${s.result}</p>`;
+        <p style="font-size:14px;color:var(--ink);margin-bottom:4px;line-height:1.5;">${escapeHTML(s.action)}</p>
+        <p style="font-size:12px;color:var(--ink3);">→ ${escapeHTML(s.result)}</p>`;
       stepsEl.appendChild(div);
       actionPlanText += `Шаг ${i+1} (${s.deadline})\n${s.action}\n→ ${s.result}\n\n`;
     });
@@ -1661,7 +1681,6 @@ function emailActionPlan() {
 async function goToQuickMode() {
   const problem = document.getElementById('problem-input').value.trim();
   if (!problem) return showToast('Опиши проблему');
-  if (!apiKey && !HARDCODED_KEY) return showScreen('setup');
   if (!checkAndIncrementLimit()) { goToStep('step-limit'); return; }
 
   currentSession = {
@@ -1704,7 +1723,7 @@ ${JARGON_RULE}
 }`, 'simple', 520);
 
     clearInterval(lt);
-    const data = JSON.parse(res.replace(/```json|```/g, '').trim());
+    const data = parseModelJSON(res, 'questions');
     currentSession.questions = data.questions;
 
     // Render quick result
@@ -1722,10 +1741,10 @@ ${JARGON_RULE}
       el.className = 'q-card';
       el.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;">
-          <div class="q-lens">${q.lens.toUpperCase()}</div>
+          <div class="q-lens">${escapeHTML((q.lens || '').toUpperCase())}</div>
           <span style="font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;background:${d.bg};color:${d.color};white-space:nowrap;margin-left:8px;">${d.text}</span>
         </div>
-        <div class="q-text">${q.question}</div>`;
+        <div class="q-text">${escapeHTML(q.question)}</div>`;
       el.onclick = () => selectQuickQ(el, i);
       list.appendChild(el);
     });
@@ -1800,12 +1819,6 @@ window.onload = () => {
   try { applyStyle(questionStyle); } catch(e) {}
   try { applyModelSettings(); } catch(e) {}
   try { setMode('deep'); } catch(e) {}
-  if (HARDCODED_KEY) {
-    document.getElementById('landing').style.display = 'none';
-    document.getElementById('appWrap').classList.add('visible');
-    document.getElementById('app-back-btn').style.display = 'block';
-    showScreen('new-session');
-  }
 };
 
 function applyTheme(t) {
@@ -1916,6 +1929,12 @@ function toggleAdvanced() {
   p.style.display = p.style.display === 'none' ? 'block' : 'none';
 }
 
+function toggleModelDevSettings() {
+  const p = document.getElementById('model-settings-card');
+  if (!p) return;
+  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+}
+
 function backToLanding() {
   document.getElementById('landing').style.display = 'flex';
   document.getElementById('appWrap').classList.remove('visible');
@@ -1930,9 +1949,19 @@ function goToApp() {
   showScreen('new-session');
 }
 
+function startScenario(problem, industry) {
+  goToApp();
+  setTimeout(() => {
+    const input = document.getElementById('problem-input');
+    const industrySelect = document.getElementById('industry-select');
+    if (input) input.value = problem;
+    if (industrySelect && industry) industrySelect.value = industry;
+  }, 0);
+}
+
 function updateApiStatus(ok) {
   document.getElementById('apiDot').classList.toggle('connected', ok);
-  document.getElementById('apiStatusText').textContent = ok ? 'API подключён' : 'API не подключён';
+  document.getElementById('apiStatusText').textContent = ok ? 'Dev API подключён' : 'Server proxy';
 }
 
 // ===== SESSION LIMIT =====
@@ -1950,6 +1979,7 @@ function getUsage() {
 }
 
 function checkAndIncrementLimit() {
+  // TODO(server): не использовать localStorage как источник правды для лимитов и платежей.
   const usage = getUsage();
   if (usage.count >= SESSION_LIMIT) return false;
   usage.count = (usage.count || 0) + 1;
@@ -2028,11 +2058,17 @@ function loadDemo() {
         id: 1,
         title: 'Топ-20% клиентов имеют общий триггер покупки который мы не используем в рекламе',
         confidence: 81,
+        testEase: 81,
+        speedDays: 7,
+        priorityScore: 88,
+        riskyAssumption: 'Мы предполагаем, что клиенты покупают из-за одного повторяющегося события, а не просто из-за цены или случайного доверия.',
         roi: 'Потенциал: сохранить 60 000-120 000 ₽ рекламного бюджета в месяц и поднять продажи на 15-25% без увеличения расходов.',
         test: 'Позвонить 10 лучшим клиентам и спросить: что произошло прямо перед тем как вы решили купить?',
         successCriteria: ['7 из 10 клиентов называют один и тот же триггер покупки', 'Новый оффер по этому триггеру дает минимум +20% к конверсии в заявку', 'Стоимость качественной заявки падает минимум на 15%'],
         killCriteria: ['Нет повторяющегося триггера минимум у 5 клиентов', 'После 7 дней теста новый оффер не улучшает конверсию хотя бы на 10%', 'Клиенты говорят что решение о покупке зависело не от сообщения, а от цены или наличия'],
         decisionRule: 'Если есть общий триггер и тестовый оффер улучшает конверсию на 20%+, переносим бюджет на новые объявления. Если нет - закрываем гипотезу и проверяем качество обработки заявок.',
+        priorityReason: 'Высокий ROI, быстрый тест через интервью, низкая стоимость ошибки.',
+        evidenceLog: [],
         status: 'strong',
         notes: ''
       },
@@ -2040,11 +2076,17 @@ function loadDemo() {
         id: 2,
         title: 'Лендинг теряет 60%+ людей на первом экране потому что не отвечает на вопрос "это для меня?"',
         confidence: 67,
+        testEase: 67,
+        speedDays: 7,
+        priorityScore: 74,
+        riskyAssumption: 'Мы предполагаем, что главное узкое место находится до заявки, а не после отправки формы или в работе менеджера.',
         roi: 'Потенциал: вернуть 20-35% потерянных заявок и сохранить 30 000-80 000 ₽ в месяц на неэффективном трафике.',
         test: 'Записать сессии через Hotjar на 50 посетителях и посмотреть где они уходят, что читают и до какого блока доходят.',
         successCriteria: ['Больше 50% уходов происходит до второго экрана', 'Пользователи не кликают CTA или не читают блок с оффером', 'Новая версия первого экрана дает минимум +15% к кликам по CTA'],
         killCriteria: ['Большинство пользователей доходит до формы, но не отправляет заявку', 'Новый первый экран не улучшает клики по CTA минимум на 10%', 'Главная потеря происходит после заявки, а не на лендинге'],
         decisionRule: 'Если первый экран подтвержден как узкое место - переписываем оффер и CTA. Если нет - переносим внимание на форму, менеджера или качество лидов.',
+        priorityReason: 'Средне-высокий ROI, данные можно собрать быстро, но нужен трафик на лендинг.',
+        evidenceLog: [],
         status: 'strong',
         notes: ''
       },
@@ -2052,11 +2094,17 @@ function loadDemo() {
         id: 3,
         title: 'Реклама привлекает "исследователей" а не "покупателей" — нужен другой канал или оффер',
         confidence: 44,
+        testEase: 44,
+        speedDays: 10,
+        priorityScore: 58,
+        riskyAssumption: 'Мы предполагаем, что проблема в намерении аудитории, а не в продукте, цене или доверии к продавцу.',
         roi: 'Потенциал: сократить до 30% пустых лидов и высвободить 40 000-100 000 ₽ в месяц на каналы с покупательским намерением.',
         test: 'Запустить A/B тест: одно объявление с ценой и ограничением, второе без цены — сравнить долю людей готовых купить в течение 7 дней.',
         successCriteria: ['Объявление с ценой дает меньше лидов, но минимум на 25% выше долю готовых купить', 'Менеджеры подтверждают что лиды стали конкретнее по запросу', 'Стоимость продажи не растет несмотря на меньший объем заявок'],
         killCriteria: ['Качество лидов не меняется после добавления цены', 'Стоимость продажи растет больше чем на 20%', 'Люди с ценой приходят, но не покупают из-за продукта или доверия'],
         decisionRule: 'Если качество лидов растет без ухудшения стоимости продажи - масштабируем фильтрующий оффер. Если нет - возвращаемся к продукту или доверию, а не к рекламе.',
+        priorityReason: 'Потенциал высокий, но тест медленнее и риск перепутать канал с оффером выше.',
+        evidenceLog: [],
         status: 'test',
         notes: ''
       }
@@ -2140,22 +2188,12 @@ function goToStep(id) {
 
 // ===== API KEY =====
 function saveApiKey() {
-  const k = document.getElementById('setup-api-key').value.trim();
-  if (!k.startsWith('sk-')) return showToast('Неверный формат ключа — должен начинаться с sk-');
-  localStorage.setItem('rf_api_key', k);
-  apiKey = k;
-  updateApiStatus(true);
   showScreen('new-session');
-  showToast('Ключ сохранён ✓');
+  showToast('Используется server proxy');
 }
 
 function updateApiKey() {
-  const k = document.getElementById('settings-api-key').value.trim();
-  if (!k.startsWith('sk-')) return showToast('Неверный формат ключа — должен начинаться с sk-');
-  localStorage.setItem('rf_api_key', k);
-  apiKey = k;
-  updateApiStatus(true);
-  showToast('Ключ обновлён ✓');
+  showToast('Ключи хранятся только на сервере');
 }
 
 // ===== STEP 1 =====
@@ -2169,8 +2207,6 @@ async function goToClarify() {
   // Deep mode continues as before
   const problem = document.getElementById('problem-input').value.trim();
   if (!problem) return showToast('Опиши проблему');
-  if (!apiKey && !HARDCODED_KEY) return showScreen('setup');
-
   const industry = document.getElementById('industry-select').value;
   const size = document.getElementById('size-select').value;
 
@@ -2208,7 +2244,7 @@ ${JARGON_RULE}
   ]
 }`, 'simple', 520);
 
-    const data = JSON.parse(res.replace(/```json|```/g, '').trim());
+    const data = parseModelJSON(res, 'clarify');
 
     // Сохраняем базовый контекст
     currentSession = {
@@ -2231,8 +2267,8 @@ ${JARGON_RULE}
       div.className = 'card';
       div.style.marginBottom = '12px';
       div.innerHTML = `
-        <label style="font-size:15px;font-weight:400;color:var(--ink);margin-bottom:10px;display:block;line-height:1.5;">${q.question}</label>
-        <textarea id="clarify-${q.id}" rows="2" placeholder="Ответь коротко, можно 1-2 предложения..."></textarea>`;
+        <label style="font-size:15px;font-weight:400;color:var(--ink);margin-bottom:10px;display:block;line-height:1.5;">${escapeHTML(q.question)}</label>
+        <textarea id="clarify-${escapeHTML(q.id)}" rows="2" placeholder="Ответь коротко, можно 1-2 предложения..."></textarea>`;
       list.appendChild(div);
     });
 
@@ -2339,7 +2375,7 @@ Zero-In: #21:Real Problem, #22:Real Business, #23:Insights, #24:Variations, #25:
 }`, 'reframe', 1100);
 
     clearInterval(lt);
-    const data = JSON.parse(res.replace(/```json|```/g, '').trim());
+    const data = parseModelJSON(res, 'questions');
     currentSession.questions = data.questions;
     renderQuestionsStep();
   } catch(e) {
@@ -2378,14 +2414,14 @@ function renderQuestionsStep() {
     }
     el.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;flex-wrap:wrap;gap:6px;">
-        <div class="q-lens">${q.lens.toUpperCase()}</div>
+        <div class="q-lens">${escapeHTML((q.lens || '').toUpperCase())}</div>
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
           ${isRecommended ? `<span style="font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;background:#2D4A3E;color:#fff;">★ Начни с этого</span>` : ''}
           <span style="font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;background:${d.bg};color:${d.color};white-space:nowrap;">${d.text}</span>
         </div>
       </div>
-      ${q.lens_hint ? `<div class="q-hint">${q.lens_hint}</div>` : ''}
-      <div class="q-text">${q.question}</div>`;
+      ${q.lens_hint ? `<div class="q-hint">${escapeHTML(q.lens_hint)}</div>` : ''}
+      <div class="q-text">${escapeHTML(q.question)}</div>`;
     el.onclick = () => toggleQ(el, i);
     c.appendChild(el);
     // #26: staggered fade-in
@@ -2425,7 +2461,7 @@ async function deepDive(type) {
   const q = currentSession.questions[selectedQIdxs[0]];
   const answer = document.getElementById('deep-dive-answer');
   answer.style.display = 'block';
-  answer.innerHTML = '<span style="color:var(--ink3);">Думаю...</span>';
+  answer.textContent = 'Думаю...';
 
   const prompts = {
     why: `Объясни кратко (2-3 предложения) почему инструмент "${q.lens}" подходит для этой проблемы: "${currentSession.problem}". Разговорный стиль, без жаргона.`,
@@ -2436,9 +2472,9 @@ async function deepDive(type) {
   try {
     // Haiku — простой пояснительный запрос, не стратегический
     const res = await callAPI(prompts[type], 'simple', 360);
-    answer.innerHTML = res;
+    answer.textContent = res;
   } catch(e) {
-    answer.innerHTML = '<span style="color:var(--danger);">Ошибка: ' + e.message + '</span>';
+    answer.textContent = 'Ошибка: ' + e.message;
   }
 }
 
@@ -2495,9 +2531,16 @@ ${COACH_LANG}
 
 Для каждой гипотезы обязательно дай экономический слой:
 - roi: сколько денег можно заработать, сохранить или не потерять. Если есть финансовый контекст — считай от этих цифр. Если цифр нет — дай осторожный диапазон в рублях/процентах и пометь как оценку.
+- riskyAssumption: самое рискованное предположение. Что должно оказаться правдой, чтобы гипотеза сработала.
 - successCriteria: 3 измеримых признака что гипотеза подтверждается. Укажи числа, сроки, пороги.
 - killCriteria: 3 измеримых признака что гипотезу надо закрыть. Это должно защищать собственника от продолжения мёртвой идеи.
 - decisionRule: что делать после теста: масштабировать / изменить / убить / перейти к другой гипотезе.
+- dontDoBeforeTest: что НЕ делать до проверки, чтобы не потратить деньги на непроверенное решение.
+- testEase: 0-100, насколько легко проверить за 7-14 дней. Это НЕ вероятность правды.
+- speedDays: сколько дней нужно на первый тест.
+- riskScore: 0-100, насколько дорого ошибиться и решать не ту проблему.
+- priorityScore: 0-100 по формуле ROI × проверяемость × скорость теста × риск ошибки.
+- priorityReason: коротко почему такой приоритет.
 
 Гипотеза 1 — ОПЕРАЦИОННАЯ (горизонт: 1-2 недели):
 Что можно изменить прямо сейчас в текущих процессах, ресурсах или приоритетах без новых денег и людей. Конкретная, проверяемая за 2 недели.
@@ -2527,48 +2570,69 @@ ${finCtx ? 'ВАЖНО: В методе проверки гипотез испо
   "hypotheses": [
     {
       "title": "операционная гипотеза — конкретное утверждение от первого лица",
-      "confidence": 75,
+      "testEase": 75,
+      "speedDays": 7,
+      "riskScore": 70,
+      "priorityScore": 82,
+      "priorityReason": "почему это проверять первым",
+      "riskyAssumption": "самое рискованное предположение",
       "roi": "оценка денег которые можно заработать/сохранить/не потерять",
       "test": "конкретные шаги проверки за 1-2 недели",
       "successCriteria": ["измеримый критерий успеха 1", "измеримый критерий успеха 2", "измеримый критерий успеха 3"],
       "killCriteria": ["измеримый критерий убийства 1", "измеримый критерий убийства 2", "измеримый критерий убийства 3"],
       "decisionRule": "что делать после теста при успехе и при провале",
+      "dontDoBeforeTest": "что не делать до проверки",
+      "evidenceLog": [],
       "status": "strong"
     },
     {
       "title": "коммерческая гипотеза — новый механизм монетизации или сегмент",
-      "confidence": 55,
+      "testEase": 55,
+      "speedDays": 10,
+      "riskScore": 65,
+      "priorityScore": 68,
+      "priorityReason": "почему это в таком приоритете",
+      "riskyAssumption": "самое рискованное предположение",
       "roi": "оценка денег которые можно заработать/сохранить/не потерять",
       "test": "конкретные шаги проверки за 1-2 месяца",
       "successCriteria": ["измеримый критерий успеха 1", "измеримый критерий успеха 2", "измеримый критерий успеха 3"],
       "killCriteria": ["измеримый критерий убийства 1", "измеримый критерий убийства 2", "измеримый критерий убийства 3"],
       "decisionRule": "что делать после теста при успехе и при провале",
+      "dontDoBeforeTest": "что не делать до проверки",
+      "evidenceLog": [],
       "status": "test"
     },
     {
       "title": "гипотеза смены модели — контринтуитивная, должна удивить",
-      "confidence": 30,
+      "testEase": 30,
+      "speedDays": 14,
+      "riskScore": 80,
+      "priorityScore": 52,
+      "priorityReason": "почему это стоит или не стоит проверять сейчас",
+      "riskyAssumption": "самое рискованное предположение",
       "roi": "оценка денег которые можно заработать/сохранить/не потерять",
       "test": "минимальный способ проверить идею без больших вложений",
       "successCriteria": ["измеримый критерий успеха 1", "измеримый критерий успеха 2", "измеримый критерий успеха 3"],
       "killCriteria": ["измеримый критерий убийства 1", "измеримый критерий убийства 2", "измеримый критерий убийства 3"],
       "decisionRule": "что делать после теста при успехе и при провале",
+      "dontDoBeforeTest": "что не делать до проверки",
+      "evidenceLog": [],
       "status": "weak"
     }
   ]
 }
-Правило confidence: числа выше — заглушки. Оцени реально. status: strong >65%, test 35-65%, weak <35%.
+Правило testEase: это проверяемость, не вероятность правды. status: strong >65%, test 35-65%, weak <35% по testEase и priorityScore.
 Критерии успеха и убийства должны быть настолько конкретными, чтобы через 7-30 дней можно было принять решение без спора.`, 'structured', 2400);
 
-    const data = JSON.parse(res.replace(/```json|```/g, '').trim());
+    const data = parseModelJSON(res, 'structured');
     currentSession.rca = data.rca;
     currentSession.insight = data.insight || '';
     currentSession.hypotheses = data.hypotheses.map((h, i) => ({
       ...normalizeHypothesis(h),
       id: Date.now() + i,
       notes: '',
-      // Пересчитываем status из confidence на случай если модель ошиблась
-      status: h.confidence > 65 ? 'strong' : h.confidence >= 35 ? 'test' : 'weak'
+      // Пересчитываем status из проверяемости на случай если модель ошиблась
+      status: (h.testEase ?? h.confidence ?? 50) > 65 ? 'strong' : (h.testEase ?? h.confidence ?? 50) >= 35 ? 'test' : 'weak'
     }));
 
     // Сохраняем в кэш
@@ -2591,14 +2655,14 @@ function renderRCA(rca, focusText) {
   const colors = ['c1', 'c2', 'c3'];
   document.getElementById('rca-container').innerHTML = `
     <div class="rca-wrap">
-      <div class="rca-root-node">${rca.root}</div>
+      <div class="rca-root-node">${escapeHTML(rca.root)}</div>
       <div class="rca-arrow-down">↓</div>
       <div class="rca-causes-row">
         ${rca.causes.map((c, i) => `
           <div class="rca-cause-col ${colors[i] || ''}">
-            <div class="rca-cause-node">${c.cause}</div>
+            <div class="rca-cause-node">${escapeHTML(c.cause)}</div>
             <div class="rca-mini-arrow">↓</div>
-            <div class="rca-deep-node">${c.deep}</div>
+            <div class="rca-deep-node">${escapeHTML(c.deep)}</div>
           </div>`).join('')}
       </div>
     </div>`;
@@ -2631,16 +2695,91 @@ function asCriteriaList(value, fallback) {
   return fallback || [];
 }
 
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[ch]));
+}
+
+function extractJSON(text) {
+  const cleaned = String(text || '').replace(/```json|```/g, '').trim();
+  const startObj = cleaned.indexOf('{');
+  const startArr = cleaned.indexOf('[');
+  const start = startObj >= 0 && startArr >= 0 ? Math.min(startObj, startArr) : Math.max(startObj, startArr);
+  if (start < 0) return cleaned;
+  const endObj = cleaned.lastIndexOf('}');
+  const endArr = cleaned.lastIndexOf(']');
+  const end = Math.max(endObj, endArr);
+  return end > start ? cleaned.slice(start, end + 1) : cleaned;
+}
+
+function repairJSONText(text) {
+  return extractJSON(text)
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/,\s*([}\]])/g, '$1');
+}
+
+function validateModelData(data, schemaName) {
+  const assert = (ok, msg) => { if (!ok) throw new Error(msg); };
+  if (schemaName === 'questions') {
+    assert(Array.isArray(data.questions), 'Модель не вернула список вопросов');
+    data.questions.forEach(q => assert(q.question && q.lens, 'В вопросе нет question/lens'));
+  }
+  if (schemaName === 'clarify') {
+    assert(Array.isArray(data.questions), 'Модель не вернула уточняющие вопросы');
+    data.questions.forEach(q => assert(q.id && q.question, 'В уточняющем вопросе нет id/question'));
+  }
+  if (schemaName === 'actionPlan') {
+    assert(Array.isArray(data.steps), 'Модель не вернула шаги плана');
+    data.steps.forEach(s => assert(s.action && s.deadline && s.result, 'В шаге плана нет action/deadline/result'));
+  }
+  if (schemaName === 'structured') {
+    assert(data.rca && data.rca.root && Array.isArray(data.rca.causes), 'Модель не вернула карту механизмов');
+    assert(Array.isArray(data.hypotheses) && data.hypotheses.length, 'Модель не вернула гипотезы');
+    data.hypotheses.forEach(h => assert(h.title && h.test && h.roi && h.riskyAssumption, 'В гипотезе нет title/test/roi/riskyAssumption'));
+  }
+  return data;
+}
+
+function parseModelJSON(text, schemaName) {
+  try {
+    return validateModelData(JSON.parse(extractJSON(text)), schemaName);
+  } catch (firstError) {
+    try {
+      return validateModelData(JSON.parse(repairJSONText(text)), schemaName);
+    } catch (secondError) {
+      throw new Error('Не удалось разобрать JSON ответа модели: ' + secondError.message);
+    }
+  }
+}
+
 function criteriaHtml(items) {
   const list = asCriteriaList(items, []);
   if (!list.length) return '<p style="margin:0;color:var(--ink3);">Не задано</p>';
-  return `<ul>${list.map(i => `<li>${i}</li>`).join('')}</ul>`;
+  return `<ul>${list.map(i => `<li>${escapeHTML(i)}</li>`).join('')}</ul>`;
 }
 
 function normalizeHypothesis(h) {
   const title = h.title || 'Гипотеза для проверки';
+  const testEase = Number(h.testEase ?? h.checkEase ?? h.confidence ?? 50);
+  const speedDays = Number(h.speedDays ?? h.testDays ?? 7);
+  const riskScore = Number(h.riskScore ?? h.riskOfWrongDecision ?? 50);
+  const priorityScore = Number(h.priorityScore ?? Math.round((testEase * 0.35) + ((Math.max(1, 15 - Math.min(speedDays, 14)) / 14) * 100 * 0.25) + (riskScore * 0.2) + (50 * 0.2)));
   return {
     ...h,
+    title,
+    testEase,
+    confidence: testEase,
+    speedDays,
+    riskScore,
+    priorityScore,
+    riskyAssumption: h.riskyAssumption || h.riskAssumption || 'Самое рискованное предположение пока не сформулировано — уточни, что должно оказаться правдой, чтобы гипотеза сработала.',
+    priorityReason: h.priorityReason || 'Приоритет рассчитан по проверяемости, скорости теста, риску ошибки и потенциальному ROI.',
     roi: h.roi || h.estimatedROI || h.moneyImpact || 'ROI пока не рассчитан — добавь выручку, маржу или бюджет, чтобы получить оценку в деньгах.',
     successCriteria: asCriteriaList(h.successCriteria || h.successFactors, [
       'Метрика из проверки улучшилась минимум на 15-20%',
@@ -2653,7 +2792,8 @@ function normalizeHypothesis(h) {
       'Стоимость проверки или внедрения выше ожидаемого экономического эффекта'
     ]),
     decisionRule: h.decisionRule || 'Если success criteria выполнены — усиливаем гипотезу и масштабируем тест. Если kill criteria выполнены — закрываем гипотезу и переходим к следующей.',
-    title
+    dontDoBeforeTest: h.dontDoBeforeTest || h.doNotDo || 'Не увеличивать бюджет, не нанимать подрядчика и не переделывать весь процесс, пока минимальный тест не покажет, что механизм действительно влияет на деньги.',
+    evidenceLog: Array.isArray(h.evidenceLog) ? h.evidenceLog : []
   };
 }
 
@@ -2662,26 +2802,29 @@ function buildHypCard(h, editable) {
   const colors = { strong: '#1e4d2b', test: '#c4930a', weak: '#8b1a1a', confirmed: '#1e4d2b', rejected: '#8b1a1a' };
   const labels = { strong: 'Высокий потенциал', test: 'Требует проверки', weak: 'Контринтуитивная', confirmed: '✓ Подтверждена', rejected: '✗ Отклонена' };
   const bc = { strong: 'badge-green', test: 'badge-gold', weak: 'badge-red', confirmed: 'badge-green', rejected: 'badge-red' };
-  const easeLabel = h.confidence >= 66 ? 'Легко проверить' : h.confidence >= 35 ? 'Средняя сложность' : 'Требует усилий';
-  const easeColor = h.confidence >= 66 ? 'var(--accent)' : h.confidence >= 35 ? 'var(--gold)' : 'var(--danger)';
+  const easeLabel = h.testEase >= 66 ? 'Легко проверить' : h.testEase >= 35 ? 'Средняя сложность' : 'Требует усилий';
+  const easeColor = h.testEase >= 66 ? 'var(--accent)' : h.testEase >= 35 ? 'var(--gold)' : 'var(--danger)';
+  const evidence = h.evidenceLog || [];
   const div = document.createElement('div');
   div.className = 'hyp-card';
-  div.id = 'hyp-' + h.id;
+  div.id = 'hyp-' + escapeHTML(h.id);
   div.innerHTML = `
     <div class="hyp-top">
-      <div class="hyp-title">${h.title}</div>
-      <span class="badge ${bc[h.status] || 'badge-gray'}">${labels[h.status] || h.status}</span>
+      <div class="hyp-title">${escapeHTML(h.title)}</div>
+      <span class="badge ${bc[h.status] || 'badge-gray'}">${escapeHTML(labels[h.status] || h.status)}</span>
     </div>
     <div class="conf-row" style="margin-bottom:4px;">
-      <div class="conf-bar"><div class="conf-fill" style="width:${h.confidence}%;background:${colors[h.status] || '#888'};"></div></div>
-      <span class="conf-label">${h.confidence}%</span>
+      <div class="conf-bar"><div class="conf-fill" style="width:${h.testEase}%;background:${colors[h.status] || '#888'};"></div></div>
+      <span class="conf-label">${h.testEase}%</span>
     </div>
     <div style="display:flex;align-items:center;gap:7px;margin-bottom:12px;">
-      <span style="font-size:0.75rem;font-weight:500;color:${easeColor};">${easeLabel}</span>
-      <span class="tip" data-tip="% показывает насколько легко проверить гипотезу — не насколько она верна. Контринтуитивные идеи часто самые важные." style="width:15px;height:15px;border-radius:50%;border:1px solid var(--border2);font-size:0.625rem;color:var(--ink3);flex-shrink:0;font-family:inherit;">?</span>
+      <span style="font-size:0.75rem;font-weight:500;color:${easeColor};">Проверяемость: ${easeLabel}</span>
+      <span class="tip" data-tip="Показывает насколько легко проверить гипотезу за короткий срок. Это не вероятность правды." style="width:15px;height:15px;border-radius:50%;border:1px solid var(--border2);font-size:0.625rem;color:var(--ink3);flex-shrink:0;font-family:inherit;">?</span>
     </div>
-    <div class="hyp-roi"><strong>ROI / деньги на кону:</strong> ${h.roi}</div>
-    <div class="hyp-test"><strong>Как проверить:</strong> ${h.test}</div>
+    <div class="hyp-priority"><strong>Приоритет:</strong> ${h.priorityScore}/100 · ${escapeHTML(h.priorityReason)}<br><span style="color:var(--ink3);">Формула: ROI × проверяемость × скорость теста × риск ошибки.</span></div>
+    <div class="hyp-risk"><strong>Самое рискованное предположение:</strong> ${escapeHTML(h.riskyAssumption)}</div>
+    <div class="hyp-roi"><strong>ROI / деньги на кону:</strong> ${escapeHTML(h.roi)}</div>
+    <div class="hyp-test"><strong>Первый тест на 7 дней:</strong> ${escapeHTML(h.test)}</div>
     <div class="hyp-criteria-grid">
       <div class="hyp-criteria success">
         <div class="hyp-criteria-title">Success criteria</div>
@@ -2692,14 +2835,20 @@ function buildHypCard(h, editable) {
         ${criteriaHtml(h.killCriteria)}
       </div>
     </div>
-    <div class="hyp-decision"><strong>Решение после теста:</strong> ${h.decisionRule}</div>
-    ${h.notes ? `<div style="margin-top:7px;font-size:0.8125rem;color:var(--ink3);border-top:1px solid var(--border);padding-top:7px;">${h.notes}</div>` : ''}
+    <div class="hyp-decision"><strong>Решение после теста:</strong> ${escapeHTML(h.decisionRule)}</div>
+    <div class="hyp-decision"><strong>Что НЕ делать до проверки:</strong> ${escapeHTML(h.dontDoBeforeTest)}</div>
+    <div class="evidence-log">
+      <div class="evidence-title">Evidence Log</div>
+      ${evidence.length ? evidence.map(e => `<div class="evidence-item"><strong>${escapeHTML(e.date || 'Без даты')}</strong><br>Сделали: ${escapeHTML(e.action || '')}<br>Цифры: ${escapeHTML(e.numbers || '')}<br>Вывод: ${escapeHTML(e.conclusion || '')}</div>`).join('') : '<div class="evidence-item">Пока нет записей. Добавь результат первого теста после проверки.</div>'}
+    </div>
+    ${h.notes ? `<div style="margin-top:7px;font-size:0.8125rem;color:var(--ink3);border-top:1px solid var(--border);padding-top:7px;">${escapeHTML(h.notes)}</div>` : ''}
     ${editable ? `
     <div class="hyp-actions" style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
       <span style="font-size:0.75rem;color:var(--ink3);margin-right:2px;">Статус:</span>
       <button class="btn btn-xs ${h.status==='confirmed'?'btn-accent':'btn-outline'}" onclick="setHypStatus('${h.id}','confirmed')">✓ Подтверждена</button>
       <button class="btn btn-xs ${h.status==='test'?'btn-primary':'btn-outline'}" onclick="setHypStatus('${h.id}','test')">В тесте</button>
       <button class="btn btn-xs ${h.status==='rejected'?'btn-danger':'btn-outline'}" onclick="setHypStatus('${h.id}','rejected')">✗ Отклонена</button>
+      <button class="btn btn-xs btn-outline" onclick="addEvidence('${h.id}')">Evidence</button>
       <button class="btn btn-xs btn-outline" onclick="editNotes('${h.id}')">Заметка</button>
     </div>` : ''}`;
   return div;
@@ -2709,8 +2858,24 @@ function setHypStatus(id, status) {
   const h = currentSession.hypotheses.find(h => h.id == id);
   if (!h) return;
   h.status = status;
-  if (status === 'confirmed') h.confidence = 90;
-  if (status === 'rejected') h.confidence = 10;
+  if (status === 'confirmed') { h.confidence = 90; h.testEase = 90; }
+  if (status === 'rejected') { h.confidence = 10; h.testEase = 10; }
+  renderHypotheses();
+}
+
+function addEvidence(id) {
+  const h = currentSession.hypotheses.find(h => h.id == id);
+  if (!h) return;
+  const date = prompt('Дата теста:', new Date().toLocaleDateString('ru'));
+  if (date === null) return;
+  const action = prompt('Что сделали?', '');
+  if (action === null) return;
+  const numbers = prompt('Какие цифры получили?', '');
+  if (numbers === null) return;
+  const conclusion = prompt('Вывод: продолжить / изменить / убить?', '');
+  if (conclusion === null) return;
+  h.evidenceLog = Array.isArray(h.evidenceLog) ? h.evidenceLog : [];
+  h.evidenceLog.unshift({ date, action, numbers, conclusion });
   renderHypotheses();
 }
 
@@ -2846,12 +3011,12 @@ body{font-family:'DM Sans',sans-serif;background:#F5F0E8;color:#1A2E24;font-size
 <div class="pdf-body">
 
   <div class="section-label">Проблема</div>
-  <div class="problem-block">${s.problem}</div>
+  <div class="problem-block">${escapeHTML(s.problem)}</div>
 
   ${s.insight ? `
   <div class="insight-block">
     <div class="insight-label">ГЛАВНЫЙ ИНСАЙТ СЕССИИ</div>
-    <div class="insight-text">${s.insight}</div>
+    <div class="insight-text">${escapeHTML(s.insight)}</div>
   </div>` : ''}
 
   <hr class="section-divider">
@@ -2862,10 +3027,10 @@ body{font-family:'DM Sans',sans-serif;background:#F5F0E8;color:#1A2E24;font-size
       const distText = {close:'Близко к фрейму',expand:'Расширяет взгляд',flip:'Переворачивает всё'}[distClass] || '';
       return `<div class="q-item">
         <div class="q-lens-row">
-          <div class="q-lens">${q.lens.toUpperCase()}</div>
+          <div class="q-lens">${escapeHTML((q.lens || '').toUpperCase())}</div>
           <span class="q-dist ${distClass}">${distText}</span>
         </div>
-        <div class="q-text">${q.question}</div>
+        <div class="q-text">${escapeHTML(q.question)}</div>
       </div>`;
     }).join('')}
   </div>
@@ -2874,14 +3039,14 @@ body{font-family:'DM Sans',sans-serif;background:#F5F0E8;color:#1A2E24;font-size
   <hr class="section-divider">
   <div class="section-label">Карта механизмов проблемы</div>
   <div style="margin-top:12px;">
-    <div class="rca-root">${s.rca.root}</div>
+    <div class="rca-root">${escapeHTML(s.rca.root)}</div>
     <div class="rca-arrow">↓</div>
     <div class="rca-branches">
       ${s.rca.causes.map((c, i) => {
         const col = causeColors[i] || causeColors[0];
         return `<div class="rca-branch" style="border-color:${col.border};">
-          <div class="rca-branch-head" style="background:${col.headBg};">${c.cause}</div>
-          <div class="rca-branch-deep" style="background:${col.bg};">${c.deep}</div>
+          <div class="rca-branch-head" style="background:${col.headBg};">${escapeHTML(c.cause)}</div>
+          <div class="rca-branch-deep" style="background:${col.bg};">${escapeHTML(c.deep)}</div>
         </div>`;
       }).join('')}
     </div>
@@ -2896,36 +3061,51 @@ body{font-family:'DM Sans',sans-serif;background:#F5F0E8;color:#1A2E24;font-size
       const col = confColor[h.status] || '#888';
       return `<div class="hyp">
         <div class="hyp-top">
-          <div class="hyp-title">${h.title}</div>
-          <span class="hyp-badge" style="background:${col}22;color:${col};">${sL[h.status]||h.status}</span>
+          <div class="hyp-title">${escapeHTML(h.title)}</div>
+          <span class="hyp-badge" style="background:${col}22;color:${col};">${escapeHTML(sL[h.status]||h.status)}</span>
         </div>
         <div class="conf-bar-wrap">
-          <div class="conf-track"><div class="conf-fill" style="width:${h.confidence}%;background:${col};"></div></div>
-          <span class="conf-pct">${h.confidence}%</span>
+          <div class="conf-track"><div class="conf-fill" style="width:${h.testEase}%;background:${col};"></div></div>
+          <span class="conf-pct">Проверяемость ${h.testEase}%</span>
         </div>
-        <div class="hyp-roi"><strong>ROI / деньги на кону:</strong> ${h.roi}</div>
-        <div class="hyp-test"><strong>Как проверить:</strong> ${h.test}</div>
+        <div style="margin:8px 0;font-size:11px;color:#6B8F7A;"><strong>Приоритет:</strong> ${h.priorityScore}/100 · ${escapeHTML(h.priorityReason)}</div>
+        <div style="margin:8px 0;font-size:11px;color:#7A2424;"><strong>Самое рискованное предположение:</strong> ${escapeHTML(h.riskyAssumption)}</div>
+        <div class="hyp-roi"><strong>ROI / деньги на кону:</strong> ${escapeHTML(h.roi)}</div>
+        <div class="hyp-test"><strong>Первый тест на 7 дней:</strong> ${escapeHTML(h.test)}</div>
         <div class="criteria-grid">
           <div class="criteria-box success">
             <div class="criteria-title">Success criteria</div>
-            <ul>${h.successCriteria.map(i => `<li>${i}</li>`).join('')}</ul>
+            <ul>${h.successCriteria.map(i => `<li>${escapeHTML(i)}</li>`).join('')}</ul>
           </div>
           <div class="criteria-box kill">
             <div class="criteria-title">Kill criteria</div>
-            <ul>${h.killCriteria.map(i => `<li>${i}</li>`).join('')}</ul>
+            <ul>${h.killCriteria.map(i => `<li>${escapeHTML(i)}</li>`).join('')}</ul>
           </div>
         </div>
-        <div class="decision-rule"><strong>Решение после теста:</strong> ${h.decisionRule}</div>
-        ${h.notes ? `<div style="margin-top:5px;font-size:11px;color:#6B8F7A;">${h.notes}</div>` : ''}
+        <div class="decision-rule"><strong>Решение после теста:</strong> ${escapeHTML(h.decisionRule)}</div>
+        <div class="decision-rule"><strong>Что НЕ делать до проверки:</strong> ${escapeHTML(h.dontDoBeforeTest)}</div>
+        ${h.notes ? `<div style="margin-top:5px;font-size:11px;color:#6B8F7A;">${escapeHTML(h.notes)}</div>` : ''}
       </div>`;
     }).join('')}
+  </div>` : ''}
+
+  ${s.hypotheses && s.hypotheses.length ? `
+  <hr class="section-divider">
+  <div class="section-label">Что НЕ делать до проверки</div>
+  <div style="margin-top:10px;background:#FDE8E3;border-radius:8px;padding:14px 16px;">
+    <ul style="margin:0;padding-left:18px;font-size:12px;color:#2D2420;line-height:1.6;">
+      ${s.hypotheses.map(raw => {
+        const h = normalizeHypothesis(raw);
+        return `<li>${escapeHTML(h.dontDoBeforeTest)}</li>`;
+      }).join('')}
+    </ul>
   </div>` : ''}
 
   <hr class="section-divider">
   <div class="section-label">Следующий шаг</div>
   <div style="margin-top:10px;background:#F5F0E8;border-radius:8px;padding:14px 16px;">
     <p style="font-size:12px;color:#2D4A3E;line-height:1.6;">Для каждой гипотезы: оцени ROI, запусти минимальный эксперимент, проверь success criteria и kill criteria. <strong>Не инвестируй крупно до подтверждения, закрывай гипотезу при выполнении kill criteria.</strong></p>
-    <p style="font-size:11px;color:#6B8F7A;margin-top:8px;">Основано на методе FrED (Frame → Explore → Decide) — Chevallier "Solvable"</p>
+    <p style="font-size:12px;color:#2D4A3E;line-height:1.6;margin-top:8px;"><strong>Хочешь разобрать это глубже за 90 минут с автором инструмента?</strong> Подготовь этот отчёт, цифры теста и главный спорный вопрос — так консультация будет про решение, а не про пересказ симптомов.</p>
   </div>
 
 </div>
@@ -2959,7 +3139,7 @@ function renderHistory() {
     div.className = 'history-item';
     div.innerHTML = `
       <div class="history-date">${new Date(s.date).toLocaleString('ru',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
-      <div class="history-problem">${s.problem}</div>
+      <div class="history-problem">${escapeHTML(s.problem)}</div>
       <div class="history-meta">
         <span class="badge badge-gray">${s.questions.length} рефреймов</span>
         <span class="badge badge-gray">${s.hypotheses.length} гипотез</span>
@@ -2975,29 +3155,32 @@ function showSessionDetail(s) {
   const bc = { strong:'badge-green', test:'badge-gold', weak:'badge-red', confirmed:'badge-green', rejected:'badge-red' };
   document.getElementById('session-detail-content').innerHTML = `
     <h1 class="page-title" style="font-size:22px;">${new Date(s.date).toLocaleString('ru',{day:'numeric',month:'long',year:'numeric'})}</h1>
-    <div class="problem-quote">${s.problem}</div>
+    <div class="problem-quote">${escapeHTML(s.problem)}</div>
     <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin:0 0 10px;font-weight:400;">Рефреймирующие вопросы</h3>
-    ${s.questions.map(q=>`<div class="q-card" style="cursor:default;"><div class="q-lens">${q.lens.toUpperCase()}</div><div class="q-text">${q.question}</div></div>`).join('')}
+    ${s.questions.map(q=>`<div class="q-card" style="cursor:default;"><div class="q-lens">${escapeHTML((q.lens || '').toUpperCase())}</div><div class="q-text">${escapeHTML(q.question)}</div></div>`).join('')}
     <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin:20px 0 10px;font-weight:400;">Карта механизмов проблемы</h3>
     <div class="rca-wrap">
-      <div class="rca-root-node">${s.rca.root}</div>
+      <div class="rca-root-node">${escapeHTML(s.rca.root)}</div>
       <div class="rca-arrow-down">↓</div>
-      <div class="rca-causes-row">${s.rca.causes.map(c=>`<div class="rca-cause-col"><div class="rca-cause-node">${c.cause}</div><div class="rca-mini-arrow">↓</div><div class="rca-deep-node">${c.deep}</div></div>`).join('')}</div>
+      <div class="rca-causes-row">${s.rca.causes.map(c=>`<div class="rca-cause-col"><div class="rca-cause-node">${escapeHTML(c.cause)}</div><div class="rca-mini-arrow">↓</div><div class="rca-deep-node">${escapeHTML(c.deep)}</div></div>`).join('')}</div>
     </div>
     <h3 style="font-family:'Playfair Display',serif;font-size:17px;margin:20px 0 10px;font-weight:400;">Гипотезы</h3>
     ${s.hypotheses.map(raw => {
       const h = normalizeHypothesis(raw);
       return `<div class="hyp-card">
-        <div class="hyp-top"><div class="hyp-title">${h.title}</div><span class="badge ${bc[h.status]||'badge-gray'}">${sL[h.status]||h.status}</span></div>
-        <div class="conf-row"><div class="conf-bar"><div class="conf-fill" style="width:${h.confidence}%;background:#1e4d2b;"></div></div><span class="conf-label">${h.confidence}%</span></div>
-        <div class="hyp-roi"><strong>ROI / деньги на кону:</strong> ${h.roi}</div>
-        <div class="hyp-test"><strong>Проверка:</strong> ${h.test}</div>
+        <div class="hyp-top"><div class="hyp-title">${escapeHTML(h.title)}</div><span class="badge ${bc[h.status]||'badge-gray'}">${escapeHTML(sL[h.status]||h.status)}</span></div>
+        <div class="conf-row"><div class="conf-bar"><div class="conf-fill" style="width:${h.testEase}%;background:#1e4d2b;"></div></div><span class="conf-label">Проверяемость ${h.testEase}%</span></div>
+        <div class="hyp-priority"><strong>Приоритет:</strong> ${h.priorityScore}/100 · ${escapeHTML(h.priorityReason)}</div>
+        <div class="hyp-risk"><strong>Самое рискованное предположение:</strong> ${escapeHTML(h.riskyAssumption)}</div>
+        <div class="hyp-roi"><strong>ROI / деньги на кону:</strong> ${escapeHTML(h.roi)}</div>
+        <div class="hyp-test"><strong>Проверка:</strong> ${escapeHTML(h.test)}</div>
         <div class="hyp-criteria-grid">
           <div class="hyp-criteria success"><div class="hyp-criteria-title">Success criteria</div>${criteriaHtml(h.successCriteria)}</div>
           <div class="hyp-criteria kill"><div class="hyp-criteria-title">Kill criteria</div>${criteriaHtml(h.killCriteria)}</div>
         </div>
-        <div class="hyp-decision"><strong>Решение после теста:</strong> ${h.decisionRule}</div>
-        ${h.notes?`<div style="margin-top:6px;font-size:13px;color:var(--ink3);">${h.notes}</div>`:''}
+        <div class="hyp-decision"><strong>Решение после теста:</strong> ${escapeHTML(h.decisionRule)}</div>
+        <div class="hyp-decision"><strong>Что НЕ делать до проверки:</strong> ${escapeHTML(h.dontDoBeforeTest)}</div>
+        ${h.notes?`<div style="margin-top:6px;font-size:13px;color:var(--ink3);">${escapeHTML(h.notes)}</div>`:''}
       </div>`;
     }).join('')}
     <div style="display:flex;gap:9px;margin-top:18px;flex-wrap:wrap;">
@@ -3044,16 +3227,19 @@ function renderTracker() {
     const div = document.createElement('div');
     div.className = 'hyp-card';
     div.innerHTML = `
-      <div style="font-size:11px;color:var(--ink3);margin-bottom:5px;">Из: ${h.prob.substring(0,65)}...</div>
-      <div class="hyp-top"><div class="hyp-title">${h.title}</div><span class="badge ${bc[h.status]||'badge-gray'}">${sL[h.status]||h.status}</span></div>
-      <div class="conf-row"><div class="conf-bar"><div class="conf-fill" style="width:${h.confidence}%;background:${colors[h.status]||'#888'};"></div></div><span class="conf-label">${h.confidence}%</span></div>
-      <div class="hyp-roi"><strong>ROI / деньги на кону:</strong> ${h.roi}</div>
-      <div class="hyp-test"><strong>Проверка:</strong> ${h.test}</div>
+      <div style="font-size:11px;color:var(--ink3);margin-bottom:5px;">Из: ${escapeHTML((h.prob || '').substring(0,65))}...</div>
+      <div class="hyp-top"><div class="hyp-title">${escapeHTML(h.title)}</div><span class="badge ${bc[h.status]||'badge-gray'}">${escapeHTML(sL[h.status]||h.status)}</span></div>
+      <div class="conf-row"><div class="conf-bar"><div class="conf-fill" style="width:${h.testEase}%;background:${colors[h.status]||'#888'};"></div></div><span class="conf-label">Проверяемость ${h.testEase}%</span></div>
+      <div class="hyp-priority"><strong>Приоритет:</strong> ${h.priorityScore}/100 · ${escapeHTML(h.priorityReason)}</div>
+      <div class="hyp-risk"><strong>Самое рискованное предположение:</strong> ${escapeHTML(h.riskyAssumption)}</div>
+      <div class="hyp-roi"><strong>ROI / деньги на кону:</strong> ${escapeHTML(h.roi)}</div>
+      <div class="hyp-test"><strong>Проверка:</strong> ${escapeHTML(h.test)}</div>
       <div class="hyp-criteria-grid">
         <div class="hyp-criteria success"><div class="hyp-criteria-title">Success criteria</div>${criteriaHtml(h.successCriteria)}</div>
         <div class="hyp-criteria kill"><div class="hyp-criteria-title">Kill criteria</div>${criteriaHtml(h.killCriteria)}</div>
       </div>
-      <div class="hyp-decision"><strong>Решение после теста:</strong> ${h.decisionRule}</div>`;
+      <div class="hyp-decision"><strong>Решение после теста:</strong> ${escapeHTML(h.decisionRule)}</div>
+      <div class="hyp-decision"><strong>Что НЕ делать до проверки:</strong> ${escapeHTML(h.dontDoBeforeTest)}</div>`;
     list.appendChild(div);
   });
 }
@@ -3115,12 +3301,14 @@ function renderPasswords() {
   passwords.forEach(p => {
     const div = document.createElement('div');
     div.className = 'pwd-item';
+    const safeCode = escapeHTML(p.code);
+    const safeStatus = p.status === 'active' ? 'active' : 'used';
     div.innerHTML = `
-      <span class="pwd-code">${p.code}</span>
-      <span class="pwd-status ${p.status === 'active' ? 'pwd-active' : 'pwd-used'}">${p.status === 'active' ? 'Активен' : 'Использован'}</span>
-      <button class="btn btn-xs btn-outline" onclick="navigator.clipboard.writeText('${p.code}').then(()=>showToast('Скопировано'))">Копировать</button>
-      <button class="btn btn-xs btn-outline" onclick="togglePwdStatus('${p.code}')">${p.status === 'active' ? 'Отметить исп.' : 'Активировать'}</button>
-      <button class="btn btn-xs btn-danger" onclick="deletePwd('${p.code}')">×</button>`;
+      <span class="pwd-code">${safeCode}</span>
+      <span class="pwd-status ${safeStatus === 'active' ? 'pwd-active' : 'pwd-used'}">${safeStatus === 'active' ? 'Активен' : 'Использован'}</span>
+      <button class="btn btn-xs btn-outline" onclick="navigator.clipboard.writeText('${safeCode}').then(()=>showToast('Скопировано'))">Копировать</button>
+      <button class="btn btn-xs btn-outline" onclick="togglePwdStatus('${safeCode}')">${safeStatus === 'active' ? 'Отметить исп.' : 'Активировать'}</button>
+      <button class="btn btn-xs btn-danger" onclick="deletePwd('${safeCode}')">×</button>`;
     list.appendChild(div);
   });
 }
@@ -3180,16 +3368,8 @@ async function testKey() {
   result.style.color = 'var(--ink2)';
   result.textContent = 'Проверяю соединение...';
 
-  const key = localStorage.getItem('rf_api_key') || '';
-  if (!key) {
-    result.style.background = 'var(--danger-light)';
-    result.style.color = 'var(--danger)';
-    result.textContent = '✗ Ключ не найден в памяти браузера. Введи ключ и нажми Сохранить.';
-    return;
-  }
-
   const testModel = getModel('simple');
-  result.textContent = `Ключ в памяти: ${key.substring(0,12)}... (${key.length} символов). Проверяю модель ${testModel}...`;
+  result.textContent = `Проверяю server proxy на модели ${testModel}...`;
 
   try {
     const res = await fetch('/api/proxy', {
